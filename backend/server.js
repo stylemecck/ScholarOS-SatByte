@@ -46,9 +46,14 @@ app.use((err, req, res, next) => {
 });
 
 // Database connection
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/student-toolkit')
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.error('MongoDB connection error:', err));
+mongoose.connect(process.env.MONGO_URI, {
+  serverSelectionTimeoutMS: 5000, // Timeout after 5 seconds
+})
+.then(() => console.log('✅ MongoDB connected successfully'))
+.catch(err => {
+  console.error('❌ MongoDB Connection Error:', err.message);
+  // If we can't connect to DB, the server is useless, so we log it clearly
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
