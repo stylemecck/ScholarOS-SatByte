@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { Mail, Lock, User, Loader2 } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 
 const Signup = () => {
   const [name, setName] = useState('');
@@ -13,6 +14,21 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  const handleGoogleSuccess = async (response: any) => {
+    try {
+      setLoading(true);
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/google`, {
+        credential: response.credential
+      });
+      login(res.data.token, res.data.user);
+      navigate('/dashboard');
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Google login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,6 +117,22 @@ const Signup = () => {
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Sign Up'}
           </button>
         </form>
+
+        <div className="my-6 flex items-center gap-4">
+          <div className="h-px bg-border flex-grow"></div>
+          <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">or</span>
+          <div className="h-px bg-border flex-grow"></div>
+        </div>
+
+        <div className="flex justify-center">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => setError('Google login failed')}
+            theme="filled_black"
+            shape="pill"
+            width="100%"
+          />
+        </div>
 
         <p className="text-center mt-6 text-sm text-muted-foreground">
           Already have an account? <Link to="/login" className="text-primary font-semibold hover:underline">Log In</Link>
