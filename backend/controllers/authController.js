@@ -81,6 +81,10 @@ exports.register = async (req, res) => {
         });
         await referrer.save();
 
+        // Send Email Notification to Referrer
+        const { sendReferralBonusEmail } = require('../utils/emailService');
+        sendReferralBonusEmail(referrer.email, referrer.name, 5);
+
         user.creditHistory.push({
           amount: 5,
           type: 'added',

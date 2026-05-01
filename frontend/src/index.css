@@ -34,7 +34,7 @@
   body {
     background-color: rgb(var(--background));
     color: rgb(var(--foreground));
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Outfit', system-ui, sans-serif;
   }
 }
 
@@ -52,6 +52,4 @@
   --color-border: rgb(var(--border));
 }
 
-/* Force standard color space for PDF compatibility */
-* {
-}
+

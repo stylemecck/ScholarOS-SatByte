@@ -16,6 +16,7 @@ const AdminDashboard = () => {
   const { user } = useAuth();
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (user?.role === 'admin') {
@@ -29,8 +30,9 @@ const AdminDashboard = () => {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       setStats(response.data);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Failed to fetch admin stats:", err);
+      setError(err.response?.data?.error || "Failed to load dashboard data.");
     } finally {
       setLoading(false);
     }
@@ -49,10 +51,30 @@ const AdminDashboard = () => {
     );
   }
 
+  if (error || !stats) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center space-y-6 px-4">
+        <div className="p-6 bg-rose-500/10 rounded-full text-rose-500">
+          <ShieldCheck className="w-12 h-12" />
+        </div>
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl font-black">Dashboard Error</h2>
+          <p className="text-muted-foreground max-w-md mx-auto">{error || "The analytics engine encountered an issue. Please check the backend connection."}</p>
+        </div>
+        <button 
+          onClick={() => { setLoading(true); setError(null); fetchStats(); }}
+          className="bg-primary text-primary-foreground px-8 py-3 rounded-xl font-bold shadow-lg hover:shadow-primary/20 transition-all"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
   const COLORS = ['#3b82f6', '#fbbf24', '#10b981', '#f43f5e', '#8b5cf6'];
 
   return (
-    <div className="max-w-7xl mx-auto py-12 px-4 space-y-12">
+    <div className="max-w-7xl mx-auto py-12 px-4 space-y-12 pb-20">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-2">
@@ -71,7 +93,7 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
           { label: 'Total Users', value: stats.totalUsers, icon: Users, color: 'text-blue-500', trend: '+12%' },
-          { label: 'Est. Revenue', value: `₹${stats.totalRevenue}`, icon: DollarSign, color: 'text-emerald-500', trend: '+24%' },
+          { label: 'Est. Revenue', value: `₹${Math.round(stats.totalRevenue)}`, icon: DollarSign, color: 'text-emerald-500', trend: '+24%' },
           { label: 'AI Requests', value: stats.totalAIRequests, icon: Zap, color: 'text-amber-500', trend: '+18%' },
           { label: 'Top Tool', value: stats.topTools[0]?.name.split(' ')[0] || 'N/A', icon: TrendingUp, color: 'text-purple-500', trend: 'Active' },
         ].map((item, i) => (
@@ -130,7 +152,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Tool Popularity */}
-        <div className="lg:col-span-4 bg-card border border-border p-8 rounded-[2.5rem] shadow-sm space-y-6">
+        <div className="lg:col-span-4 bg-card border border-border p-8 rounded-[2.5rem] shadow-sm space-y-6 flex flex-col">
           <h3 className="text-xl font-black flex items-center gap-2">
             <Zap className="w-5 h-5 text-amber-500" />
             Tool Popularity
@@ -155,7 +177,7 @@ const AdminDashboard = () => {
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-3 mt-auto">
             {stats.topTools.map((tool: any, i: number) => (
               <div key={i} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -165,6 +187,36 @@ const AdminDashboard = () => {
                 <span className="text-xs font-black">{tool.count}</span>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Revenue Growth Chart */}
+        <div className="lg:col-span-12 bg-card border border-border p-8 rounded-[2.5rem] shadow-sm space-y-6">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl font-black flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-emerald-500" />
+              Monthly Revenue Performance
+            </h3>
+          </div>
+          <div className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={stats.revenueHistory}>
+                <defs>
+                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#88888820" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 600 }} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 600 }} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#18181b', border: 'none', borderRadius: '12px', color: '#fff' }}
+                  itemStyle={{ color: '#10b981' }}
+                />
+                <Area type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
