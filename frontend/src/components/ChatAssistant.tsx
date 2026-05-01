@@ -80,7 +80,7 @@ const ChatAssistant = () => {
             initial={{ opacity: 0, y: 100, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 100, scale: 0.8 }}
-            className="fixed bottom-24 right-6 z-[100] w-[380px] h-[550px] bg-background/95 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden"
+            className="fixed bottom-24 right-4 md:right-6 z-[100] w-[calc(100%-2rem)] md:w-[380px] h-[70vh] md:h-[550px] bg-background/95 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden"
           >
             {/* Header */}
             <div className="p-6 bg-primary text-primary-foreground flex items-center justify-between">
