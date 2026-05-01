@@ -1,19 +1,59 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Target, TrendingUp, School, ShieldCheck, AlertCircle, Loader2, Sparkles, Download } from 'lucide-react';
+import { Target, TrendingUp, School, ShieldCheck, AlertCircle, Loader2, Sparkles, Download, MapPin, IndianRupee, Users, Award, Briefcase, BarChart3, Clock, Zap } from 'lucide-react';
 import axios from 'axios';
 // @ts-ignore
 import html2pdf from 'html2pdf.js';
 import ResultPDFTemplate from '../../components/ResultPDFTemplate';
 import { useAuth } from '../../context/useAuth';
 
+interface CollegeDetail {
+  name: string;
+  branch: string;
+  fee: string;
+  cutoffRange: string;
+  cutoffGeneral: number;
+  categoryWiseCutoff?: Record<string, string>;
+  yourCategoryCutoff?: string;
+  location?: string;
+  avgPlacement?: string;
+  totalSeats?: number;
+  naacGrade?: string;
+  topRecruiters?: string[];
+  website?: string;
+  hostelAvailable?: boolean;
+  note?: string;
+}
+
+interface DifficultyAnalysis {
+  currentYear: { year: string; difficultyLevel: string; difficultyLabel: string; avgMarksScored: number };
+  '10YearAvgDifficulty': string;
+  '10YearAvgMarks': number;
+  yourPerformance: { marksScored: number; vsAverage: string; normalizedScore: number; verdict: string };
+  paperInsight: string;
+  similarYears: { year: string; difficulty: string; avgMarks: number }[];
+}
+
+interface SpotRoundAnalysis {
+  description: string;
+  tip: string;
+  roundWiseChances: { round1: string[]; round2: string[]; round3: string[]; spot: string[] };
+  summary: Record<string, string>;
+}
+
 interface Prediction {
   predictedRank: string;
   predictedPercentile: string;
-  admissionChances: 'High' | 'Moderate' | 'Low';
+  admissionChances: string;
+  performanceLevel?: string;
   suggestedColleges: string[];
-  confidence: 'High' | 'Medium' | 'Low';
+  confidence: string;
   analysis: string;
+  betterThan?: string;
+  category?: string;
+  collegeDetails?: CollegeDetail[];
+  paperDifficultyAnalysis?: DifficultyAnalysis;
+  spotRoundAnalysis?: SpotRoundAnalysis;
 }
 
 const RankPredictor = () => {
@@ -292,9 +332,10 @@ const RankPredictor = () => {
                 key="result"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="space-y-6"
+                className="space-y-5"
               >
-                <div className="flex items-center justify-between gap-4">
+                {/* Header + Download */}
+                <div className="flex items-center justify-between gap-4 flex-wrap">
                   <h3 className="text-xl font-black flex items-center gap-2">
                     <Sparkles className="w-5 h-5 text-amber-500" />
                     AI Prediction Result
@@ -307,84 +348,202 @@ const RankPredictor = () => {
                   </button>
                 </div>
 
-                {/* Main Stats */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-card border border-border p-6 rounded-[2.5rem] space-y-4 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-center justify-between">
-                      <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                        <Target className="w-4 h-4" />
-                      </div>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Predicted Rank</span>
-                    </div>
-                    <div>
-                      <h3 className="text-3xl font-black text-primary">{prediction?.predictedRank}</h3>
-                      <p className="text-xs font-medium text-muted-foreground">Approximate Range</p>
-                    </div>
-                  </div>
-                  <div className="bg-card border border-border p-6 rounded-[2.5rem] space-y-4 shadow-sm hover:shadow-md transition-shadow">
-                    <div className="flex items-center justify-between">
-                      <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-500">
-                        <TrendingUp className="w-4 h-4" />
-                      </div>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Percentile</span>
-                    </div>
-                    <div>
-                      <h3 className="text-3xl font-black text-indigo-500">{prediction?.predictedPercentile}%</h3>
-                      <p className="text-xs font-medium text-muted-foreground">Estimated Score</p>
-                    </div>
-                  </div>
+                {/* Stats Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {[
+                    { label: 'Predicted Rank', value: prediction?.predictedRank, icon: Target, color: 'text-primary', bg: 'bg-primary/10' },
+                    { label: 'Percentile', value: prediction?.predictedPercentile?.toString().endsWith('%') ? prediction.predictedPercentile : `${prediction?.predictedPercentile}%`, icon: TrendingUp, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
+                    { label: 'Performance', value: prediction?.performanceLevel || prediction?.admissionChances, icon: Award, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+                    { label: 'Better Than', value: prediction?.betterThan || '-', icon: BarChart3, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+                  ].map((stat, i) => (
+                    <motion.div key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+                      className="bg-card border border-border p-4 rounded-2xl space-y-2 shadow-sm hover:shadow-md transition-shadow"
+                    >
+                      <div className={`p-1.5 rounded-lg ${stat.bg} ${stat.color} w-fit`}><stat.icon className="w-3.5 h-3.5" /></div>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{stat.label}</p>
+                      <p className={`text-lg sm:text-xl font-black ${stat.color} truncate`}>{stat.value}</p>
+                    </motion.div>
+                  ))}
                 </div>
 
-                {/* Admission Chances */}
-                <div className={`p-6 rounded-3xl border-2 flex items-center justify-between ${
-                  prediction?.admissionChances === 'High' ? 'bg-emerald-500/5 border-emerald-500/20' :
-                  prediction?.admissionChances === 'Moderate' ? 'bg-amber-500/5 border-amber-500/20' :
+                {/* Admission Chances Bar */}
+                <div className={`p-4 rounded-2xl border-2 flex items-center justify-between gap-3 ${
+                  prediction?.admissionChances?.includes('High') ? 'bg-emerald-500/5 border-emerald-500/20' :
+                  prediction?.admissionChances?.includes('Moderate') ? 'bg-amber-500/5 border-amber-500/20' :
                   'bg-rose-500/5 border-rose-500/20'
                 }`}>
-                  <div className="flex items-center gap-4">
-                    <div className={`p-3 rounded-2xl ${
-                      prediction?.admissionChances === 'High' ? 'bg-emerald-500 text-white' :
-                      prediction?.admissionChances === 'Moderate' ? 'bg-amber-500 text-white' :
-                      'bg-rose-500 text-white'
-                    }`}>
-                      <ShieldCheck className="w-6 h-6" />
-                    </div>
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-xl ${
+                      prediction?.admissionChances?.includes('High') ? 'bg-emerald-500' :
+                      prediction?.admissionChances?.includes('Moderate') ? 'bg-amber-500' : 'bg-rose-500'
+                    } text-white`}><ShieldCheck className="w-5 h-5" /></div>
                     <div>
-                      <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Admission Chances</h4>
-                      <p className={`text-2xl font-black ${
-                        prediction?.admissionChances === 'High' ? 'text-emerald-500' :
-                        prediction?.admissionChances === 'Moderate' ? 'text-amber-500' :
-                        'text-rose-500'
+                      <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Admission Chances</p>
+                      <p className={`text-lg font-black ${
+                        prediction?.admissionChances?.includes('High') ? 'text-emerald-500' :
+                        prediction?.admissionChances?.includes('Moderate') ? 'text-amber-500' : 'text-rose-500'
                       }`}>{prediction?.admissionChances}</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-xs font-bold text-muted-foreground">Confidence Level</p>
-                    <p className="font-bold">{prediction?.confidence}</p>
+                  <div className="text-right hidden sm:block">
+                    <p className="text-[10px] font-bold text-muted-foreground">Confidence</p>
+                    <p className="text-xs font-bold">{prediction?.confidence}</p>
                   </div>
                 </div>
 
-                {/* Suggested Colleges */}
-                <div className="bg-card border border-border p-8 rounded-[2.5rem] space-y-6 shadow-sm">
-                  <div className="flex items-center gap-2 text-primary">
-                    <School className="w-5 h-5" />
-                    <h3 className="text-lg font-bold">Suggested Colleges</h3>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {prediction?.suggestedColleges.map((college, idx) => (
-                      <div key={idx} className="flex items-center gap-3 p-4 bg-muted/50 rounded-2xl border border-border hover:border-primary/30 transition-all cursor-default">
-                        <div className="w-2 h-2 rounded-full bg-primary" />
-                        <span className="font-medium text-sm">{college}</span>
+                {/* Paper Difficulty Analysis */}
+                {prediction?.paperDifficultyAnalysis && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
+                    className="bg-gradient-to-br from-orange-500/5 to-red-500/5 border border-orange-500/15 p-5 rounded-2xl space-y-3"
+                  >
+                    <div className="flex items-center gap-2 text-orange-500">
+                      <Zap className="w-4 h-4" />
+                      <h4 className="text-sm font-black uppercase tracking-wider">Paper Difficulty Analysis</h4>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div className="bg-card/60 backdrop-blur rounded-xl p-3 text-center">
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase">Difficulty</p>
+                        <p className="text-lg font-black text-orange-500">{prediction.paperDifficultyAnalysis.currentYear.difficultyLevel}</p>
+                        <p className="text-[10px] font-medium text-muted-foreground">{prediction.paperDifficultyAnalysis.currentYear.difficultyLabel}</p>
                       </div>
-                    ))}
-                  </div>
-                </div>
+                      <div className="bg-card/60 backdrop-blur rounded-xl p-3 text-center">
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase">Avg Marks</p>
+                        <p className="text-lg font-black">{prediction.paperDifficultyAnalysis.currentYear.avgMarksScored}</p>
+                        <p className="text-[10px] font-medium text-muted-foreground">This Year</p>
+                      </div>
+                      <div className="bg-card/60 backdrop-blur rounded-xl p-3 text-center">
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase">Normalized</p>
+                        <p className="text-lg font-black text-emerald-500">{prediction.paperDifficultyAnalysis.yourPerformance.normalizedScore}</p>
+                        <p className="text-[10px] font-medium text-muted-foreground">Your Adjusted</p>
+                      </div>
+                      <div className="bg-card/60 backdrop-blur rounded-xl p-3 text-center">
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase">vs Average</p>
+                        <p className={`text-sm font-black ${prediction.paperDifficultyAnalysis.yourPerformance.verdict === 'Above Average' ? 'text-emerald-500' : 'text-rose-500'}`}>
+                          {prediction.paperDifficultyAnalysis.yourPerformance.vsAverage}
+                        </p>
+                        <p className="text-[10px] font-medium text-muted-foreground">{prediction.paperDifficultyAnalysis.yourPerformance.verdict}</p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-muted-foreground italic leading-relaxed">{prediction.paperDifficultyAnalysis.paperInsight}</p>
+                  </motion.div>
+                )}
+
+                {/* College Details Cards */}
+                {prediction?.collegeDetails && prediction.collegeDetails.length > 0 && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+                    className="bg-card border border-border p-5 rounded-2xl space-y-4 shadow-sm"
+                  >
+                    <div className="flex items-center gap-2 text-primary">
+                      <School className="w-5 h-5" />
+                      <h3 className="text-sm font-black uppercase tracking-wider">College Counseling — Eligible Institutions</h3>
+                    </div>
+                    <div className="space-y-3">
+                      {prediction.collegeDetails.map((college, idx) => (
+                        <motion.div key={idx} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 * idx }}
+                          className="bg-muted/30 border border-border rounded-xl p-4 hover:border-primary/30 transition-all space-y-3"
+                        >
+                          {/* College Header */}
+                          <div className="flex items-start justify-between gap-2 flex-wrap">
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-bold text-sm leading-tight">{college.name}</h4>
+                              <div className="flex items-center gap-3 mt-1 flex-wrap">
+                                {college.location && (
+                                  <span className="flex items-center gap-1 text-[11px] text-muted-foreground"><MapPin className="w-3 h-3" />{college.location}</span>
+                                )}
+                                <span className="text-[11px] text-muted-foreground">{college.branch}</span>
+                              </div>
+                            </div>
+                            {college.naacGrade && (
+                              <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-black rounded-lg shrink-0">NAAC {college.naacGrade}</span>
+                            )}
+                          </div>
+
+                          {/* Stats Row */}
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            <div className="flex items-center gap-1.5 text-xs">
+                              <IndianRupee className="w-3 h-3 text-emerald-500 shrink-0" />
+                              <span className="font-bold truncate">{college.fee}</span>
+                            </div>
+                            {college.totalSeats && (
+                              <div className="flex items-center gap-1.5 text-xs">
+                                <Users className="w-3 h-3 text-blue-500 shrink-0" />
+                                <span className="font-bold">{college.totalSeats} seats</span>
+                              </div>
+                            )}
+                            <div className="flex items-center gap-1.5 text-xs">
+                              <Target className="w-3 h-3 text-orange-500 shrink-0" />
+                              <span className="font-bold">Cutoff: {college.cutoffRange}</span>
+                            </div>
+                            {college.avgPlacement && (
+                              <div className="flex items-center gap-1.5 text-xs">
+                                <Briefcase className="w-3 h-3 text-violet-500 shrink-0" />
+                                <span className="font-bold">{college.avgPlacement}</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Your Category Cutoff Highlight */}
+                          {college.yourCategoryCutoff && prediction.category && prediction.category !== 'General' && (
+                            <div className="bg-primary/5 border border-primary/10 rounded-lg px-3 py-1.5">
+                              <span className="text-[11px] font-bold text-primary">Your {prediction.category} Cutoff Range: {college.yourCategoryCutoff}</span>
+                            </div>
+                          )}
+
+                          {/* Recruiters */}
+                          {college.topRecruiters && college.topRecruiters.length > 0 && (
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="text-[10px] text-muted-foreground font-bold">Top Recruiters:</span>
+                              {college.topRecruiters.map((r, ri) => (
+                                <span key={ri} className="px-2 py-0.5 bg-muted rounded-md text-[10px] font-medium">{r}</span>
+                              ))}
+                            </div>
+                          )}
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Spot Round Counseling */}
+                {prediction?.spotRoundAnalysis && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
+                    className="bg-gradient-to-br from-violet-500/5 to-blue-500/5 border border-violet-500/15 p-5 rounded-2xl space-y-3"
+                  >
+                    <div className="flex items-center gap-2 text-violet-500">
+                      <Clock className="w-4 h-4" />
+                      <h4 className="text-sm font-black uppercase tracking-wider">Counseling Round Analysis</h4>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {(['round1', 'round2', 'round3', 'spot'] as const).map((round) => {
+                        const colleges = prediction.spotRoundAnalysis!.roundWiseChances[round];
+                        const labels: Record<string, string> = { round1: 'Round 1', round2: 'Round 2', round3: 'Round 3', spot: 'Spot Round' };
+                        const colors: Record<string, string> = { round1: 'text-emerald-500 bg-emerald-500/10', round2: 'text-blue-500 bg-blue-500/10', round3: 'text-amber-500 bg-amber-500/10', spot: 'text-violet-500 bg-violet-500/10' };
+                        return (
+                          <div key={round} className="bg-card/60 backdrop-blur rounded-xl p-3 space-y-1.5">
+                            <p className={`text-[10px] font-black uppercase tracking-wider ${colors[round].split(' ')[0]}`}>{labels[round]}</p>
+                            {colleges.length > 0 ? (
+                              colleges.slice(0, 2).map((c, i) => (
+                                <p key={i} className="text-[11px] font-medium truncate">{c}</p>
+                              ))
+                            ) : (
+                              <p className="text-[11px] text-muted-foreground italic">—</p>
+                            )}
+                            {colleges.length > 2 && <p className="text-[10px] text-muted-foreground">+{colleges.length - 2} more</p>}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div className="bg-violet-500/10 rounded-xl p-3">
+                      <p className="text-[11px] text-violet-300 font-medium italic">💡 {prediction.spotRoundAnalysis.tip}</p>
+                    </div>
+                  </motion.div>
+                )}
 
                 {/* AI Analysis */}
-                <div className="bg-primary/5 border border-primary/10 p-6 rounded-3xl flex gap-4">
-                  <AlertCircle className="w-6 h-6 text-primary shrink-0" />
-                  <p className="text-sm leading-relaxed italic text-muted-foreground">
-                    <span className="text-foreground font-bold">AI Analysis:</span> {prediction?.analysis}
+                <div className="bg-primary/5 border border-primary/10 p-5 rounded-2xl flex gap-3">
+                  <AlertCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                  <p className="text-xs leading-relaxed text-muted-foreground">
+                    <span className="text-foreground font-bold">AI Analysis: </span>{prediction?.analysis}
                   </p>
                 </div>
               </motion.div>
