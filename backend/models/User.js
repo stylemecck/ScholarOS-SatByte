@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema({
     date: { type: Date, default: Date.now }
   }],
   isGoogleUser: { type: Boolean, default: false },
+  role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  referralCode: { type: String, unique: true },
+  referredBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  referralsCount: { type: Number, default: 0 },
   avatar: { type: String }
 }, { timestamps: true });
 

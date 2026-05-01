@@ -5,6 +5,9 @@ interface User {
   id: string;
   name: string;
   email: string;
+  role: string;
+  referralCode?: string;
+  referralsCount?: number;
 }
 
 interface AuthContextType {
@@ -33,7 +36,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
             headers: { Authorization: `Bearer ${token}` }
           });
-          setUser({ id: res.data._id, name: res.data.name, email: res.data.email });
+          setUser({ 
+            id: res.data._id, 
+            name: res.data.name, 
+            email: res.data.email, 
+            role: res.data.role,
+            referralCode: res.data.referralCode,
+            referralsCount: res.data.referralsCount
+          });
         } catch (err) {
           console.error('Token validation failed');
           localStorage.removeItem('token');

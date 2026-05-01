@@ -3,13 +3,15 @@ import { useAuth } from '../context/useAuth';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { Mail, Lock, User, Loader2 } from 'lucide-react';
+import { Mail, Lock, User, Loader2, Sparkles } from 'lucide-react';
 import { GoogleLogin } from '@react-oauth/google';
 
 const Signup = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [referredByCode, setReferredByCode] = useState('');
+  const [role, setRole] = useState<'user' | 'admin'>('user');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
@@ -35,7 +37,7 @@ const Signup = () => {
     setError('');
     setLoading(true);
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, { name, email, password });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, { name, email, password, role, referredByCode });
       login(res.data.token, res.data.user);
       navigate('/');
     } catch (err: any) {
@@ -106,6 +108,41 @@ const Signup = () => {
                 className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary outline-none transition-all"
                 placeholder="••••••••"
               />
+            </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium flex items-center gap-2">
+                Referral Code <span className="text-[10px] text-muted-foreground font-bold uppercase">(Optional)</span>
+            </label>
+            <div className="relative">
+              <Sparkles className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-amber-500/50" />
+              <input
+                type="text"
+                value={referredByCode}
+                onChange={(e) => setReferredByCode(e.target.value.toUpperCase())}
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-amber-500 outline-none transition-all placeholder:text-muted-foreground/30"
+                placeholder="PRO-XXXXXX"
+              />
+            </div>
+          </div>
+          </div>
+          <div className="space-y-3 pt-2">
+            <label className="text-sm font-black uppercase tracking-widest text-muted-foreground">Account Role</label>
+            <div className="grid grid-cols-2 gap-2 p-1 bg-muted rounded-xl border border-border">
+              <button
+                type="button"
+                onClick={() => setRole('user')}
+                className={`py-2 px-4 rounded-lg text-xs font-black transition-all ${role === 'user' ? 'bg-background shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                🎓 Student
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole('admin')}
+                className={`py-2 px-4 rounded-lg text-xs font-black transition-all ${role === 'admin' ? 'bg-background shadow-sm text-amber-500' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                🛡️ Admin
+              </button>
             </div>
           </div>
 

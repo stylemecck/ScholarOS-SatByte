@@ -7,11 +7,19 @@ const fs = require('fs');
 
 const getAIModel = () => {
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey === 'AIzaSyBKfg3VeSsQgt0TUso7NNTsuCxeZ9s0chk') {
-    throw new Error('Valid Gemini API Key not found in environment variables. Please update backend/.env and restart the server.');
+  if (!apiKey || apiKey.length < 10) {
+    throw new Error('Gemini API Key is missing or too short in backend/.env. Please update and restart.');
   }
-  const ai = new GoogleGenerativeAI(apiKey);
-  return ai.getGenerativeModel({ model: "gemini-1.5-flash" });
+  
+  // Safe debug: If we suspect the wrong key is being used, we check the last 4 chars
+  const maskedKey = `...${apiKey.slice(-4)}`;
+  
+  try {
+    const ai = new GoogleGenerativeAI(apiKey);
+    return ai.getGenerativeModel({ model: "gemini-1.5-flash" });
+  } catch (err) {
+    throw new Error(`Failed to initialize AI with key ${maskedKey}: ${err.message}`);
+  }
 };
 
 exports.parsePdf = async (req, res) => {

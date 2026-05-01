@@ -20,6 +20,7 @@ import About from './pages/About';
 import Privacy from './pages/Privacy';
 import Contact from './pages/Contact';
 import Support from './pages/Support';
+import AdminDashboard from './pages/AdminDashboard';
 import { AuthProvider } from './context/AuthContext';
 import { useEffect } from 'react';
 
@@ -61,6 +62,7 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/support" element={<Support />} />
+              <Route path="/admin" element={<AdminDashboard />} />
             </Routes>
           </main>
           <Footer />

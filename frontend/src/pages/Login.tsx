@@ -9,6 +9,7 @@ import { GoogleLogin } from '@react-oauth/google';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState<'user' | 'admin'>('user');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
@@ -90,6 +91,26 @@ const Login = () => {
                 className="w-full pl-10 pr-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary outline-none transition-all"
                 placeholder="••••••••"
               />
+            </div>
+          </div>
+
+          <div className="space-y-3 pt-2">
+            <label className="text-sm font-black uppercase tracking-widest text-muted-foreground">Login As</label>
+            <div className="grid grid-cols-2 gap-2 p-1 bg-muted rounded-xl border border-border">
+              <button
+                type="button"
+                onClick={() => setRole('user')}
+                className={`py-2 px-4 rounded-lg text-xs font-black transition-all ${role === 'user' ? 'bg-background shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                🎓 Student
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole('admin')}
+                className={`py-2 px-4 rounded-lg text-xs font-black transition-all ${role === 'admin' ? 'bg-background shadow-sm text-amber-500' : 'text-muted-foreground hover:text-foreground'}`}
+              >
+                🛡️ Admin
+              </button>
             </div>
           </div>
 

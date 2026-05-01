@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Target, TrendingUp, School, ShieldCheck, AlertCircle, Loader2, Sparkles } from 'lucide-react';
+import { Target, TrendingUp, School, ShieldCheck, AlertCircle, Loader2, Sparkles, Download } from 'lucide-react';
 import axios from 'axios';
+// @ts-ignore
+import html2pdf from 'html2pdf.js';
+import ResultPDFTemplate from '../../components/ResultPDFTemplate';
+import { useAuth } from '../../context/useAuth';
 
 interface Prediction {
   predictedRank: string;
@@ -13,6 +17,7 @@ interface Prediction {
 }
 
 const RankPredictor = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     exam: 'CUET PG (MCA)',
     marks: '',
@@ -22,6 +27,18 @@ const RankPredictor = () => {
   const [prediction, setPrediction] = useState<Prediction | null>(null);
   const [loading, setLoading] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
+
+  const handleDownload = () => {
+    const element = document.getElementById('pdf-report-content');
+    const opt = {
+      margin: 0,
+      filename: `Rank_Report_${user?.name || 'Student'}.pdf`,
+      image: { type: 'jpeg' as const, quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'in' as const, format: 'letter' as const, orientation: 'portrait' as const }
+    };
+    html2pdf().set(opt).from(element).save();
+  };
 
   const exams = [
     'CUET PG (MCA)', 'CUET UG', 'NIMCET', 'MAH MCA CET', 'WBJECA', 'TANCET',
@@ -48,6 +65,16 @@ const RankPredictor = () => {
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/tools/predict-rank`, formData);
       setPrediction(response.data);
+      // @ts-ignore
+      if (window.confetti) {
+        // @ts-ignore
+        window.confetti({
+          particleCount: 150,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#3b82f6', '#fbbf24', '#10b981']
+        });
+      }
       
       // Update usage count and Save Result if logged in
       if (!token) {
@@ -230,6 +257,19 @@ const RankPredictor = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 className="space-y-6"
               >
+                <div className="flex items-center justify-between gap-4">
+                  <h3 className="text-xl font-black flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-amber-500" />
+                    AI Prediction Result
+                  </h3>
+                  <button 
+                    onClick={handleDownload}
+                    className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-xl text-xs font-black hover:bg-primary hover:text-primary-foreground transition-all border border-primary/20"
+                  >
+                    <Download className="w-4 h-4" /> Download Report
+                  </button>
+                </div>
+
                 {/* Main Stats */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-card border border-border p-6 rounded-[2.5rem] space-y-4 shadow-sm hover:shadow-md transition-shadow">
@@ -317,6 +357,22 @@ const RankPredictor = () => {
       </div>
 
       <LimitModal isOpen={showLimitModal} onClose={() => setShowLimitModal(false)} />
+
+      {/* Hidden PDF Template */}
+      <div className="hidden">
+        {prediction && user && (
+          <ResultPDFTemplate 
+            user={{ name: user.name, email: user.email }}
+            toolName="Rank Predictor"
+            data={{
+                exam: formData.exam,
+                predictedRank: prediction.predictedRank,
+                performanceLevel: prediction.admissionChances
+            }}
+            date={new Date().toLocaleDateString()}
+          />
+        )}
+      </div>
     </div>
   );
 };
