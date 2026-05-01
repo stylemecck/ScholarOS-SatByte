@@ -170,9 +170,13 @@ const Support = () => {
           <button 
             onClick={() => handleSupport(100, "Coffee")}
             disabled={loading !== null}
-            className="w-full md:w-auto px-8 md:px-12 py-4 md:py-5 bg-[#FFDD00] text-black rounded-2xl md:rounded-[2rem] font-black text-lg md:text-xl shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-70"
+            className="w-full md:w-auto px-6 md:px-12 py-4 md:py-5 bg-[#FFDD00] text-black rounded-2xl md:rounded-[2rem] font-black text-lg md:text-xl shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-70"
           >
-            {loading === "Coffee" ? <Loader2 className="w-6 h-6 animate-spin" /> : <Coffee className="w-6 h-6" />}
+            {loading === "Coffee" ? (
+              <Loader2 className="w-6 h-6 animate-spin shrink-0" />
+            ) : (
+              <Coffee className="w-6 h-6 shrink-0 fill-black/10" />
+            )}
             <span className="whitespace-nowrap">Buy {quantity} Coffee(s) (₹{100 * quantity})</span>
           </button>
           <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Securely via Razorpay</p>
