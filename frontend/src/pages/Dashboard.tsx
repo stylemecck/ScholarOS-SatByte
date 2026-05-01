@@ -11,8 +11,10 @@ import { Link } from 'react-router-dom';
 const Dashboard = () => {
   const { user } = useAuth();
   const [results, setResults] = useState<any[]>([]);
+  const [creditHistory, setCreditHistory] = useState<any[]>([]);
   const [credits, setCredits] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'results' | 'credits'>('results');
 
   useEffect(() => {
     fetchUserData();
@@ -24,6 +26,7 @@ const Dashboard = () => {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       setResults(response.data.savedResults.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+      setCreditHistory(response.data.creditHistory?.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()) || []);
       setCredits(response.data.credits || 0);
     } catch (err) {
       console.error("Failed to fetch user data:", err);
@@ -123,11 +126,21 @@ const Dashboard = () => {
 
         {/* Saved Results History */}
         <div className="lg:col-span-8 space-y-6">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xl font-black tracking-tight flex items-center gap-2">
-              <History className="w-5 h-5 text-primary" />
+          <div className="flex items-center gap-4 border-b border-border mb-8">
+            <button 
+              onClick={() => setActiveTab('results')}
+              className={`pb-4 px-2 text-sm font-black transition-all relative ${activeTab === 'results' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+            >
               Saved Analysis History
-            </h3>
+              {activeTab === 'results' && <motion.div layoutId="tab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />}
+            </button>
+            <button 
+              onClick={() => setActiveTab('credits')}
+              className={`pb-4 px-2 text-sm font-black transition-all relative ${activeTab === 'credits' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              Credit Transactions
+              {activeTab === 'credits' && <motion.div layoutId="tab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />}
+            </button>
           </div>
 
           {loading ? (
@@ -135,75 +148,126 @@ const Dashboard = () => {
               <Loader2 className="w-10 h-10 animate-spin text-primary" />
               <p className="font-bold text-muted-foreground">Loading your history...</p>
             </div>
-          ) : results.length === 0 ? (
-            <div className="p-20 text-center border-2 border-dashed border-border rounded-[3rem] space-y-4">
-              <div className="p-5 bg-muted rounded-full inline-block">
-                <BarChart3 className="w-12 h-12 text-muted-foreground" />
+          ) : activeTab === 'results' ? (
+            results.length === 0 ? (
+              <div className="p-20 text-center border-2 border-dashed border-border rounded-[3rem] space-y-4">
+                <div className="p-5 bg-muted rounded-full inline-block">
+                  <BarChart3 className="w-12 h-12 text-muted-foreground" />
+                </div>
+                <div>
+                  <h4 className="text-lg font-bold">No results saved yet</h4>
+                  <p className="text-sm text-muted-foreground">Start using our AI tools and your results will appear here automatically.</p>
+                </div>
               </div>
-              <div>
-                <h4 className="text-lg font-bold">No results saved yet</h4>
-                <p className="text-sm text-muted-foreground">Start using our AI tools and your results will appear here automatically.</p>
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <AnimatePresence>
-                {results.map((res, idx) => (
-                  <motion.div 
-                    key={res._id || idx}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.05 }}
-                    className="group bg-card border border-border p-6 rounded-[2rem] hover:border-primary/30 transition-all shadow-sm flex flex-col justify-between h-full"
-                  >
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-start">
-                        <div className={`p-2 rounded-lg ${res.toolName === 'Rank Predictor' ? 'bg-amber-500/10 text-amber-500' : 'bg-primary/10 text-primary'}`}>
-                          {res.toolName === 'Rank Predictor' ? <TrendingUp className="w-4 h-4" /> : <BarChart3 className="w-4 h-4" />}
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <AnimatePresence>
+                  {results.map((res, idx) => (
+                    <motion.div 
+                      key={res._id || idx}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className="group bg-card border border-border p-6 rounded-[2rem] hover:border-primary/30 transition-all shadow-sm flex flex-col justify-between h-full"
+                    >
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-start">
+                          <div className={`p-2 rounded-lg ${res.toolName === 'Rank Predictor' ? 'bg-amber-500/10 text-amber-500' : 'bg-primary/10 text-primary'}`}>
+                            {res.toolName === 'Rank Predictor' ? <TrendingUp className="w-4 h-4" /> : <BarChart3 className="w-4 h-4" />}
+                          </div>
+                          <span className="text-[10px] font-black text-muted-foreground bg-muted px-2 py-1 rounded-md uppercase">
+                            {new Date(res.date).toLocaleDateString()}
+                          </span>
                         </div>
-                        <span className="text-[10px] font-black text-muted-foreground bg-muted px-2 py-1 rounded-md uppercase">
-                          {new Date(res.date).toLocaleDateString()}
-                        </span>
-                      </div>
-                      
-                      <div>
-                        <h4 className="font-black text-lg leading-tight">{res.toolName}</h4>
-                        <p className="text-xs text-muted-foreground font-medium mt-1">
-                          Exam: <span className="text-foreground">{res.data.exam}</span>
-                        </p>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3 pt-2">
-                        <div className="bg-muted/50 p-3 rounded-xl">
-                          <p className="text-[10px] font-black uppercase text-muted-foreground opacity-70">Result</p>
-                          <p className="text-sm font-black text-primary">
-                            {res.toolName === 'Rank Predictor' ? res.data.predictedRank : `${res.data.percentile}%`}
+                        
+                        <div>
+                          <h4 className="font-black text-lg leading-tight">{res.toolName}</h4>
+                          <p className="text-xs text-muted-foreground font-medium mt-1">
+                            Exam: <span className="text-foreground">{res.data.exam}</span>
                           </p>
                         </div>
-                        <div className="bg-muted/50 p-3 rounded-xl">
-                          <p className="text-[10px] font-black uppercase text-muted-foreground opacity-70">Performance</p>
-                          <p className="text-sm font-black text-foreground">{res.data.performanceLevel || res.data.admissionChances}</p>
+  
+                        <div className="grid grid-cols-2 gap-3 pt-2">
+                          <div className="bg-muted/50 p-3 rounded-xl">
+                            <p className="text-[10px] font-black uppercase text-muted-foreground opacity-70">Result</p>
+                            <p className="text-sm font-black text-primary">
+                              {res.toolName === 'Rank Predictor' ? res.data.predictedRank : `${res.data.percentile}%`}
+                            </p>
+                          </div>
+                          <div className="bg-muted/50 p-3 rounded-xl">
+                            <p className="text-[10px] font-black uppercase text-muted-foreground opacity-70">Performance</p>
+                            <p className="text-sm font-black text-foreground">{res.data.performanceLevel || res.data.admissionChances}</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-
-                    <div className="mt-6 flex gap-2">
-                      <Link 
-                        to={res.toolName === 'Rank Predictor' ? '/tools/rank-predictor' : '/tools/marks-percentile'}
-                        className="flex-grow flex items-center justify-center gap-2 py-2.5 bg-muted text-muted-foreground rounded-xl text-xs font-black hover:bg-primary hover:text-primary-foreground transition-all"
-                      >
-                        <ExternalLink className="w-3.5 h-3.5" /> Re-Analyze
-                      </Link>
-                      <button 
-                        onClick={() => deleteResult(res._id)}
-                        className="p-2.5 bg-muted text-muted-foreground rounded-xl hover:bg-rose-500 hover:text-white transition-all"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
+  
+                      <div className="mt-6 flex gap-2">
+                        <Link 
+                          to={res.toolName === 'Rank Predictor' ? '/tools/rank-predictor' : '/tools/marks-percentile'}
+                          className="flex-grow flex items-center justify-center gap-2 py-2.5 bg-muted text-muted-foreground rounded-xl text-xs font-black hover:bg-primary hover:text-primary-foreground transition-all"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" /> Re-Analyze
+                        </Link>
+                        <button 
+                          onClick={() => deleteResult(res._id)}
+                          className="p-2.5 bg-muted text-muted-foreground rounded-xl hover:bg-rose-500 hover:text-white transition-all"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            )
+          ) : (
+            /* Credit History View */
+            <div className="bg-card border border-border rounded-[2.5rem] overflow-hidden shadow-sm">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="bg-muted/50 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      <th className="px-6 py-4">Transaction</th>
+                      <th className="px-6 py-4">Type</th>
+                      <th className="px-6 py-4 text-center">Amount</th>
+                      <th className="px-6 py-4 text-right">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {creditHistory.map((item, i) => (
+                      <tr key={i} className="hover:bg-muted/20 transition-all">
+                        <td className="px-6 py-4">
+                          <p className="text-sm font-bold">{item.description}</p>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-md ${
+                            item.type === 'added' ? 'bg-emerald-500/10 text-emerald-500' : 
+                            item.type === 'spent' ? 'bg-rose-500/10 text-rose-500' : 
+                            'bg-amber-500/10 text-amber-500'
+                          }`}>
+                            {item.type}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-center">
+                          <p className={`text-sm font-black ${item.type === 'added' ? 'text-emerald-500' : 'text-rose-500'}`}>
+                            {item.type === 'added' ? '+' : '-'}{item.amount}
+                          </p>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <p className="text-xs text-muted-foreground font-medium">{new Date(item.date).toLocaleDateString()}</p>
+                        </td>
+                      </tr>
+                    ))}
+                    {creditHistory.length === 0 && (
+                      <tr>
+                        <td colSpan={4} className="px-6 py-20 text-center text-muted-foreground italic">
+                          No credit transactions found.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </div>

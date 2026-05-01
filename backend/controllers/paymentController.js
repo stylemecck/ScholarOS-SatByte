@@ -52,7 +52,13 @@ exports.verifyPayment = async (req, res) => {
       if (req.user?.userId) {
         const user = await User.findById(req.user.userId);
         if (user && credits && parseInt(credits) > 0) {
-          user.credits = (user.credits || 0) + parseInt(credits);
+          const addedAmount = parseInt(credits);
+          user.credits = (user.credits || 0) + addedAmount;
+          user.creditHistory.push({
+            type: 'added',
+            amount: addedAmount,
+            description: `Purchased ${addedAmount} Credits via Razorpay`
+          });
           await user.save();
           return res.json({ message: "Payment verified and credits added", credits: user.credits });
         }

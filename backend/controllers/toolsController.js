@@ -5,7 +5,14 @@ const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const getAIModel = () => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey || apiKey === 'AIzaSyBKfg3VeSsQgt0TUso7NNTsuCxeZ9s0chk') {
+    throw new Error('Valid Gemini API Key not found in environment variables. Please update backend/.env and restart the server.');
+  }
+  const ai = new GoogleGenerativeAI(apiKey);
+  return ai.getGenerativeModel({ model: "gemini-1.5-flash" });
+};
 
 exports.parsePdf = async (req, res) => {
   try {
@@ -40,7 +47,7 @@ exports.predictRank = async (req, res) => {
 
     Do not include markdown formatting, backticks, or any text other than the JSON object.`;
 
-    const model = ai.getGenerativeModel({ model: "gemini-3-flash-preview" });
+    const model = getAIModel();
 
     // CREDIT CHECK (Only if logged in)
     let user = null;
@@ -55,9 +62,14 @@ exports.predictRank = async (req, res) => {
     const response = await result.response;
     const resultText = response.text();
 
-    // DEDUCT CREDIT
+    // DEDUCT CREDIT & LOG HISTORY
     if (user) {
       user.credits -= 1;
+      user.creditHistory.push({
+        type: 'spent',
+        amount: 1,
+        description: `Used ${exam} Rank Predictor`
+      });
       await user.save();
     }
     
@@ -99,7 +111,7 @@ exports.generateResumeSummary = async (req, res) => {
     Make it ATS-friendly and focused on value delivery.
     Return only the summary text without quotes or extra explanation.`;
 
-    const model = ai.getGenerativeModel({ model: "gemini-3-flash-preview" });
+    const model = getAIModel();
     
     let user = null;
     if (req.user) {
@@ -113,6 +125,11 @@ exports.generateResumeSummary = async (req, res) => {
     
     if (user) {
       user.credits -= 1;
+      user.creditHistory.push({
+        type: 'spent',
+        amount: 1,
+        description: `Generated Resume Summary for ${jobTitle}`
+      });
       await user.save();
     }
     
@@ -131,7 +148,7 @@ exports.enhanceResumeBullet = async (req, res) => {
     Original: "${bulletText}"
     Return only the enhanced bullet point without quotes.`;
 
-    const model = ai.getGenerativeModel({ model: "gemini-3-flash-preview" });
+    const model = getAIModel();
     
     let user = null;
     if (req.user) {
@@ -145,6 +162,11 @@ exports.enhanceResumeBullet = async (req, res) => {
     
     if (user) {
       user.credits -= 1;
+      user.creditHistory.push({
+        type: 'spent',
+        amount: 1,
+        description: 'Enhanced Resume Bullet Point'
+      });
       await user.save();
     }
 
@@ -178,7 +200,7 @@ exports.predictPercentile = async (req, res) => {
     }
     No explanation, no markdown, just JSON.`;
 
-    const model = ai.getGenerativeModel({ model: "gemini-3-flash-preview" });
+    const model = getAIModel();
 
     let user = null;
     if (req.user) {
@@ -194,6 +216,11 @@ exports.predictPercentile = async (req, res) => {
 
     if (user) {
       user.credits -= 1;
+      user.creditHistory.push({
+        type: 'spent',
+        amount: 1,
+        description: `Analyzed ${exam} Percentile`
+      });
       await user.save();
     }
 
