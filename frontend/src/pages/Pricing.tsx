@@ -145,6 +145,8 @@ const Pricing = () => {
           <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Mobile Number (for Razorpay)</label>
           <input 
             type="tel"
+            name="pricing_phone_user"
+            autoComplete="off"
             placeholder="e.g. 9988776655"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}

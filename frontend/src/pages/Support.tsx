@@ -159,6 +159,8 @@ const Support = () => {
           <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Your Mobile Number (Optional)</label>
           <input 
             type="tel"
+            name="support_phone_guest"
+            autoComplete="off"
             placeholder="e.g. 9988776655"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
