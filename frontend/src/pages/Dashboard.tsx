@@ -275,40 +275,49 @@ const Dashboard = () => {
             </div>
           )
         ) : activeTab === 'credits' ? (
-          <div className="bg-card/40 backdrop-blur-md border border-white/10 rounded-[2.5rem] overflow-hidden">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="bg-white/5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                  <th className="px-8 py-5">Transaction</th>
-                  <th className="px-8 py-5">Type</th>
-                  <th className="px-8 py-5 text-center">Amount</th>
-                  <th className="px-8 py-5 text-right">Date</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {creditHistory.map((item, i) => (
-                  <tr key={i} className="hover:bg-white/5 transition-all">
-                    <td className="px-8 py-5 font-bold text-sm">{item.description}</td>
-                    <td className="px-8 py-5">
-                      <span className={`text-[9px] font-black uppercase px-2.5 py-1 rounded-lg ${
-                        item.type === 'added' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'
-                      }`}>
-                        {item.type}
-                      </span>
-                    </td>
-                    <td className="px-8 py-5 text-center font-black text-sm">
-                      <span className={item.type === 'added' ? 'text-emerald-500' : 'text-rose-500'}>
-                        {item.type === 'added' ? '+' : '-'}{item.amount}
-                      </span>
-                    </td>
-                    <td className="px-8 py-5 text-right text-xs text-muted-foreground font-medium">
-                      {new Date(item.date).toLocaleDateString()}
-                    </td>
+          creditHistory.length === 0 ? (
+            <div className="p-20 text-center border-2 border-dashed border-white/10 rounded-[3rem] space-y-4">
+              <div className="p-5 bg-muted rounded-full inline-block text-muted-foreground">
+                <Coins className="w-12 h-12" />
+              </div>
+              <p className="text-sm font-bold text-muted-foreground">No credit transactions yet.</p>
+            </div>
+          ) : (
+            <div className="bg-card/40 backdrop-blur-md border border-white/10 rounded-[2.5rem] overflow-hidden">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="bg-white/5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    <th className="px-8 py-5">Transaction</th>
+                    <th className="px-8 py-5">Type</th>
+                    <th className="px-8 py-5 text-center">Amount</th>
+                    <th className="px-8 py-5 text-right">Date</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {creditHistory.map((item, i) => (
+                    <tr key={i} className="hover:bg-white/5 transition-all">
+                      <td className="px-8 py-5 font-bold text-sm">{item.description}</td>
+                      <td className="px-8 py-5">
+                        <span className={`text-[9px] font-black uppercase px-2.5 py-1 rounded-lg ${
+                          item.type === 'added' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'
+                        }`}>
+                          {item.type}
+                        </span>
+                      </td>
+                      <td className="px-8 py-5 text-center font-black text-sm">
+                        <span className={item.type === 'added' ? 'text-emerald-500' : 'text-rose-500'}>
+                          {item.type === 'added' ? '+' : '-'}{item.amount}
+                        </span>
+                      </td>
+                      <td className="px-8 py-5 text-right text-xs text-muted-foreground font-medium">
+                        {new Date(item.date).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
         ) : (
           <ReferralNetwork />
         )}

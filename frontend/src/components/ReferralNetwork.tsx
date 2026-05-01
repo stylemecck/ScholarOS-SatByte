@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, ArrowRight, Star, Loader2, Network, UserPlus } from 'lucide-react';
+import { Users, Star, Loader2, Network, UserPlus } from 'lucide-react';
 import axios from 'axios';
 
 interface Referral {

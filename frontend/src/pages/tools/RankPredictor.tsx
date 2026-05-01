@@ -30,6 +30,7 @@ const RankPredictor = () => {
 
   const handleDownload = () => {
     const element = document.getElementById('pdf-report-content');
+    if (!element) return;
     const opt = {
       margin: 0,
       filename: `Rank_Report_${user?.name || 'Student'}.pdf`,
