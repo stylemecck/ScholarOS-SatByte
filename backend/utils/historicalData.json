@@ -1,0 +1,220 @@
+{
+  "CUET PG (MCA)": {
+    "totalCandidates": { "2017": 38000, "2018": 42000, "2019": 48000, "2020": 52000, "2021": 55000, "2022": 60000, "2023": 65000, "2024": 68000, "2025": 72000, "2026": 75000 },
+    "yearWiseCutoffs": {
+      "JNU": { "2017": 230, "2018": 235, "2019": 238, "2020": 240, "2021": 236, "2022": 242, "2023": 245, "2024": 248, "2025": 250, "2026": 252 },
+      "DU": { "2017": 220, "2018": 222, "2019": 225, "2020": 228, "2021": 224, "2022": 230, "2023": 233, "2024": 235, "2025": 238, "2026": 240 },
+      "BHU": { "2017": 200, "2018": 202, "2019": 205, "2020": 208, "2021": 204, "2022": 210, "2023": 212, "2024": 215, "2025": 218, "2026": 220 },
+      "HCU": { "2017": 190, "2018": 192, "2019": 195, "2020": 198, "2021": 194, "2022": 200, "2023": 203, "2024": 205, "2025": 208, "2026": 210 },
+      "JMI": { "2017": 182, "2018": 184, "2019": 187, "2020": 190, "2021": 186, "2022": 192, "2023": 195, "2024": 197, "2025": 200, "2026": 202 },
+      "BBAU": { "2017": 148, "2018": 150, "2019": 153, "2020": 155, "2021": 151, "2022": 158, "2023": 160, "2024": 163, "2025": 165, "2026": 168 },
+      "CU Rajasthan": { "2017": 135, "2018": 138, "2019": 140, "2020": 142, "2021": 138, "2022": 145, "2023": 148, "2024": 150, "2025": 153, "2026": 155 },
+      "CUH (Central University of Haryana)": { "2017": 118, "2018": 120, "2019": 125, "2020": 130, "2021": 122, "2022": 132, "2023": 135, "2024": 138, "2025": 140, "2026": 143 },
+      "CU Punjab": { "2017": 118, "2018": 120, "2019": 123, "2020": 125, "2021": 121, "2022": 128, "2023": 130, "2024": 133, "2025": 135, "2026": 138 },
+      "GGV (Guru Ghasidas Vishwavidyalaya, Bilaspur)": { "2017": 72, "2018": 78, "2019": 85, "2020": 92, "2021": 80, "2022": 98, "2023": 105, "2024": 110, "2025": 113, "2026": 118 },
+      "Sagar University (Dr. Harisingh Gour Vishwavidyalaya)": { "2017": 55, "2018": 60, "2019": 65, "2020": 72, "2021": 62, "2022": 78, "2023": 85, "2024": 92, "2025": 97, "2026": 102 }
+    },
+    "categoryRelaxation": { "OBC": -15, "SC": -35, "ST": -45, "EWS": -10, "PwD": -50 },
+    "branches": ["MCA", "MSc Computer Science"],
+    "totalSeats": 5500,
+    "paperCode": "SCQP09",
+    "maxMarks": 300,
+    "paperDifficulty": {
+      "2017": { "level": 5, "label": "Moderate", "avgMarks": 112 },
+      "2018": { "level": 6, "label": "Moderate-Tough", "avgMarks": 105 },
+      "2019": { "level": 5, "label": "Moderate", "avgMarks": 110 },
+      "2020": { "level": 7, "label": "Tough", "avgMarks": 95 },
+      "2021": { "level": 4, "label": "Easy-Moderate", "avgMarks": 125 },
+      "2022": { "level": 6, "label": "Moderate-Tough", "avgMarks": 102 },
+      "2023": { "level": 7, "label": "Tough", "avgMarks": 92 },
+      "2024": { "level": 6, "label": "Moderate-Tough", "avgMarks": 98 },
+      "2025": { "level": 5, "label": "Moderate", "avgMarks": 108 },
+      "2026": { "level": 7, "label": "Tough", "avgMarks": 90 }
+    },
+    "trendNote": "Competition increasing ~5-8% annually. 2021 saw a dip due to COVID.",
+    "spotRound": {
+      "description": "Spot round is conducted after all regular counseling rounds to fill remaining vacant seats. Cutoffs drop 15-30% from Round 1.",
+      "avgCutoffDrop": "20-30%",
+      "spotCutoffs": {
+        "JNU": { "round1": 252, "round2": 240, "round3": 228, "spot": 210 },
+        "DU": { "round1": 240, "round2": 228, "round3": 215, "spot": 195 },
+        "BHU": { "round1": 220, "round2": 208, "round3": 195, "spot": 178 },
+        "HCU": { "round1": 210, "round2": 198, "round3": 185, "spot": 168 },
+        "JMI": { "round1": 202, "round2": 190, "round3": 178, "spot": 162 },
+        "BBAU": { "round1": 168, "round2": 155, "round3": 142, "spot": 125 },
+        "CU Rajasthan": { "round1": 155, "round2": 142, "round3": 130, "spot": 112 },
+        "CUH": { "round1": 143, "round2": 130, "round3": 118, "spot": 100 },
+        "CU Punjab": { "round1": 138, "round2": 125, "round3": 112, "spot": 95 },
+        "GGV Bilaspur": { "round1": 118, "round2": 105, "round3": 90, "spot": 70 },
+        "Sagar University": { "round1": 102, "round2": 88, "round3": 72, "spot": 55 },
+        "CU Jammu": { "round1": 105, "round2": 90, "round3": 75, "spot": 58 },
+        "CU Kashmir": { "round1": 100, "round2": 85, "round3": 70, "spot": 50 },
+        "Mizoram University": { "round1": 95, "round2": 80, "round3": 65, "spot": 45 },
+        "Nagaland University": { "round1": 90, "round2": 75, "round3": 60, "spot": 40 }
+      },
+      "tip": "If your score is below Round 1 cutoff, don't lose hope. Register for all counseling rounds. Spot rounds fill 10-15% of total seats and have significantly lower cutoffs."
+    }
+  },
+  "NIMCET": {
+    "totalCandidates": { "2017": 8500, "2018": 9200, "2019": 10000, "2020": 10800, "2021": 9500, "2022": 11000, "2023": 11500, "2024": 12000, "2025": 12500, "2026": 13000 },
+    "yearWiseClosingRanks": {
+      "NIT Trichy": { "2017": 38, "2018": 42, "2019": 45, "2020": 48, "2021": 44, "2022": 50, "2023": 48, "2024": 52, "2025": 55, "2026": 58 },
+      "NIT Surathkal": { "2017": 72, "2018": 78, "2019": 82, "2020": 88, "2021": 80, "2022": 92, "2023": 95, "2024": 98, "2025": 100, "2026": 105 },
+      "NIT Warangal": { "2017": 110, "2018": 118, "2019": 125, "2020": 132, "2021": 120, "2022": 138, "2023": 142, "2024": 148, "2025": 152, "2026": 155 },
+      "MNNIT Allahabad": { "2017": 180, "2018": 195, "2019": 210, "2020": 225, "2021": 200, "2022": 235, "2023": 240, "2024": 248, "2025": 255, "2026": 260 },
+      "NIT Calicut": { "2017": 280, "2018": 300, "2019": 320, "2020": 345, "2021": 310, "2022": 360, "2023": 375, "2024": 390, "2025": 400, "2026": 410 },
+      "NIT Kurukshetra": { "2017": 380, "2018": 410, "2019": 440, "2020": 470, "2021": 420, "2022": 490, "2023": 510, "2024": 530, "2025": 550, "2026": 565 },
+      "MANIT Bhopal": { "2017": 520, "2018": 560, "2019": 600, "2020": 640, "2021": 580, "2022": 680, "2023": 720, "2024": 760, "2025": 790, "2026": 810 },
+      "NIT Jamshedpur": { "2017": 680, "2018": 730, "2019": 780, "2020": 830, "2021": 760, "2022": 880, "2023": 930, "2024": 970, "2025": 1000, "2026": 1030 },
+      "NIT Raipur": { "2017": 900, "2018": 970, "2019": 1050, "2020": 1120, "2021": 1000, "2022": 1180, "2023": 1250, "2024": 1300, "2025": 1350, "2026": 1400 },
+      "NIT Agartala": { "2017": 1200, "2018": 1300, "2019": 1400, "2020": 1500, "2021": 1350, "2022": 1580, "2023": 1650, "2024": 1720, "2025": 1780, "2026": 1830 }
+    },
+    "categoryRelaxation": { "OBC": 1.3, "SC": 1.8, "ST": 2.2, "EWS": 1.1, "PwD": 2.5 },
+    "branches": ["MCA"],
+    "maxMarks": 480,
+    "totalSeats": 1800,
+    "paperDifficulty": {
+      "2017": { "level": 5, "label": "Moderate", "avgMarks": 180 },
+      "2018": { "level": 6, "label": "Moderate-Tough", "avgMarks": 165 },
+      "2019": { "level": 5, "label": "Moderate", "avgMarks": 175 },
+      "2020": { "level": 7, "label": "Tough", "avgMarks": 150 },
+      "2021": { "level": 4, "label": "Easy-Moderate", "avgMarks": 195 },
+      "2022": { "level": 6, "label": "Moderate-Tough", "avgMarks": 160 },
+      "2023": { "level": 7, "label": "Tough", "avgMarks": 148 },
+      "2024": { "level": 5, "label": "Moderate", "avgMarks": 172 },
+      "2025": { "level": 6, "label": "Moderate-Tough", "avgMarks": 158 },
+      "2026": { "level": 7, "label": "Tough", "avgMarks": 145 }
+    },
+    "trendNote": "Closing ranks rising steadily due to 10-15% more candidates yearly.",
+    "spotRound": {
+      "description": "NIMCET spot round fills vacancies after 3 regular counseling rounds. Closing ranks relax by 30-50%.",
+      "avgRankRelaxation": "30-50%",
+      "spotClosingRanks": {
+        "NIT Trichy": { "round1": 58, "round2": 72, "round3": 90, "spot": 120 },
+        "NIT Surathkal": { "round1": 105, "round2": 130, "round3": 160, "spot": 210 },
+        "NIT Warangal": { "round1": 155, "round2": 190, "round3": 230, "spot": 300 },
+        "MNNIT Allahabad": { "round1": 260, "round2": 320, "round3": 400, "spot": 520 },
+        "NIT Calicut": { "round1": 410, "round2": 500, "round3": 600, "spot": 780 },
+        "NIT Kurukshetra": { "round1": 565, "round2": 680, "round3": 820, "spot": 1050 },
+        "MANIT Bhopal": { "round1": 810, "round2": 960, "round3": 1150, "spot": 1450 },
+        "NIT Jamshedpur": { "round1": 1030, "round2": 1220, "round3": 1450, "spot": 1850 },
+        "NIT Raipur": { "round1": 1400, "round2": 1650, "round3": 1950, "spot": 2500 },
+        "NIT Agartala": { "round1": 1830, "round2": 2150, "round3": 2550, "spot": 3200 }
+      },
+      "tip": "NIMCET spot round is your best chance if you missed regular rounds. Top NITs rarely have spot vacancies, but mid and lower NITs often do."
+    }
+  },
+  "JEE Mains": {
+    "totalCandidates": { "2017": 1100000, "2018": 1150000, "2019": 1200000, "2020": 900000, "2021": 950000, "2022": 1050000, "2023": 1100000, "2024": 1200000, "2025": 1350000, "2026": 1400000 },
+    "qualifyingPercentile": { "2017": 81.0, "2018": 74.0, "2019": 89.75, "2020": 90.37, "2021": 87.89, "2022": 88.41, "2023": 90.0, "2024": 93.24, "2025": 93.10, "2026": 93.41 },
+    "percentileToRank": [
+      { "percentile": 99.99, "rank": 150 },
+      { "percentile": 99.97, "rank": 400 },
+      { "percentile": 99.95, "rank": 700 },
+      { "percentile": 99.9, "rank": 1400 },
+      { "percentile": 99.8, "rank": 2800 },
+      { "percentile": 99.5, "rank": 7000 },
+      { "percentile": 99.0, "rank": 14000 },
+      { "percentile": 98.0, "rank": 28000 },
+      { "percentile": 97.0, "rank": 42000 },
+      { "percentile": 95.0, "rank": 70000 },
+      { "percentile": 93.0, "rank": 98000 },
+      { "percentile": 90.0, "rank": 140000 },
+      { "percentile": 85.0, "rank": 210000 },
+      { "percentile": 80.0, "rank": 280000 },
+      { "percentile": 70.0, "rank": 420000 },
+      { "percentile": 50.0, "rank": 700000 }
+    ],
+    "categoryRelaxation": { "OBC": -5, "SC": -15, "ST": -20, "EWS": -3, "PwD": -25 },
+    "branches": ["CSE", "ECE", "EE", "ME", "CE", "IT", "Chemical", "Biotechnology", "Aerospace"],
+    "totalSeats": 75000,
+    "paperDifficulty": {
+      "2017": { "level": 6, "label": "Moderate-Tough", "avgMarks": 85 },
+      "2018": { "level": 5, "label": "Moderate", "avgMarks": 95 },
+      "2019": { "level": 7, "label": "Tough", "avgMarks": 78 },
+      "2020": { "level": 8, "label": "Very Tough", "avgMarks": 65 },
+      "2021": { "level": 5, "label": "Moderate", "avgMarks": 92 },
+      "2022": { "level": 6, "label": "Moderate-Tough", "avgMarks": 82 },
+      "2023": { "level": 7, "label": "Tough", "avgMarks": 74 },
+      "2024": { "level": 6, "label": "Moderate-Tough", "avgMarks": 80 },
+      "2025": { "level": 7, "label": "Tough", "avgMarks": 72 },
+      "2026": { "level": 8, "label": "Very Tough", "avgMarks": 68 }
+    },
+    "trendNote": "Post-2019: Shifted to NTA percentile system. Competition increasing dramatically."
+  },
+  "GATE": {
+    "totalCandidates": { "2017": 82000, "2018": 85000, "2019": 88000, "2020": 91000, "2021": 75000, "2022": 92000, "2023": 95000, "2024": 98000, "2025": 100000, "2026": 105000 },
+    "qualifyingMarks": {
+      "CS": { "2017": 25.0, "2018": 25.0, "2019": 29.5, "2020": 28.0, "2021": 25.0, "2022": 33.1, "2023": 30.4, "2024": 29.2, "2025": 28.0, "2026": 30.0 },
+      "ME": { "2017": 32.7, "2018": 34.7, "2019": 26.6, "2020": 28.0, "2021": 25.0, "2022": 25.0, "2023": 27.6, "2024": 26.0, "2025": 25.2, "2026": 25.2 },
+      "EE": { "2017": 25.2, "2018": 29.1, "2019": 39.6, "2020": 33.0, "2021": 28.0, "2022": 30.0, "2023": 32.0, "2024": 28.0, "2025": 27.7, "2026": 27.7 },
+      "CE": { "2017": 28.7, "2018": 26.9, "2019": 28.2, "2020": 32.9, "2021": 25.0, "2022": 30.6, "2023": 28.0, "2024": 29.5, "2025": 28.7, "2026": 28.7 },
+      "EC": { "2017": 25.0, "2018": 25.0, "2019": 26.7, "2020": 28.0, "2021": 25.0, "2022": 27.0, "2023": 28.0, "2024": 26.0, "2025": 25.5, "2026": 25.5 }
+    },
+    "categoryRelaxation": { "OBC": 0.9, "SC": 0.667, "ST": 0.667, "EWS": 0.9, "PwD": 0.667 },
+    "branches": ["MTech CSE", "MTech AI/ML", "MTech Data Science", "MTech VLSI", "MTech Communication", "MTech Power Systems", "MTech Thermal", "MTech Structural", "MTech Geotechnical"],
+    "totalSeats": 45000,
+    "maxMarks": 100,
+    "paperDifficulty": {
+      "2017": { "level": 6, "label": "Moderate-Tough", "avgMarks": 32 },
+      "2018": { "level": 5, "label": "Moderate", "avgMarks": 35 },
+      "2019": { "level": 7, "label": "Tough", "avgMarks": 28 },
+      "2020": { "level": 6, "label": "Moderate-Tough", "avgMarks": 30 },
+      "2021": { "level": 4, "label": "Easy-Moderate", "avgMarks": 38 },
+      "2022": { "level": 8, "label": "Very Tough", "avgMarks": 25 },
+      "2023": { "level": 7, "label": "Tough", "avgMarks": 27 },
+      "2024": { "level": 6, "label": "Moderate-Tough", "avgMarks": 31 },
+      "2025": { "level": 5, "label": "Moderate", "avgMarks": 34 },
+      "2026": { "level": 7, "label": "Tough", "avgMarks": 28 }
+    },
+    "trendNote": "CS/IT qualifying marks fluctuate 25-33. PSU recruitment requires 550+ GATE score."
+  },
+  "NEET": {
+    "totalCandidates": { "2017": 1160000, "2018": 1350000, "2019": 1520000, "2020": 1580000, "2021": 1610000, "2022": 1850000, "2023": 2050000, "2024": 2350000, "2025": 2400000, "2026": 2500000 },
+    "qualifyingMarks": { "2017": 131, "2018": 119, "2019": 134, "2020": 147, "2021": 138, "2022": 117, "2023": 137, "2024": 164, "2025": 155, "2026": 160 },
+    "categoryRelaxation": { "OBC": -20, "SC": -50, "ST": -60, "EWS": -15, "PwD": -60 },
+    "branches": ["MBBS", "BDS", "BAMS", "BHMS", "BUMS", "BSc Nursing"],
+    "totalSeats": 110000,
+    "maxMarks": 720,
+    "paperDifficulty": {
+      "2017": { "level": 5, "label": "Moderate", "avgMarks": 300 },
+      "2018": { "level": 4, "label": "Easy-Moderate", "avgMarks": 340 },
+      "2019": { "level": 6, "label": "Moderate-Tough", "avgMarks": 280 },
+      "2020": { "level": 7, "label": "Tough", "avgMarks": 260 },
+      "2021": { "level": 5, "label": "Moderate", "avgMarks": 310 },
+      "2022": { "level": 3, "label": "Easy", "avgMarks": 370 },
+      "2023": { "level": 6, "label": "Moderate-Tough", "avgMarks": 285 },
+      "2024": { "level": 8, "label": "Very Tough", "avgMarks": 240 },
+      "2025": { "level": 7, "label": "Tough", "avgMarks": 255 },
+      "2026": { "level": 6, "label": "Moderate-Tough", "avgMarks": 275 }
+    },
+    "trendNote": "Total candidates doubled in 5 years. Government seats are extremely competitive."
+  },
+  "CAT": {
+    "totalCandidates": { "2017": 200000, "2018": 210000, "2019": 244000, "2020": 227000, "2021": 230000, "2022": 228000, "2023": 255000, "2024": 270000, "2025": 280000, "2026": 290000 },
+    "yearWiseCutoffs": {
+      "IIM Ahmedabad": { "2017": 99.0, "2018": 99.0, "2019": 99.0, "2020": 99.0, "2021": 99.0, "2022": 99.0, "2023": 99.0, "2024": 99.0, "2025": 99.0, "2026": 99.0 },
+      "IIM Bangalore": { "2017": 99.0, "2018": 99.0, "2019": 99.0, "2020": 99.0, "2021": 99.0, "2022": 99.0, "2023": 99.0, "2024": 99.0, "2025": 99.0, "2026": 99.0 },
+      "IIM Calcutta": { "2017": 99.0, "2018": 99.0, "2019": 99.0, "2020": 99.0, "2021": 99.0, "2022": 99.0, "2023": 99.0, "2024": 99.0, "2025": 99.0, "2026": 99.0 },
+      "FMS Delhi": { "2017": 98.5, "2018": 98.5, "2019": 98.5, "2020": 98.5, "2021": 98.0, "2022": 98.5, "2023": 98.0, "2024": 98.5, "2025": 98.0, "2026": 98.0 },
+      "IIM Lucknow": { "2017": 97.0, "2018": 97.5, "2019": 97.5, "2020": 98.0, "2021": 97.0, "2022": 97.5, "2023": 97.5, "2024": 98.0, "2025": 98.0, "2026": 98.0 }
+    },
+    "categoryRelaxation": { "OBC": -5, "SC": -15, "ST": -20, "EWS": -3, "PwD": -20 },
+    "branches": ["MBA", "PGDM", "MBA-HR", "MBA-Finance", "MBA-Operations"],
+    "totalSeats": 6000,
+    "maxMarks": 228,
+    "paperDifficulty": {
+      "2017": { "level": 6, "label": "Moderate-Tough", "avgMarks": 42 },
+      "2018": { "level": 7, "label": "Tough", "avgMarks": 38 },
+      "2019": { "level": 5, "label": "Moderate", "avgMarks": 48 },
+      "2020": { "level": 8, "label": "Very Tough", "avgMarks": 32 },
+      "2021": { "level": 6, "label": "Moderate-Tough", "avgMarks": 40 },
+      "2022": { "level": 7, "label": "Tough", "avgMarks": 36 },
+      "2023": { "level": 5, "label": "Moderate", "avgMarks": 45 },
+      "2024": { "level": 7, "label": "Tough", "avgMarks": 37 },
+      "2025": { "level": 6, "label": "Moderate-Tough", "avgMarks": 41 },
+      "2026": { "level": 7, "label": "Tough", "avgMarks": 35 }
+    },
+    "trendNote": "Top 3 IIMs consistently require 99+ percentile. New IIMs accept 85-90 percentile."
+  }
+}

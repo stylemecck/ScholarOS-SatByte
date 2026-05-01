@@ -2,26 +2,31 @@ require('dotenv').config();
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 async function listModels() {
-  try {
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    // The SDK doesn't have a direct listModels, but we can try to see the error or use the discovery API
-    console.log("Checking Gemini API Key:", process.env.GEMINI_API_KEY ? "Present" : "Missing");
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+        console.error('No API Key found');
+        return;
+    }
+    const genAI = new GoogleGenerativeAI(apiKey);
     
-    // Let's try the common models
-    const models = ["gemini-1.5-flash", "gemini-1.5-flash-latest", "gemini-1.5-pro", "gemini-1.0-pro", "gemini-pro"];
-    
+    const models = [
+        "gemini-1.5-flash",
+        "models/gemini-1.5-flash",
+        "gemini-1.5-pro",
+        "models/gemini-1.5-pro",
+        "gemini-pro"
+    ];
+
     for (const m of models) {
         try {
+            console.log(`Checking ${m}...`);
             const model = genAI.getGenerativeModel({ model: m });
-            await model.generateContent("test");
-            console.log(`✅ Model ${m} is WORKING`);
+            const res = await model.generateContent("Hi");
+            console.log(`SUCCESS: ${m} -> ${res.response.text().substring(0, 20)}...`);
         } catch (err) {
-            console.log(`❌ Model ${m} FAILED: ${err.message}`);
+            console.log(`FAILED: ${m} - ${err.message}`);
         }
     }
-  } catch (err) {
-    console.error("Discovery failed:", err.message);
-  }
 }
 
 listModels();

@@ -4,6 +4,7 @@ const User = require('../models/User');
 const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
+const predictor = require('../utils/predictor');
 
 const getAIModel = (modelName = "gemini-1.5-flash") => {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -15,12 +16,18 @@ const getAIModel = (modelName = "gemini-1.5-flash") => {
 };
 
 const generateWithFallback = async (prompt) => {
-  const modelsToTry = ["gemini-3-flash-preview", "gemini-2.5-flash", "gemini-2.0-flash"];
+  const modelsToTry = [
+    "gemini-3-flash-preview", 
+    "gemini-2.5-flash", 
+    "gemini-2.0-flash",
+    "gemini-2.0-flash-lite", // Lite models often have higher quotas
+    "gemini-flash-lite-latest"
+  ];
   let lastError = null;
 
   for (const modelName of modelsToTry) {
     try {
-      console.log(`Attempting generation with model: ${modelName}`);
+      console.log(`[AI] Attempting generation with: ${modelName}...`);
       const model = getAIModel(modelName);
       const result = await model.generateContent(prompt);
       const response = await result.response;
@@ -31,17 +38,35 @@ const generateWithFallback = async (prompt) => {
 
       const text = response.text();
       if (!text) throw new Error("EMPTY_RESPONSE");
+      
+      console.log(`[AI] Success with ${modelName}`);
       return text;
     } catch (err) {
-      console.error(`Error with ${modelName}:`, err.message);
+      console.warn(`[AI] ${modelName} unavailable: ${err.message.substring(0, 50)}...`);
       lastError = err;
-      if (err.message.includes('404') || err.message.includes('not found') || err.message.includes('supported') || err.message.includes('503') || err.message.includes('SAFETY') || err.message.includes('EMPTY')) {
-        continue; // Try next model
-      }
-      throw err;
+      continue; 
     }
   }
   throw lastError;
+};
+
+const callPythonAnalysis = async (exam, marks, category = 'General', year = '2026') => {
+  return new Promise((resolve, reject) => {
+    const pythonProcess = spawn('python', [
+      path.join(__dirname, '../utils/analysis.py'), exam, marks, category, year
+    ]);
+    let data = '';
+    pythonProcess.stdout.on('data', (chunk) => data += chunk);
+    pythonProcess.stderr.on('data', (chunk) => console.error('Python Error:', chunk.toString()));
+    pythonProcess.on('close', (code) => {
+      if (code !== 0) return resolve(null);
+      try {
+        resolve(JSON.parse(data));
+      } catch (e) {
+        resolve(null);
+      }
+    });
+  });
 };
 
 exports.parsePdf = async (req, res) => {
@@ -98,9 +123,11 @@ exports.deductCredits = async (req, res) => {
 };
 
 exports.predictRank = async (req, res) => {
+  const { exam, marks, category, year } = req.body;
+  let localResult = null;
+  let suggestedColleges = [];
+
   try {
-    const { exam, marks, category, year, isChat } = req.body;
-    
     let user = null;
     if (req.user) {
       user = await User.findById(req.user.userId);
@@ -108,61 +135,87 @@ exports.predictRank = async (req, res) => {
         return res.status(403).json({ error: 'Insufficient credits. AI Analysis requires 2 credits.', needsUpgrade: true });
       }
     }
+    
+    // Pre-calculate local data with category and year
+    localResult = await callPythonAnalysis(exam, marks, category || 'General', year || '2026');
+    if (!localResult) localResult = predictor.predictLocal(exam, marks);
+    suggestedColleges = predictor.getSuggestions(exam, marks, localResult?.predictedRank, localResult?.predictedPercentile);
 
-    const prompt = `As an expert in Indian competitive exams (like CUET PG, NIMCET, JEE, NEET, GATE, etc.), predict the rank, percentile, and admission chances for a student with the following details:
-    - Exam: ${exam}
-    - Marks: ${marks}
-    - Category: ${category || 'General'}
-    - Target Year: ${year || '2026'}
+    // Build college context for AI from local data
+    const collegeContext = localResult?.collegeDetails ? 
+      localResult.collegeDetails.map(c => 
+        `${c.name} | Location: ${c.location || 'N/A'} | Fee: ${c.fee || 'N/A'} | Seats: ${c.totalSeats || 'N/A'} | Cutoff: ${c.cutoffGeneral || 'N/A'} | Placement: ${c.avgPlacement || 'N/A'} | NAAC: ${c.naacGrade || 'N/A'}`
+      ).join('\n      ') : '';
 
-    Provide a realistic, data-driven approximation based on historical trends.
-    Return the response strictly as a JSON object with these keys:
-    - "predictedRank": (string range, e.g., "1200 - 1500")
-    - "predictedPercentile": (string, e.g., "98.2")
-    - "admissionChances": (string: "High", "Moderate", or "Low")
-    - "suggestedColleges": (array of strings, top 3-4 colleges)
-    - "confidence": (string: "High", "Medium", or "Low")
-    - "analysis": (string, 1-2 sentences explaining the trend)
+    const spotContext = localResult?.spotRoundAnalysis?.summary ? 
+      JSON.stringify(localResult.spotRoundAnalysis.summary) : '';
 
-    Do not include markdown formatting, backticks, or any text other than the JSON object.`;
+    const difficultyContext = localResult?.paperDifficultyAnalysis?.paperInsight || '';
+
+    const prompt = `You are an expert counselor for Indian competitive exams. Generate a COMPREHENSIVE counseling-style analysis.
+
+    STUDENT DATA:
+    - Exam: ${exam}, Marks: ${marks}, Category: ${category || 'General'}, Year: ${year || '2026'}
+    ${localResult ? `- Predicted Rank: ${localResult.predictedRank}, Percentile: ${localResult.predictedPercentile}%` : ''}
+    ${difficultyContext ? `- Paper Difficulty: ${difficultyContext}` : ''}
+    
+    ELIGIBLE COLLEGES (verified data - use these EXACTLY):
+    ${collegeContext || suggestedColleges.join(', ')}
+    
+    ${spotContext ? `COUNSELING ROUND DATA: ${spotContext}` : ''}
+
+    Return ONLY a JSON object with this EXACT structure (no markdown, no backticks):
+    {
+      "predictedRank": "rank range",
+      "predictedPercentile": "percentile with suffix",
+      "admissionChances": "Very High/High/Moderate/Low/Very Low",
+      "suggestedColleges": ["top 3 college names from the data above"],
+      "confidence": "High (AI + Local Data)",
+      "analysis": "Write 3-4 sentences covering: 1) rank/percentile assessment, 2) paper difficulty context, 3) which colleges to target and in which counseling round, 4) spot round advice if applicable. Make it sound like a professional counselor giving personalized advice."
+    }`;
 
     const resultText = await generateWithFallback(prompt);
-    console.log("AI Raw Response Length:", resultText?.length);
-
-    // DEDUCT CREDIT & LOG HISTORY
+    
+    // Deduct credits
     if (user) {
-      user.credits -= 2; // Deduct 2 credits for analysis
-      user.creditHistory.push({
-        type: 'spent',
-        amount: 2,
-        description: `Used ${exam} AI Rank Analysis`,
-        date: new Date()
-      });
+      user.credits -= 2;
+      user.creditHistory.push({ type: 'spent', amount: 2, description: `Used ${exam} AI Analysis`, date: new Date() });
       await user.save();
-      console.log("Credits deducted successfully");
     }
     
-    // Attempt to parse JSON
-    let resultJson;
-    try {
-      const cleaned = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
-      resultJson = JSON.parse(cleaned);
-    } catch(e) {
-      console.error("AI Parse Error:", e, resultText);
-      resultJson = { predictedRank: "N/A", analysis: resultText };
+    const cleaned = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
+    const aiResult = JSON.parse(cleaned);
+    
+    // Merge AI analysis with rich local data (college details, difficulty, spot rounds)
+    return res.json({
+      ...aiResult,
+      collegeDetails: localResult?.collegeDetails || [],
+      paperDifficultyAnalysis: localResult?.paperDifficultyAnalysis || null,
+      spotRoundAnalysis: localResult?.spotRoundAnalysis || null,
+      historicalContext: localResult?.historicalContext || null
+    });
+
+  } catch (err) {
+    console.error("AI FAILED, FALLING BACK TO LOCAL:", err.message);
+    
+    // FALLBACK TO LOCAL MODEL — now returns full counseling-style data
+    if (localResult) {
+      return res.json({
+        ...localResult,
+        suggestedColleges: localResult.suggestedColleges?.length > 0 ? localResult.suggestedColleges : suggestedColleges,
+        confidence: "High (Local 10-Year Archive)"
+      });
     }
 
-    res.json(resultJson);
-  } catch (err) {
-    console.error("RANK PREDICTION ERROR:", err);
-    res.status(500).json({ error: 'AI Analysis failed.' });
+    res.status(500).json({ error: 'Prediction failed.', details: err.message });
   }
 };
 
 exports.predictPercentile = async (req, res) => {
-  try {
-    const { exam, marks, totalMarks, category, difficulty } = req.body;
+  const { exam, marks, totalMarks, category, difficulty } = req.body;
+  let localResult = null;
 
+  try {
     let user = null;
     if (req.user) {
       user = await User.findById(req.user.userId);
@@ -171,44 +224,48 @@ exports.predictPercentile = async (req, res) => {
       }
     }
 
-    const prompt = `Act as an expert exam data analyst. Predict the percentile for a student with these details:
-    Exam: ${exam}
-    Marks: ${marks} / ${totalMarks || 'Standard Total'}
-    Category: ${category}
-    Difficulty: ${difficulty}
+    localResult = await callPythonAnalysis(exam, marks);
+    if (!localResult) localResult = predictor.predictLocal(exam, marks);
+
+    const prompt = `Act as an expert exam data analyst. Predict the percentile for:
+    Exam: ${exam}, Marks: ${marks}, Total: ${totalMarks}, Difficulty: ${difficulty}
+    ${localResult ? `- Local Baseline: ${localResult.predictedPercentile}%` : ''}
     
-    Based on historical trends of competitive exams in India, provide a realistic percentile analysis.
-    Return ONLY a JSON object with this structure:
+    Return ONLY a JSON object:
     {
-      "percentile": "String (e.g. 98.4)",
-      "range": "String (e.g. 97.5 - 99.1)",
-      "performanceLevel": "Excellent" | "Good" | "Average" | "Needs Improvement",
-      "betterThan": "String (X%)",
-      "insights": "String (short analytical summary)",
-      "suggestions": ["String", "String"],
-      "confidence": "High" | "Medium" | "Low"
-    }
-    No explanation, no markdown, just JSON.`;
+      "percentile": "value",
+      "range": "range",
+      "performanceLevel": "Excellent/Good/Average",
+      "betterThan": "X%",
+      "insights": "short summary",
+      "suggestions": ["s1", "s2"],
+      "confidence": "High (Hybrid Model)"
+    }`;
 
     const resultText = await generateWithFallback(prompt);
-    const responseText = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
-    const resultJson = JSON.parse(responseText);
-
+    
     if (user) {
-      user.credits -= 2; // Deduct 2 credits for analysis
-      user.creditHistory.push({
-        type: 'spent',
-        amount: 2,
-        description: `Analyzed ${exam} Percentile (AI)`,
-        date: new Date()
-      });
+      user.credits -= 2;
+      user.creditHistory.push({ type: 'spent', amount: 2, description: `Analyzed ${exam} Percentile (AI)`, date: new Date() });
       await user.save();
     }
 
-    res.json(resultJson);
+    const responseText = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
+    res.json(JSON.parse(responseText));
+
   } catch (err) {
-    console.error("PERCENTILE PREDICTION ERROR:", err);
-    res.status(500).json({ error: 'Failed to predict percentile' });
+    console.error("PERCENTILE AI FAILED:", err.message);
+
+    if (localResult) {
+      return res.json({
+        percentile: localResult.predictedPercentile || "N/A",
+        insights: "AI analysis limit reached. Prediction based on historical trends.",
+        performanceLevel: "Estimated from Data",
+        confidence: "High (Local Archive)"
+      });
+    }
+
+    res.status(500).json({ error: 'Failed to predict percentile', details: err.message });
   }
 };
 
