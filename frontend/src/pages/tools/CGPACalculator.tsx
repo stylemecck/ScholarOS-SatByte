@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Trash2, Calculator, Save, Download } from 'lucide-react';
+import { Plus, Trash2, Calculator, Save } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../../context/useAuth';
 

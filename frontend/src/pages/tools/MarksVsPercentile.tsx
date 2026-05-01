@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  BarChart3, TrendingUp, AlertCircle, Loader2, Sparkles, 
+  BarChart3, TrendingUp, Loader2, Sparkles, 
   Info, Share2, Target, Award, Lightbulb
 } from 'lucide-react';
 import axios from 'axios';

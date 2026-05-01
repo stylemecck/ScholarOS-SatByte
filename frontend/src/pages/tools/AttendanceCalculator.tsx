@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Target, CheckCircle2, XCircle, Info } from 'lucide-react';
+import { CheckCircle2, XCircle, Info } from 'lucide-react';
 
 const AttendanceCalculator = () => {
   const [present, setPresent] = useState<string>('');
