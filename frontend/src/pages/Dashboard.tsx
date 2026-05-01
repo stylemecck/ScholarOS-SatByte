@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Trash2, ExternalLink, 
-  Calendar, BarChart3, Target, Loader2, Coins, Zap, ShieldCheck, TrendingUp, Share2
+  BarChart3, Target, Loader2, Coins, Zap, ShieldCheck, TrendingUp, Share2
 } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../context/useAuth';
 import { Link, Navigate } from 'react-router-dom';
+import ReferralNetwork from '../components/ReferralNetwork';
 
 const Dashboard = () => {
   const { user, isLoading } = useAuth();
@@ -14,7 +15,7 @@ const Dashboard = () => {
   const [creditHistory, setCreditHistory] = useState<any[]>([]);
   const [credits, setCredits] = useState<number>(0);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'results' | 'credits'>('results');
+  const [activeTab, setActiveTab] = useState<'results' | 'credits' | 'network'>('results');
 
   useEffect(() => {
     if (!isLoading && user) {
@@ -195,6 +196,13 @@ const Dashboard = () => {
             Credit History
             {activeTab === 'credits' && <motion.div layoutId="tab" className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-full" />}
           </button>
+          <button 
+            onClick={() => setActiveTab('network')}
+            className={`pb-4 px-2 text-sm font-black transition-all relative ${activeTab === 'network' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+          >
+            My Network
+            {activeTab === 'network' && <motion.div layoutId="tab" className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-full" />}
+          </button>
         </div>
 
         {loading ? (
@@ -266,7 +274,7 @@ const Dashboard = () => {
               </AnimatePresence>
             </div>
           )
-        ) : (
+        ) : activeTab === 'credits' ? (
           <div className="bg-card/40 backdrop-blur-md border border-white/10 rounded-[2.5rem] overflow-hidden">
             <table className="w-full text-left">
               <thead>
@@ -301,6 +309,8 @@ const Dashboard = () => {
               </tbody>
             </table>
           </div>
+        ) : (
+          <ReferralNetwork />
         )}
       </div>
     </div>
