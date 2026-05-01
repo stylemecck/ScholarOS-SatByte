@@ -56,6 +56,7 @@ exports.register = async (req, res) => {
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
     res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email } });
   } catch (err) {
+    console.error("LOGIN ERROR:", err.message);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -72,6 +73,7 @@ exports.login = async (req, res) => {
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
     res.json({ token, user: { id: user._id, name: user.name, email: user.email } });
   } catch (err) {
+    console.error("LOGIN ERROR:", err.message);
     res.status(500).json({ error: 'Server error' });
   }
 };
@@ -81,6 +83,7 @@ exports.getMe = async (req, res) => {
     const user = await User.findById(req.user.userId).select('-password');
     res.json(user);
   } catch (err) {
+    console.error("LOGIN ERROR:", err.message);
     res.status(500).json({ error: 'Server error' });
   }
 };
