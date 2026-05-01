@@ -19,7 +19,8 @@ app.use(helmet()); // Security headers
 app.use(morgan('dev')); // Logging
 app.use(cors({
   origin: ['http://localhost:5173', 'https://toolkit.satbyte.in'],
-  credentials: true
+  credentials: true,
+  exposedHeaders: ["x-rtb-fingerprint-id", "request-id"]
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
