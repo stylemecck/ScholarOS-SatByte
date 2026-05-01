@@ -108,7 +108,7 @@ const Pricing = () => {
         prefill: {
           name: user.name,
           email: user.email,
-          contact: phone || '',
+          ...(phone ? { contact: phone } : {})
         },
         theme: {
           color: "#8b5cf6",
