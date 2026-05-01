@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, type ReactNode, type Dispatch, type SetStateAction } from 'react';
 
 export interface ResumeData {
   personalInfo: {
@@ -103,14 +103,14 @@ const sampleData: ResumeData = {
 
 interface ResumeContextType {
   resumeData: ResumeData;
-  setResumeData: React.Dispatch<React.SetStateAction<ResumeData>>;
+  setResumeData: Dispatch<SetStateAction<ResumeData>>;
   fillSampleData: () => void;
   resetData: () => void;
 }
 
 const ResumeContext = createContext<ResumeContextType | undefined>(undefined);
 
-export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ResumeProvider = ({ children }: { children: ReactNode }) => {
   const [resumeData, setResumeData] = useState<ResumeData>(() => {
     const saved = localStorage.getItem('resume-draft');
     return saved ? JSON.parse(saved) : initialData;

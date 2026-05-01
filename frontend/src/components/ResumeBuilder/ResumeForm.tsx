@@ -1,7 +1,7 @@
 import { useResume } from '../../context/ResumeContext';
 import { User, Mail, Phone, MapPin, Link, AlignLeft, GraduationCap, Briefcase, Award, Plus, Trash2, Zap, Sparkles, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import axios from 'axios';
 
 const ResumeForm = () => {
@@ -105,12 +105,12 @@ const ResumeForm = () => {
           <h3>Personal Information</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Input label="Full Name" value={resumeData.personalInfo.fullName} onChange={(v) => updatePersonalInfo('fullName', v)} placeholder="John Doe" />
-          <Input label="Professional Title" value={resumeData.personalInfo.title} onChange={(v) => updatePersonalInfo('title', v)} placeholder="Full Stack Developer" />
-          <Input label="Email" value={resumeData.personalInfo.email} onChange={(v) => updatePersonalInfo('email', v)} placeholder="john@example.com" icon={<Mail className="w-4 h-4" />} />
-          <Input label="Phone" value={resumeData.personalInfo.phone} onChange={(v) => updatePersonalInfo('phone', v)} placeholder="+1 234 567 890" icon={<Phone className="w-4 h-4" />} />
-          <Input label="Location" value={resumeData.personalInfo.location} onChange={(v) => updatePersonalInfo('location', v)} placeholder="New York, USA" icon={<MapPin className="w-4 h-4" />} />
-          <Input label="LinkedIn" value={resumeData.personalInfo.linkedin} onChange={(v) => updatePersonalInfo('linkedin', v)} placeholder="linkedin.com/in/johndoe" icon={<Link className="w-4 h-4" />} />
+          <Input label="Full Name" value={resumeData.personalInfo.fullName} onChange={(v: string) => updatePersonalInfo('fullName', v)} placeholder="John Doe" />
+          <Input label="Professional Title" value={resumeData.personalInfo.title} onChange={(v: string) => updatePersonalInfo('title', v)} placeholder="Full Stack Developer" />
+          <Input label="Email" value={resumeData.personalInfo.email} onChange={(v: string) => updatePersonalInfo('email', v)} placeholder="john@example.com" icon={<Mail className="w-4 h-4" />} />
+          <Input label="Phone" value={resumeData.personalInfo.phone} onChange={(v: string) => updatePersonalInfo('phone', v)} placeholder="+1 234 567 890" icon={<Phone className="w-4 h-4" />} />
+          <Input label="Location" value={resumeData.personalInfo.location} onChange={(v: string) => updatePersonalInfo('location', v)} placeholder="New York, USA" icon={<MapPin className="w-4 h-4" />} />
+          <Input label="LinkedIn" value={resumeData.personalInfo.linkedin} onChange={(v: string) => updatePersonalInfo('linkedin', v)} placeholder="linkedin.com/in/johndoe" icon={<Link className="w-4 h-4" />} />
         </div>
       </section>
 
@@ -259,7 +259,15 @@ const ResumeForm = () => {
   );
 };
 
-const Input = ({ label, value, onChange, placeholder, icon }: any) => (
+interface InputProps {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  icon?: ReactNode;
+}
+
+const Input = ({ label, value, onChange, placeholder, icon }: InputProps) => (
   <div className="space-y-1.5">
     <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">{label}</label>
     <div className="relative">

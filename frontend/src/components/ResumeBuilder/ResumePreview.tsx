@@ -1,5 +1,5 @@
 import { useResume } from '../../context/ResumeContext';
-import { Mail, Phone, MapPin, Link } from 'lucide-react';
+import { Mail, Phone, MapPin } from 'lucide-react';
 
 const ResumePreview = () => {
   const { resumeData } = useResume();
