@@ -53,99 +53,102 @@ const ResumeBuilderContent = () => {
 
   return (
     <div className="min-h-screen bg-muted/30 -mt-8 -mx-4 pb-20">
-      {/* Top Controls Toolbar */}
-      <div className="sticky top-16 z-40 w-full bg-background border-b border-border shadow-sm px-6 py-3 flex flex-wrap items-center justify-between gap-4 no-print">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
-            <Layout className="w-4 h-4 text-muted-foreground" />
-            <div className="flex bg-muted p-1 rounded-lg">
-              {templates.map(t => (
-                <button
-                  key={t}
-                  onClick={() => setResumeData(prev => ({ ...prev, template: t }))}
-                  className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
-                    resumeData.template === t ? 'bg-background text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  {t}
-                </button>
-              ))}
+      {/* Top Controls Toolbar - More Responsive */}
+      <div className="sticky top-16 z-40 w-full bg-background border-b border-border shadow-sm px-4 md:px-6 py-3 no-print">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-4 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+            {/* Template Selector */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <Layout className="w-4 h-4 text-muted-foreground hidden sm:block" />
+              <div className="flex bg-muted p-1 rounded-lg">
+                {templates.map(t => (
+                  <button
+                    key={t}
+                    onClick={() => setResumeData(prev => ({ ...prev, template: t }))}
+                    className={`px-3 py-1.5 rounded-md text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap ${
+                      resumeData.template === t ? 'bg-background text-primary shadow-sm' : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <Palette className="w-4 h-4 text-muted-foreground" />
-            <div className="flex gap-1.5">
-              {colors.map(c => (
-                <button
-                  key={c}
-                  onClick={() => setResumeData(prev => ({ ...prev, themeColor: c }))}
-                  className={`w-5 h-5 rounded-full border-2 transition-all ${
-                    resumeData.themeColor === c ? 'border-foreground scale-125' : 'border-transparent'
-                  }`}
-                  style={{ backgroundColor: c }}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
+            
+            <div className="h-6 w-px bg-border flex-shrink-0" />
 
-        <div className="flex items-center gap-3">
-          <div className="hidden md:flex items-center gap-2 mr-4">
-            <span className="text-xs font-bold text-muted-foreground">Zoom</span>
-            <input 
-              type="range" min="0.5" max="1" step="0.05" 
-              value={zoom} onChange={(e) => setZoom(parseFloat(e.target.value))}
-              className="w-24 h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
-            />
+            {/* Color Picker */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <Palette className="w-4 h-4 text-muted-foreground hidden sm:block" />
+              <div className="flex gap-2">
+                {colors.map(c => (
+                  <button
+                    key={c}
+                    onClick={() => setResumeData(prev => ({ ...prev, themeColor: c }))}
+                    className={`w-6 h-6 rounded-full border-2 transition-all ${
+                      resumeData.themeColor === c ? 'border-foreground scale-110' : 'border-transparent'
+                    }`}
+                    style={{ backgroundColor: c }}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
-          <button 
-            onClick={handleDownload}
-            disabled={isGenerating}
-            className={`flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-xl font-bold hover:opacity-90 transition-all shadow-lg text-sm ${isGenerating ? 'opacity-70 cursor-not-allowed' : ''}`}
-          >
-            <Download className={`w-4 h-4 ${isGenerating ? 'animate-bounce' : ''}`} />
-            {isGenerating ? 'Generating...' : 'Download PDF'}
-          </button>
-          <div className="flex gap-2 ml-2">
-             <button 
-              onClick={() => {
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(resumeData));
-                const downloadAnchorNode = document.createElement('a');
-                downloadAnchorNode.setAttribute("href", dataStr);
-                downloadAnchorNode.setAttribute("download", "resume.json");
-                document.body.appendChild(downloadAnchorNode);
-                downloadAnchorNode.click();
-                downloadAnchorNode.remove();
-              }}
-              className="p-2.5 bg-muted text-muted-foreground rounded-xl hover:text-foreground transition-all"
-              title="Export JSON"
-            >
-              <Layout className="w-4 h-4 rotate-90" />
-            </button>
-            <label className="p-2.5 bg-muted text-muted-foreground rounded-xl hover:text-foreground transition-all cursor-pointer" title="Import JSON">
-              <Eye className="w-4 h-4" />
+
+          <div className="flex items-center justify-between md:justify-end gap-3 border-t md:border-t-0 pt-3 md:pt-0 border-border">
+            <div className="hidden md:flex items-center gap-2 mr-4">
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Zoom</span>
               <input 
-                type="file" 
-                className="hidden" 
-                accept=".json" 
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                      try {
-                        const json = JSON.parse(e.target?.result as string);
-                        setResumeData(json);
-                      } catch (err) {
-                        alert("Invalid JSON file");
-                      }
-                    };
-                    reader.readAsText(file);
-                  }
-                }}
+                type="range" min="0.5" max="1" step="0.05" 
+                value={zoom} onChange={(e) => setZoom(parseFloat(e.target.value))}
+                className="w-24 h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
               />
-            </label>
+            </div>
+            
+            <div className="flex items-center gap-2 w-full md:w-auto">
+              <button 
+                onClick={handleDownload}
+                disabled={isGenerating}
+                className={`flex-1 md:flex-none flex items-center justify-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-xl font-black uppercase tracking-widest hover:opacity-90 transition-all shadow-lg text-[10px] sm:text-xs ${isGenerating ? 'opacity-70 cursor-not-allowed' : ''}`}
+              >
+                <Download className={`w-4 h-4 ${isGenerating ? 'animate-bounce' : ''}`} />
+                {isGenerating ? 'Saving...' : 'Get PDF'}
+              </button>
+              
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => {
+                    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(resumeData));
+                    const downloadAnchorNode = document.createElement('a');
+                    downloadAnchorNode.setAttribute("href", dataStr);
+                    downloadAnchorNode.setAttribute("download", "resume.json");
+                    document.body.appendChild(downloadAnchorNode);
+                    downloadAnchorNode.click();
+                    downloadAnchorNode.remove();
+                  }}
+                  className="p-2.5 bg-muted text-muted-foreground rounded-xl hover:text-foreground transition-all"
+                  title="Export JSON"
+                >
+                  <Layout className="w-4 h-4 rotate-90" />
+                </button>
+                <label className="p-2.5 bg-muted text-muted-foreground rounded-xl hover:text-foreground transition-all cursor-pointer" title="Import JSON">
+                  <Eye className="w-4 h-4" />
+                  <input type="file" className="hidden" accept=".json" onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (e) => {
+                        try {
+                          const json = JSON.parse(e.target?.result as string);
+                          setResumeData(json);
+                        } catch (err) { alert("Invalid JSON"); }
+                      };
+                      reader.readAsText(file);
+                    }
+                  }}/>
+                </label>
+              </div>
+            </div>
           </div>
         </div>
       </div>
