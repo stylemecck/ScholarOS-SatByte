@@ -9,6 +9,7 @@ import { useAuth } from '../context/useAuth';
 
 const Pricing = () => {
   const { user } = useAuth();
+  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState<string | null>(null);
 
   const plans = [
@@ -107,6 +108,7 @@ const Pricing = () => {
         prefill: {
           name: user.name,
           email: user.email,
+          contact: phone || '',
         },
         theme: {
           color: "#8b5cf6",
@@ -138,6 +140,17 @@ const Pricing = () => {
         <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
           Purchase credits to unlock high-precision AI predictions, detailed roadmaps, and professional resume enhancements.
         </p>
+        
+        <div className="max-w-xs mx-auto space-y-2 pt-4">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Mobile Number (for Razorpay)</label>
+          <input 
+            type="tel"
+            placeholder="e.g. 9988776655"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="w-full px-5 py-3 rounded-xl bg-card border border-border focus:ring-2 focus:ring-primary outline-none transition-all text-center font-bold"
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

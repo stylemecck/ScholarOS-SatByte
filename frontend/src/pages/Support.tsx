@@ -7,6 +7,7 @@ import { useAuth } from '../context/useAuth';
 const Support = () => {
   const { user } = useAuth();
   const [quantity, setQuantity] = useState(1);
+  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState<string | null>(null);
 
   const loadRazorpay = () => {
@@ -64,6 +65,7 @@ const Support = () => {
         prefill: { 
           name: user?.name || '', 
           email: user?.email || '',
+          contact: phone || '',
         },
         theme: { color: "#8b5cf6" },
       };
@@ -153,6 +155,17 @@ const Support = () => {
           All contributions go directly towards maintaining the AI infrastructure and adding more free tools for everyone.
         </p>
         
+        <div className="max-w-xs mx-auto space-y-2">
+          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Your Mobile Number (Optional)</label>
+          <input 
+            type="tel"
+            placeholder="e.g. 9988776655"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="w-full px-5 py-3 rounded-xl bg-background border border-border focus:ring-2 focus:ring-primary outline-none transition-all text-center font-bold"
+          />
+        </div>
+
         <div className="pt-4 flex flex-col items-center gap-4">
           <button 
             onClick={() => handleSupport(100, "Coffee")}
