@@ -46,7 +46,7 @@ const RankPredictor = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post('${import.meta.env.VITE_API_URL}/api/tools/predict-rank', formData);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/tools/predict-rank`, formData);
       setPrediction(response.data);
       
       // Update usage count and Save Result if logged in
@@ -55,7 +55,7 @@ const RankPredictor = () => {
       } else {
         // Automatically save to dashboard if logged in
         try {
-          await axios.post('${import.meta.env.VITE_API_URL}/api/tools/save-result', {
+          await axios.post(`${import.meta.env.VITE_API_URL}/api/tools/save-result`, {
             toolName: 'Rank Predictor',
             data: { ...formData, ...response.data }
           }, {

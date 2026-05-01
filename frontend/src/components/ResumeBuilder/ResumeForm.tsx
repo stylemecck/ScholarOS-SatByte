@@ -16,7 +16,7 @@ const ResumeForm = () => {
     }
     setIsGeneratingSummary(true);
     try {
-      const response = await axios.post('${import.meta.env.VITE_API_URL}/api/tools/generate-summary', {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/tools/generate-summary`, {
         jobTitle: resumeData.personalInfo.title,
         skills: resumeData.skills,
         experience: resumeData.experience.map((e: any) => e.position).join(', ')
@@ -34,7 +34,7 @@ const ResumeForm = () => {
     if (!text) return;
     setEnhancingBulletId(id);
     try {
-      const response = await axios.post('${import.meta.env.VITE_API_URL}/api/tools/enhance-bullet', { bulletText: text });
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/tools/enhance-bullet`, { bulletText: text });
       updateEntry('experience', id, 'description', response.data.enhanced);
     } catch (err) {
       console.error(err);

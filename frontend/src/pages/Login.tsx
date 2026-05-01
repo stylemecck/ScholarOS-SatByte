@@ -34,7 +34,7 @@ const Login = () => {
     setError('');
     setLoading(true);
     try {
-      const res = await axios.post('${import.meta.env.VITE_API_URL}/api/auth/login', { email, password });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, { email, password });
       login(res.data.token, res.data.user);
       navigate('/');
     } catch (err: any) {

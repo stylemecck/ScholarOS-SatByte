@@ -24,7 +24,7 @@ const ResumeBuilderContent = () => {
       
       const fullHtml = `<html><head>${styles}</head><body>${element.outerHTML}</body></html>`;
 
-      const response = await axios.post('${import.meta.env.VITE_API_URL}/api/tools/generate-pdf', {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/tools/generate-pdf`, {
         html: fullHtml
       }, {
         responseType: 'blob',

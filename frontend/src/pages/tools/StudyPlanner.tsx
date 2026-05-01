@@ -37,7 +37,7 @@ const StudyPlanner = () => {
         setLoading(false);
         return;
       }
-      const response = await axios.get('${import.meta.env.VITE_API_URL}/api/study-planner', {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/study-planner`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setTasks(response.data.tasks);
@@ -63,7 +63,7 @@ const StudyPlanner = () => {
       return;
     }
     try {
-      await axios.post('${import.meta.env.VITE_API_URL}/api/study-planner/tasks', taskData, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/study-planner/tasks`, taskData, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchTasks();
@@ -259,13 +259,13 @@ const StudyPlanner = () => {
               alert("Please login to use AI Magic Plan!");
               return;
             }
-            const response = await axios.post('${import.meta.env.VITE_API_URL}/api/study-planner/ai-generate', { goal, hoursPerDay: hours }, {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/study-planner/ai-generate`, { goal, hoursPerDay: hours }, {
               headers: { Authorization: `Bearer ${token}` }
             });
             
             // Add generated tasks to the list
             for (const task of response.data) {
-              await axios.post('${import.meta.env.VITE_API_URL}/api/study-planner/tasks', task, {
+              await axios.post(`${import.meta.env.VITE_API_URL}/api/study-planner/tasks`, task, {
                 headers: { Authorization: `Bearer ${token}` }
               });
             }
