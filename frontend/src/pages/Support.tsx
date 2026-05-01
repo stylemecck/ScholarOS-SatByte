@@ -170,7 +170,7 @@ const Support = () => {
           <button 
             onClick={() => handleSupport(100, "Coffee")}
             disabled={loading !== null}
-            className="px-12 py-5 bg-primary text-primary-foreground rounded-[2rem] font-black text-xl shadow-xl hover:scale-105 transition-all flex items-center gap-3 disabled:opacity-70"
+            className="px-12 py-5 bg-[#FFDD00] text-black rounded-[2rem] font-black text-xl shadow-xl hover:scale-105 transition-all flex items-center gap-3 disabled:opacity-70"
           >
             {loading === "Coffee" ? <Loader2 className="w-6 h-6 animate-spin" /> : <Coffee className="w-6 h-6" />}
             Buy {quantity} Coffee(s) (₹{100 * quantity})
