@@ -114,7 +114,6 @@ const Login = () => {
             onError={() => setError('Google login failed')}
             theme="filled_black"
             shape="pill"
-            width="100%"
           />
         </div>
 
