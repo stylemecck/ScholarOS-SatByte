@@ -27,7 +27,7 @@ const PDFToText = () => {
     formData.append('pdf', file);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/tools/pdf-to-text', formData, {
+      const res = await axios.post('${import.meta.env.VITE_API_URL}/api/tools/pdf-to-text', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       setText(res.data.text);

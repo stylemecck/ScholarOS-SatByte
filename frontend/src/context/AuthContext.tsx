@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          const res = await axios.get('http://localhost:5000/api/auth/me', {
+          const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           setUser({ id: res.data._id, name: res.data.name, email: res.data.email });

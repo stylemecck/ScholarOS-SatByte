@@ -69,7 +69,7 @@ const Pricing = () => {
 
     try {
       // 1. Create order on backend
-      const orderRes = await axios.post('http://localhost:5000/api/payments/create-order', {
+      const orderRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/payments/create-order`, {
         amount: plan.price,
         credits: plan.credits
       }, {
@@ -88,7 +88,7 @@ const Pricing = () => {
         order_id: order_id,
         handler: async (response: any) => {
           try {
-            const verifyRes = await axios.post('http://localhost:5000/api/payments/verify-payment', {
+            const verifyRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/payments/verify-payment`, {
               ...response,
               credits: plan.credits
             }, {

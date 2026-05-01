@@ -36,14 +36,14 @@ const MarksVsPercentile = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:5000/api/tools/predict-percentile', formData);
+      const response = await axios.post('${import.meta.env.VITE_API_URL}/api/tools/predict-percentile', formData);
       setResult(response.data);
 
       // Automatically save to dashboard if logged in
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          await axios.post('http://localhost:5000/api/tools/save-result', {
+          await axios.post('${import.meta.env.VITE_API_URL}/api/tools/save-result', {
             toolName: 'Marks vs Percentile',
             data: { ...formData, ...response.data }
           }, {
