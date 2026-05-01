@@ -23,6 +23,7 @@ import Support from './pages/Support';
 import AdminDashboard from './pages/AdminDashboard';
 import { AuthProvider } from './context/AuthContext';
 import { useEffect } from 'react';
+import ChatAssistant from './components/ChatAssistant';
 
 function App() {
   // Use light mode by default
@@ -36,7 +37,7 @@ function App() {
         <ScrollToTop />
         <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
           <Navbar />
-          <main className="flex-grow container mx-auto px-4 py-8">
+          <main className="flex-grow container mx-auto px-4 py-8 relative">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
@@ -64,6 +65,7 @@ function App() {
               <Route path="/support" element={<Support />} />
               <Route path="/admin" element={<AdminDashboard />} />
             </Routes>
+            <ChatAssistant />
           </main>
           <Footer />
         </div>
