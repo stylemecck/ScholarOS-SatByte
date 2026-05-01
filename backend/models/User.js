@@ -9,7 +9,9 @@ const userSchema = new mongoose.Schema({
     data: mongoose.Schema.Types.Mixed,
     date: { type: Date, default: Date.now }
   }],
-  credits: { type: Number, default: 5 } // New users get 5 free credits
+  credits: { type: Number, default: 5 }, // New users get 5 free credits
+  isGoogleUser: { type: Boolean, default: false },
+  avatar: { type: String }
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);

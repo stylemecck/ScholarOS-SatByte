@@ -22,9 +22,14 @@ exports.googleLogin = async (req, res) => {
       user = new User({
         name,
         email,
-        password: Math.random().toString(36).slice(-10), // Random password for social login users
-        isGoogleUser: true // You might want to add this to your model
+        avatar: picture,
+        password: Math.random().toString(36).slice(-10), 
+        isGoogleUser: true 
       });
+      await user.save();
+    } else if (!user.avatar && picture) {
+      // Update existing user with Google picture if they don't have one
+      user.avatar = picture;
       await user.save();
     }
 
