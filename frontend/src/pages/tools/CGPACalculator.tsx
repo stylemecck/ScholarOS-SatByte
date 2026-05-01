@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, Calculator, Save } from 'lucide-react';
 import axios from 'axios';
@@ -12,6 +13,7 @@ interface Semester {
 
 const CGPACalculator = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [semesters, setSemesters] = useState<Semester[]>([
     { id: 1, sgpa: '', credits: '' }
   ]);
@@ -52,7 +54,7 @@ const CGPACalculator = () => {
 
   const saveToProfile = async () => {
     if (!user) {
-      alert('Please login to save results');
+      navigate('/login');
       return;
     }
     if (result === null) return;

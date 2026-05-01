@@ -13,12 +13,12 @@ exports.createOrder = async (req, res) => {
     });
 
     const options = {
-      amount: Math.round(amount * 100), // Ensure it's an integer
+      amount: Math.round(amount * 100), 
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
       notes: { 
-        credits: credits.toString(), 
-        userId: req.user.userId.toString() 
+        credits: credits ? credits.toString() : '0', 
+        userId: req.user?.userId ? req.user.userId.toString() : 'guest'
       }
     };
 
@@ -48,16 +48,18 @@ exports.verifyPayment = async (req, res) => {
       .digest("hex");
 
     if (razorpay_signature === expectedSign) {
-      console.log("Signature Verified! Adding credits:", credits);
+      // Handle user credits if logged in
+      if (req.user?.userId) {
+        const user = await User.findById(req.user.userId);
+        if (user && credits && parseInt(credits) > 0) {
+          user.credits = (user.credits || 0) + parseInt(credits);
+          await user.save();
+          return res.json({ message: "Payment verified and credits added", credits: user.credits });
+        }
+      }
       
-      const user = await User.findById(req.user.userId);
-      if (!user) return res.status(404).json({ error: "User not found" });
-
-      user.credits = (user.credits || 0) + parseInt(credits);
-      await user.save();
-
-      console.log("User updated successfully. New credits:", user.credits);
-      res.json({ message: "Payment verified and credits added successfully", credits: user.credits });
+      // Guest donation or fallback
+      res.json({ message: "Thank you for your generous support!" });
     } else {
       console.error("Signature Mismatch!");
       res.status(400).json({ error: "Invalid payment signature" });

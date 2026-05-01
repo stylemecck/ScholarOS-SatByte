@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   BarChart3, TrendingUp, Loader2, Sparkles, 
@@ -17,6 +18,7 @@ interface PercentileResult {
 }
 
 const MarksVsPercentile = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     exam: 'CUET PG (MCA)',
     marks: '',
@@ -55,7 +57,7 @@ const MarksVsPercentile = () => {
       }
     } catch (err) {
       console.error(err);
-      alert("Failed to analyze. Please try again.");
+      navigate('/login');
     } finally {
       setLoading(false);
     }
