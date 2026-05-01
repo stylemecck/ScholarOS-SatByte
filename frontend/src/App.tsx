@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import ScrollToTop from './components/ScrollToTop';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -16,7 +17,9 @@ import ResumeBuilder from './pages/tools/ResumeBuilder';
 import StudyPlanner from './pages/tools/StudyPlanner';
 import MarksVsPercentile from './pages/tools/MarksVsPercentile';
 import About from './pages/About';
-import SimplePage from './components/SimplePage';
+import Privacy from './pages/Privacy';
+import Contact from './pages/Contact';
+import Support from './pages/Support';
 import { AuthProvider } from './context/AuthContext';
 import { useEffect } from 'react';
 
@@ -29,6 +32,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
+        <ScrollToTop />
         <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
           <Navbar />
           <main className="flex-grow container mx-auto px-4 py-8">
@@ -54,8 +58,9 @@ function App() {
 
               {/* Informational Pages */}
               <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<SimplePage title="Contact Us" content="Have questions or suggestions? Reach out to us at support@studenttoolkitpro.com or through our social media channels." />} />
-              <Route path="/privacy" element={<SimplePage title="Privacy Policy" content="Your privacy is important to us. We only store the data you explicitly choose to save, and we use industry-standard encryption to protect your information." />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/support" element={<Support />} />
             </Routes>
           </main>
           <Footer />
