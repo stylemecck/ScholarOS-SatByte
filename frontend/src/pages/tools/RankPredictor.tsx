@@ -82,29 +82,44 @@ const RankPredictor = () => {
       // Deduct 4 credits for PDF download
       await axios.post(`${import.meta.env.VITE_API_URL}/api/tools/deduct-credits`, {
         amount: 4,
-        reason: 'PDF Report Download'
+        reason: 'Premium PDF Report Generation'
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       await refreshUser();
 
-      const opt = {
-        margin: 0,
-        filename: `Rank_Report_${user?.name || 'Student'}.pdf`,
-        image: { type: 'jpeg' as const, quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'in' as const, format: 'letter' as const, orientation: 'portrait' as const }
-      };
-      html2pdf().set(opt).from(element).save();
+      // Trigger backend PDF generation
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/tools/export-counseling-pdf`, {
+        predictionData: {
+            ...prediction,
+            exam: formData.exam,
+            marks: formData.marks,
+            category: formData.category
+        },
+        userData: { name: user?.name || 'Student' }
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
+        responseType: 'blob'
+      });
+
+      // Handle file download
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Counseling_Report_${user?.name || 'Student'}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
     } catch (err: any) {
       if (err.response?.status === 403) {
         if (confirm("Insufficient credits to download the PDF (Requires 4 Credits). Would you like to buy more?")) {
             window.location.href = '/pricing';
         }
       } else {
-        alert("Failed to process download. Please check your connection.");
+        alert("Failed to generate PDF. Please try again later.");
       }
     }
+
   };
 
   const exams = [

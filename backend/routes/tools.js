@@ -20,5 +20,6 @@ router.post('/chat', (req, res, next) => {
     next();
 }, toolsController.chat);
 router.post('/generate-pdf', toolsController.generatePdf);
+router.post('/export-counseling-pdf', authMiddleware, toolsController.exportCounselingPdf);
 
 module.exports = router;

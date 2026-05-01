@@ -399,15 +399,82 @@ exports.saveResult = async (req, res) => {
   }
 };
 
+const os = require('os');
+
 exports.generatePdf = async (req, res) => {
+  res.status(501).json({ error: 'Standard PDF generation not implemented. Use specific tool export instead.' });
+};
+
+exports.exportCounselingPdf = async (req, res) => {
   try {
-    const { html } = req.body;
+    const { predictionData, userData } = req.body;
     const timestamp = Date.now();
-    const outputPath = path.join(__dirname, `../temp_resume_${timestamp}.pdf`);
-    // Placeholder for real PDF generation logic if needed
-    res.json({ message: 'PDF logic triggered' });
+    const tempFileName = `counseling_report_${timestamp}.pdf`;
+    
+    const tempDir = os.tmpdir();
+    const outputPath = path.join(tempDir, tempFileName);
+    const inputDataPath = path.join(tempDir, `input_${timestamp}.json`);
+
+    const pythonData = {
+      ...predictionData,
+      userName: userData.name,
+      outputPath: outputPath
+    };
+
+    fs.writeFileSync(inputDataPath, JSON.stringify(pythonData));
+
+    const pythonProcess = spawn('python', [
+      path.join(__dirname, '../utils/pdf_generator.py'),
+      inputDataPath
+    ]);
+
+    let errorData = '';
+    let stdoutData = '';
+    pythonProcess.stderr.on('data', (data) => errorData += data.toString());
+    pythonProcess.stdout.on('data', (data) => stdoutData += data.toString());
+    
+    pythonProcess.on('error', (err) => {
+      console.error('Failed to start Python process:', err);
+      if (fs.existsSync(inputDataPath)) fs.unlinkSync(inputDataPath);
+      if (!res.headersSent) {
+        res.status(500).json({ error: 'Python environment not found' });
+      }
+    });
+
+    pythonProcess.on('close', (code) => {
+      if (fs.existsSync(inputDataPath)) fs.unlinkSync(inputDataPath);
+
+      if (code !== 0 || stdoutData.startsWith('ERROR:')) {
+        const fullError = errorData || stdoutData;
+        console.error('Python PDF Error:', fullError);
+        if (!res.headersSent) {
+          res.status(500).json({ error: 'Failed to generate PDF', details: fullError });
+        }
+        return;
+      }
+
+      if (fs.existsSync(outputPath)) {
+        res.download(outputPath, `Counseling_Report.pdf`, (err) => {
+          if (err) console.error('Download Error:', err);
+          try {
+            if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
+          } catch (unlinkErr) {
+            console.error('Unlink Error:', unlinkErr);
+          }
+        });
+      } else {
+        if (!res.headersSent) {
+          res.status(500).json({ error: 'PDF file was not created', details: stdoutData });
+        }
+      }
+    });
+
+
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to generate PDF' });
+    console.error('PDF Export Error:', err);
+    if (!res.headersSent) {
+      res.status(500).json({ error: 'Server error during PDF export' });
+    }
   }
 };
+
