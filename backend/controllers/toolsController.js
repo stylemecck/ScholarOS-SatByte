@@ -8,25 +8,33 @@ const fs = require('fs');
 const getAIModel = (modelName = "gemini-1.5-flash") => {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey || apiKey.length < 10) {
-    throw new Error('Gemini API Key is missing or too short in backend/.env. Please update and restart.');
+    throw new Error('Gemini API Key is missing or too short. Please check your backend/.env file.');
   }
-  const ai = new GoogleGenerativeAI(apiKey);
-  return ai.getGenerativeModel({ model: modelName });
+  const genAI = new GoogleGenerativeAI(apiKey);
+  return genAI.getGenerativeModel({ model: modelName });
 };
 
 const generateWithFallback = async (prompt) => {
-  try {
-    const model = getAIModel("gemini-1.5-flash");
-    const result = await model.generateContent(prompt);
-    return result;
-  } catch (err) {
-    if (err.message.includes('404') || err.message.includes('not found')) {
-      console.warn("Gemini 1.5 Flash 404, falling back to gemini-pro...");
-      const model = getAIModel("gemini-pro");
-      return await model.generateContent(prompt);
+  const modelsToTry = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-1.0-pro"];
+  let lastError = null;
+
+  for (const modelName of modelsToTry) {
+    try {
+      console.log(`Attempting generation with model: ${modelName}`);
+      const model = getAIModel(modelName);
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      return response.text();
+    } catch (err) {
+      console.error(`Error with ${modelName}:`, err.message);
+      lastError = err;
+      if (err.message.includes('404') || err.message.includes('not found') || err.message.includes('supported')) {
+        continue; // Try next model
+      }
+      throw err;
     }
-    throw err;
   }
+  throw lastError;
 };
 
 exports.parsePdf = async (req, res) => {
@@ -62,9 +70,7 @@ exports.predictRank = async (req, res) => {
 
     Do not include markdown formatting, backticks, or any text other than the JSON object.`;
 
-    const result = await generateWithFallback(prompt);
-    const response = await result.response;
-    const resultText = response.text();
+    const resultText = await generateWithFallback(prompt);
 
     // DEDUCT CREDIT & LOG HISTORY
     if (user) {
@@ -135,7 +141,7 @@ exports.generateResumeSummary = async (req, res) => {
       await user.save();
     }
     
-    res.json({ summary: result.response.text().trim() });
+    res.json({ summary: result.trim() });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to generate summary' });
@@ -170,7 +176,7 @@ exports.enhanceResumeBullet = async (req, res) => {
       await user.save();
     }
 
-    res.json({ enhanced: result.response.text().trim() });
+    res.json({ enhanced: result.trim() });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to enhance bullet point' });
@@ -208,8 +214,8 @@ exports.predictPercentile = async (req, res) => {
       }
     }
 
-    const result = await generateWithFallback(prompt);
-    const responseText = result.response.text().replace(/```json/g, '').replace(/```/g, '').trim();
+    const resultText = await generateWithFallback(prompt);
+    const responseText = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
     const resultJson = JSON.parse(responseText);
 
     if (user) {
