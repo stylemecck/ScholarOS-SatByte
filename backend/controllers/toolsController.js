@@ -5,20 +5,27 @@ const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-const getAIModel = () => {
+const getAIModel = (modelName = "gemini-1.5-flash") => {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey || apiKey.length < 10) {
     throw new Error('Gemini API Key is missing or too short in backend/.env. Please update and restart.');
   }
-  
-  // Safe debug: If we suspect the wrong key is being used, we check the last 4 chars
-  const maskedKey = `...${apiKey.slice(-4)}`;
-  
+  const ai = new GoogleGenerativeAI(apiKey);
+  return ai.getGenerativeModel({ model: modelName });
+};
+
+const generateWithFallback = async (prompt) => {
   try {
-    const ai = new GoogleGenerativeAI(apiKey);
-    return ai.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = getAIModel("gemini-1.5-flash");
+    const result = await model.generateContent(prompt);
+    return result;
   } catch (err) {
-    throw new Error(`Failed to initialize AI with key ${maskedKey}: ${err.message}`);
+    if (err.message.includes('404') || err.message.includes('not found')) {
+      console.warn("Gemini 1.5 Flash 404, falling back to gemini-pro...");
+      const model = getAIModel("gemini-pro");
+      return await model.generateContent(prompt);
+    }
+    throw err;
   }
 };
 
@@ -55,18 +62,7 @@ exports.predictRank = async (req, res) => {
 
     Do not include markdown formatting, backticks, or any text other than the JSON object.`;
 
-    const model = getAIModel();
-
-    // CREDIT CHECK (Only if logged in)
-    let user = null;
-    if (req.user) {
-      user = await User.findById(req.user.userId);
-      if (user && user.credits < 1) {
-        return res.status(403).json({ error: 'Insufficient credits', needsUpgrade: true });
-      }
-    }
-
-    const result = await model.generateContent(prompt);
+    const result = await generateWithFallback(prompt);
     const response = await result.response;
     const resultText = response.text();
 
@@ -119,8 +115,6 @@ exports.generateResumeSummary = async (req, res) => {
     Make it ATS-friendly and focused on value delivery.
     Return only the summary text without quotes or extra explanation.`;
 
-    const model = getAIModel();
-    
     let user = null;
     if (req.user) {
       user = await User.findById(req.user.userId);
@@ -129,7 +123,7 @@ exports.generateResumeSummary = async (req, res) => {
       }
     }
 
-    const result = await model.generateContent(prompt);
+    const result = await generateWithFallback(prompt);
     
     if (user) {
       user.credits -= 1;
@@ -156,8 +150,6 @@ exports.enhanceResumeBullet = async (req, res) => {
     Original: "${bulletText}"
     Return only the enhanced bullet point without quotes.`;
 
-    const model = getAIModel();
-    
     let user = null;
     if (req.user) {
       user = await User.findById(req.user.userId);
@@ -166,7 +158,7 @@ exports.enhanceResumeBullet = async (req, res) => {
       }
     }
 
-    const result = await model.generateContent(prompt);
+    const result = await generateWithFallback(prompt);
     
     if (user) {
       user.credits -= 1;
@@ -208,8 +200,6 @@ exports.predictPercentile = async (req, res) => {
     }
     No explanation, no markdown, just JSON.`;
 
-    const model = getAIModel();
-
     let user = null;
     if (req.user) {
       user = await User.findById(req.user.userId);
@@ -218,7 +208,7 @@ exports.predictPercentile = async (req, res) => {
       }
     }
 
-    const result = await model.generateContent(prompt);
+    const result = await generateWithFallback(prompt);
     const responseText = result.response.text().replace(/```json/g, '').replace(/```/g, '').trim();
     const resultJson = JSON.parse(responseText);
 
