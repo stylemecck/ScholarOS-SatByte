@@ -195,16 +195,16 @@ const Pricing = () => {
             <button
               onClick={() => handlePayment(plan)}
               disabled={loading !== null}
-              className={`w-full py-4 rounded-2xl font-black text-lg shadow-lg transition-all flex items-center justify-center gap-2 ${
+              className={`w-full py-4 md:py-4 rounded-2xl font-black text-base md:text-lg shadow-lg transition-all flex items-center justify-center gap-2 ${
                 plan.popular
-                  ? 'bg-primary text-primary-foreground hover:shadow-primary/25 hover:-translate-y-1'
+                  ? 'bg-primary text-primary-foreground hover:shadow-primary/25 md:hover:-translate-y-1'
                   : 'bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground'
               }`}
             >
               {loading === plan.id ? (
-                <><Loader2 className="w-6 h-6 animate-spin" /> Processing...</>
+                <><Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin" /> <span className="text-sm md:text-base">Processing...</span></>
               ) : (
-                <><Zap className="w-5 h-5" /> Buy {plan.credits} Credits</>
+                <><Zap className="w-4 h-4 md:w-5 md:h-5" /> <span className="text-sm md:text-base">Buy {plan.credits} Credits</span></>
               )}
             </button>
           </motion.div>
