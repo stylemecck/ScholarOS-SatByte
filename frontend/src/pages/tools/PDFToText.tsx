@@ -31,8 +31,9 @@ const PDFToText = () => {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       setText(res.data.text);
-    } catch (err) {
-      setError('Failed to process PDF. Make sure it is not password protected.');
+    } catch (err: any) {
+      const msg = err.response?.data?.details || err.response?.data?.error || 'Failed to process PDF.';
+      setError(msg);
     } finally {
       setLoading(false);
     }

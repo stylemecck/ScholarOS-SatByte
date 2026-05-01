@@ -46,12 +46,30 @@ const generateWithFallback = async (prompt) => {
 
 exports.parsePdf = async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    if (!req.file) {
+      console.log("PDF Parse: No file received");
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+    
+    console.log(`PDF Parse: Processing ${req.file.originalname} (${req.file.size} bytes)`);
+    
     const data = await pdfParse(req.file.buffer);
+    
+    if (!data.text || data.text.trim().length === 0) {
+      return res.status(422).json({ 
+        error: 'No text content found in this PDF.', 
+        details: 'The file might be a scanned image (requires OCR) or empty.' 
+      });
+    }
+
+    console.log(`PDF Parse: Success, extracted ${data.text.length} characters`);
     res.json({ text: data.text });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Failed to parse PDF' });
+    console.error("PDF PARSE ERROR:", err);
+    res.status(500).json({ 
+      error: 'Failed to parse PDF', 
+      details: err.message.includes('password') ? 'PDF is password protected.' : 'The file might be corrupted.'
+    });
   }
 };
 
