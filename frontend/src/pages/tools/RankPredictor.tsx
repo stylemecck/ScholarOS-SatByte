@@ -17,7 +17,7 @@ interface Prediction {
 }
 
 const RankPredictor = () => {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [formData, setFormData] = useState({
     exam: 'CUET PG (MCA)',
     marks: '',
@@ -28,17 +28,43 @@ const RankPredictor = () => {
   const [loading, setLoading] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     const element = document.getElementById('pdf-report-content');
     if (!element) return;
-    const opt = {
-      margin: 0,
-      filename: `Rank_Report_${user?.name || 'Student'}.pdf`,
-      image: { type: 'jpeg' as const, quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'in' as const, format: 'letter' as const, orientation: 'portrait' as const }
-    };
-    html2pdf().set(opt).from(element).save();
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert("Please login to download reports.");
+        return;
+    }
+
+    try {
+      // Deduct 4 credits for PDF download
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/tools/deduct-credits`, {
+        amount: 4,
+        reason: 'PDF Report Download'
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      await refreshUser();
+
+      const opt = {
+        margin: 0,
+        filename: `Rank_Report_${user?.name || 'Student'}.pdf`,
+        image: { type: 'jpeg' as const, quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'in' as const, format: 'letter' as const, orientation: 'portrait' as const }
+      };
+      html2pdf().set(opt).from(element).save();
+    } catch (err: any) {
+      if (err.response?.status === 403) {
+        if (confirm("Insufficient credits to download the PDF (Requires 4 Credits). Would you like to buy more?")) {
+            window.location.href = '/pricing';
+        }
+      } else {
+        alert("Failed to process download. Please check your connection.");
+      }
+    }
   };
 
   const exams = [
@@ -64,8 +90,12 @@ const RankPredictor = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/tools/predict-rank`, formData);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/tools/predict-rank`, formData, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
       setPrediction(response.data);
+      if (token) await refreshUser();
+      
       // @ts-ignore
       if (window.confetti) {
         // @ts-ignore
@@ -95,8 +125,14 @@ const RankPredictor = () => {
       }
     } catch (err: any) {
       console.error(err);
-      const errorMsg = err.response?.data?.details || err.message || 'Failed to predict rank. Please try again.';
-      alert(`Error: ${errorMsg}`);
+      if (err.response?.status === 403) {
+        if (confirm("Insufficient credits for AI analysis (Requires 2 Credits). Would you like to buy more?")) {
+          window.location.href = '/pricing';
+        }
+      } else {
+        const errorMsg = err.response?.data?.details || err.message || 'Failed to predict rank. Please try again.';
+        alert(`Error: ${errorMsg}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -359,8 +395,8 @@ const RankPredictor = () => {
 
       <LimitModal isOpen={showLimitModal} onClose={() => setShowLimitModal(false)} />
 
-      {/* Hidden PDF Template */}
-      <div className="hidden">
+      {/* Hidden PDF Template (Off-screen for capture) */}
+      <div className="absolute left-[-9999px] top-0 overflow-hidden">
         {prediction && user && (
           <ResultPDFTemplate 
             user={{ name: user.name, email: user.email }}

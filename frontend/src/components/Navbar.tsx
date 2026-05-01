@@ -101,11 +101,14 @@ const Navbar = () => {
                   <ShieldCheck className="w-3 h-3" /> Admin
                 </Link>
               )}
-              <Link to="/dashboard" className="hidden md:flex items-center gap-3 p-1.5 pr-4 bg-primary/10 hover:bg-primary/20 rounded-xl border border-primary/20 transition-all group">
-                <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center text-xs font-black">
+              <Link to="/dashboard" className="hidden md:flex items-center gap-3 p-1.5 pr-4 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 transition-all group">
+                <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center text-xs font-black shadow-lg shadow-primary/20">
                   {user.name.charAt(0).toUpperCase()}
                 </div>
-                <span className="text-xs font-black text-primary">{user.name.split(' ')[0]}</span>
+                <div className="flex flex-col">
+                    <span className="text-[10px] font-black text-foreground leading-none">{user.name.split(' ')[0]}</span>
+                    <span className="text-[9px] font-black text-primary uppercase tracking-tighter mt-0.5">{user.credits} Credits</span>
+                </div>
               </Link>
               <button 
                 onClick={logout}

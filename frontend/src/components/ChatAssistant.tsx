@@ -29,15 +29,22 @@ const ChatAssistant = () => {
     setLoading(true);
 
     try {
-      // We'll use the existing predict-rank endpoint logic or a generic chat one
-      // For now, let's assume we have a simple chat endpoint or reuse tool logic
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/tools/predict-rank`, {
-        exam: "Chat Question",
-        marks: userMessage,
-        isChat: true // We'll handle this in backend
+      const token = localStorage.getItem('token');
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/tools/chat`, {
+        message: userMessage,
+        history: messages.slice(-5) // Send last 5 messages for context
+      }, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
 
-      setMessages(prev => [...prev, { role: 'assistant', content: response.data.analysis || "I'm here to help with your exam predictions and study planning!" }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: response.data.response }]);
+      
+      // If user is logged in, refresh their credits in the navbar
+      if (token) {
+        // We can't easily call refreshUser here without passing it down, 
+        // but we'll assume the user sees it on next navigation or we can use a custom event
+        window.dispatchEvent(new Event('user-data-refresh'));
+      }
     } catch (err) {
       setMessages(prev => [...prev, { role: 'assistant', content: "Sorry, I'm having trouble connecting right now. Please try again later!" }]);
     } finally {
