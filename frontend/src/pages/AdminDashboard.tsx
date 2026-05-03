@@ -65,10 +65,11 @@ const AdminDashboard = () => {
       await axios.post(`${import.meta.env.VITE_API_URL}/api/settings`, { key: 'announcement', value: settings.announcement }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
-      alert('Settings saved successfully!');
-    } catch (err) {
+      alert('✅ All settings saved successfully!');
+    } catch (err: any) {
       console.error("Failed to save settings:", err);
-      alert('Failed to save settings.');
+      const errorMessage = err.response?.data?.error || err.message || 'Failed to save settings.';
+      alert(`❌ Error: ${errorMessage}`);
     } finally {
       setSaving(false);
     }

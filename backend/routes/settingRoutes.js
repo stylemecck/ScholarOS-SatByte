@@ -29,7 +29,8 @@ router.post('/', protect, admin, async (req, res) => {
     }
     res.json(setting);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to update setting' });
+    console.error("SETTING UPDATE ERROR:", err);
+    res.status(500).json({ error: `Failed to update setting: ${err.message}` });
   }
 });
 
