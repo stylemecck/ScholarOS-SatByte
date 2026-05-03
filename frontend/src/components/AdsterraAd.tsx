@@ -36,13 +36,16 @@ const AdsterraAd: React.FC<AdsterraAdProps> = ({ type, code }) => {
 
   if (type === 'native') {
     return (
-      <div className="w-full flex flex-col items-center gap-3 py-6">
-        <div className="flex items-center gap-3 w-full">
-          <div className="h-[1px] flex-grow bg-border/40" />
-          <span className="text-[8px] font-black uppercase tracking-[0.4em] text-muted-foreground/80 whitespace-nowrap">Sponsored Ad</span>
-          <div className="h-[1px] flex-grow bg-border/40" />
+      <div className="w-full flex flex-col items-center gap-4 py-8">
+        <div className="flex items-center gap-4 w-full px-4">
+          <div className="h-[1px] flex-grow bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground/60 whitespace-nowrap">Sponsored content</span>
+          <div className="h-[1px] flex-grow bg-gradient-to-r from-transparent via-border/40 to-transparent" />
         </div>
-        <div ref={containerRef} className="adsterra-native-banner min-h-[100px] w-full bg-card/20 border border-white/5 rounded-3xl overflow-hidden flex items-center justify-center text-[10px] font-black uppercase tracking-widest text-muted-foreground/-1" />
+        <div 
+          ref={containerRef} 
+          className="adsterra-native-banner min-h-[120px] w-full bg-card/10 backdrop-blur-md border border-white/5 rounded-[2.5rem] overflow-hidden flex items-center justify-center text-[11px] font-bold uppercase tracking-widest text-muted-foreground/10 transition-all hover:bg-card/20 hover:border-white/10 shadow-xl" 
+        />
       </div>
     );
   }
