@@ -32,6 +32,8 @@ import Privacy from './pages/Privacy';
 import Contact from './pages/Contact';
 import Support from './pages/Support';
 import Terms from './pages/Terms';
+import Status from './pages/Status';
+import Feedback from './pages/Feedback';
 import AdminDashboard from './pages/AdminDashboard';
 import { AuthProvider } from './context/AuthContext';
 import { SettingsProvider, useSettings } from './context/SettingsContext';
@@ -122,6 +124,8 @@ function AppContent() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path="/status" element={<Status />} />
+          <Route path="/feedback" element={<Feedback />} />
           <Route path="/support" element={<Support />} />
           <Route path="/admin" element={<AdminDashboard />} />
         </Routes>

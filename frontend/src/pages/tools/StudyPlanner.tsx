@@ -4,7 +4,7 @@ import {
   Calendar, Clock, CheckCircle2, Circle, Plus, 
   Trash2, Timer as TimerIcon, LayoutDashboard, 
   ChevronLeft, ChevronRight, Play, Pause, RotateCcw, 
-  Flame, BookOpen, Target, Sparkles, Loader2
+  Flame, BookOpen, Target, Sparkles, Loader2, X
 } from 'lucide-react';
 import axios from 'axios';
 
@@ -26,12 +26,10 @@ const StudyPlanner = () => {
   const [showAIModal, setShowAIModal] = useState(false);
   const [aiLoading, setAILoading] = useState(false);
 
-  // Fetch Tasks
   const fetchTasks = async () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        // Load from localStorage for guests
         const localTasks = JSON.parse(localStorage.getItem('study_tasks') || '[]');
         setTasks(localTasks);
         setLoading(false);
@@ -110,288 +108,289 @@ const StudyPlanner = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 lg:px-8 space-y-8">
-      {/* Sidebar-style Nav for Desktop, Top Nav for Mobile */}
-      <div className="flex flex-col md:flex-row gap-8">
-        <aside className="md:w-64 space-y-4">
-          <div className="flex md:flex-col gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar snap-x">
-            <NavButton 
-              active={activeTab === 'dashboard'} 
-              onClick={() => setActiveTab('dashboard')}
-              icon={<LayoutDashboard className="w-5 h-5" />}
-              label="Dashboard"
-            />
-            <NavButton 
-              active={activeTab === 'weekly'} 
-              onClick={() => setActiveTab('weekly')}
-              icon={<Calendar className="w-5 h-5" />}
-              label="Weekly"
-            />
-            <NavButton 
-              active={activeTab === 'timer'} 
-              onClick={() => setActiveTab('timer')}
-              icon={<TimerIcon className="w-5 h-5" />}
-              label="Timer"
-            />
-            <button 
-              onClick={() => setShowAIModal(true)}
-              className="flex items-center gap-3 px-6 py-4 rounded-2xl font-bold bg-primary/10 text-primary hover:bg-primary/20 transition-all border border-primary/20 shrink-0 whitespace-nowrap"
-            >
-              <Sparkles className="w-5 h-5" />
-              <span>AI Magic</span>
-            </button>
-          </div>
-          
-          <div className="hidden md:block pt-4 px-4">
-            <div className="bg-primary/5 border border-primary/10 rounded-3xl p-6 space-y-4">
-              <div className="flex items-center gap-2 text-primary font-bold">
-                <Flame className="w-5 h-5" />
-                <span>3 Day Streak</span>
-              </div>
-              <p className="text-xs text-muted-foreground">Keep it up! You're 2 days away from a badge.</p>
-            </div>
-          </div>
-        </aside>
-
-        <main className="flex-grow space-y-8">
-          <AnimatePresence mode="wait">
-            {activeTab === 'dashboard' && (
-              <motion.div 
-                key="dashboard"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="space-y-8"
-              >
-                {loading ? (
-                  <div className="flex flex-col items-center justify-center py-20 space-y-4">
-                    <Loader2 className="w-12 h-12 animate-spin text-primary" />
-                    <p className="font-bold text-muted-foreground">Syncing your progress...</p>
-                  </div>
-                ) : (
-                  <>
-                    {/* Stats Header */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                      <StatCard label="Today's Progress" value={`${Math.round((tasks.filter(t => t.completed && new Date(t.date).toDateString() === new Date().toDateString()).length / (tasks.filter(t => new Date(t.date).toDateString() === new Date().toDateString()).length || 1)) * 100)}%`} icon={<Target className="w-5 h-5" />} color="primary" />
-                      <StatCard label="Total Focus" value={`${Math.round(tasks.reduce((acc, t) => acc + (t.completed ? t.duration : 0), 0) / 60)}h`} icon={<Clock className="w-5 h-5" />} color="indigo-500" />
-                      <StatCard label="Tasks Done" value={tasks.filter(t => t.completed).length.toString()} icon={<CheckCircle2 className="w-5 h-5" />} color="emerald-500" />
-                    </div>
-
-                    {/* Today's Tasks Section */}
-                    <div className="bg-card border border-border rounded-[2.5rem] p-8 shadow-sm space-y-6">
-                      <div className="flex items-center justify-between">
-                        <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
-                          <BookOpen className="w-6 h-6 text-primary" />
-                          Today's Study Plan
-                        </h2>
-                        <button 
-                          onClick={() => setShowAddModal(true)}
-                          className="p-2 bg-primary text-primary-foreground rounded-xl hover:scale-105 transition-all shadow-lg shadow-primary/20"
-                        >
-                          <Plus className="w-6 h-6" />
-                        </button>
-                      </div>
-
-                      <div className="space-y-4">
-                        {tasks.filter(t => new Date(t.date).toDateString() === new Date().toDateString()).length === 0 ? (
-                          <div className="py-12 text-center text-muted-foreground italic border-2 border-dashed border-border rounded-3xl">
-                            No tasks for today. Start planning your success!
-                          </div>
-                        ) : (
-                          tasks.filter(t => new Date(t.date).toDateString() === new Date().toDateString()).map(task => (
-                            <TaskItem 
-                              key={task._id} 
-                              task={task} 
-                              onToggle={toggleTask} 
-                              onDelete={deleteTask}
-                            />
-                          ))
-                        )}
-                      </div>
-                    </div>
-                  </>
-                )}
-              </motion.div>
-            )}
-
-            {activeTab === 'timer' && (
-              <motion.div 
-                key="timer"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-              >
-                <PomodoroTimer />
-              </motion.div>
-            )}
-
-            {activeTab === 'weekly' && (
-              <motion.div 
-                key="weekly"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-              >
-                <WeeklyView tasks={tasks} onToggle={toggleTask} />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </main>
+    <div className="min-h-screen bg-background pb-32">
+      {/* Mobile-First Header */}
+      <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl border-b border-white/5 px-6 py-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
+            <Sparkles className="w-6 h-6 text-primary" />
+            Study <span className="text-primary italic">Planner</span>
+          </h1>
+          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50">SatByte Pro Suite</p>
+        </div>
+        <button 
+          onClick={() => setShowAIModal(true)}
+          className="p-3 bg-primary/10 text-primary rounded-2xl hover:bg-primary/20 transition-all border border-primary/20"
+        >
+          <Sparkles className="w-5 h-5 animate-pulse" />
+        </button>
       </div>
 
-      {/* Add Task Modal */}
-      <AddTaskModal 
-        isOpen={showAddModal} 
-        onClose={() => setShowAddModal(false)} 
-        onAdd={addTask} 
-      />
-
-      {/* AI Magic Modal */}
-      <AIMagicModal 
-        isOpen={showAIModal}
-        onClose={() => setShowAIModal(false)}
-        loading={aiLoading}
-        onGenerate={async (goal: string, hours: number) => {
-          setAILoading(true);
-          try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-              alert("Please login to use AI Magic Plan!");
-              return;
-            }
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/study-planner/ai-generate`, { goal, hoursPerDay: hours }, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
+      <div className="max-w-7xl mx-auto px-4 lg:px-8 mt-8">
+        <div className="flex flex-col lg:flex-row gap-12">
+          {/* Desktop Sidebar */}
+          <aside className="hidden lg:block w-72 space-y-8">
+            <div className="flex flex-col gap-3">
+               <NavButton active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} icon={<LayoutDashboard className="w-5 h-5" />} label="Dashboard" />
+               <NavButton active={activeTab === 'weekly'} onClick={() => setActiveTab('weekly')} icon={<Calendar className="w-5 h-5" />} label="Calendar" />
+               <NavButton active={activeTab === 'timer'} onClick={() => setActiveTab('timer')} icon={<TimerIcon className="w-5 h-5" />} label="Focus Timer" />
+            </div>
             
-            // Add generated tasks to the list
-            for (const task of response.data) {
-              await axios.post(`${import.meta.env.VITE_API_URL}/api/study-planner/tasks`, task, {
+            <div className="bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 rounded-[2.5rem] p-8 space-y-4">
+              <div className="flex items-center gap-3 text-primary font-black uppercase tracking-widest text-xs">
+                <Flame className="w-5 h-5" />
+                <span>Active Streak</span>
+              </div>
+              <p className="text-4xl font-black tracking-tighter">3 <span className="text-lg opacity-40">Days</span></p>
+              <p className="text-xs font-medium text-muted-foreground leading-relaxed">You're in the zone! Complete today's tasks to reach level 4.</p>
+            </div>
+          </aside>
+
+          {/* Content Area */}
+          <main className="flex-grow">
+            <AnimatePresence mode="wait">
+              {activeTab === 'dashboard' && (
+                <motion.div 
+                  key="dashboard"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="space-y-10"
+                >
+                  {loading ? (
+                    <div className="flex flex-col items-center justify-center py-32 space-y-6">
+                      <div className="relative">
+                        <Loader2 className="w-16 h-16 animate-spin text-primary opacity-20" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-2 h-2 bg-primary rounded-full animate-ping" />
+                        </div>
+                      </div>
+                      <p className="font-black uppercase tracking-[0.3em] text-[10px] text-muted-foreground">Syncing academic cloud...</p>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Premium Stats Grid */}
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
+                        <StatCard label="Progress" value={`${Math.round((tasks.filter(t => t.completed && new Date(t.date).toDateString() === new Date().toDateString()).length / (tasks.filter(t => new Date(t.date).toDateString() === new Date().toDateString()).length || 1)) * 100)}%`} icon={<Target className="w-5 h-5" />} />
+                        <StatCard label="Focus" value={`${Math.round(tasks.reduce((acc, t) => acc + (t.completed ? t.duration : 0), 0) / 60)}h`} icon={<Clock className="w-5 h-5" />} />
+                        <StatCard label="Completed" value={tasks.filter(t => t.completed).length.toString()} icon={<CheckCircle2 className="w-5 h-5" />} className="col-span-2 md:col-span-1" />
+                      </div>
+
+                      {/* Tasks Section */}
+                      <div className="space-y-6">
+                        <div className="flex items-center justify-between px-2">
+                          <div>
+                            <h2 className="text-2xl font-black tracking-tight">Today's Focus</h2>
+                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+                          </div>
+                          <button 
+                            onClick={() => setShowAddModal(true)}
+                            className="p-4 bg-primary text-primary-foreground rounded-2xl hover:scale-110 transition-all shadow-xl shadow-primary/30"
+                          >
+                            <Plus className="w-6 h-6" />
+                          </button>
+                        </div>
+
+                        <div className="space-y-4">
+                          {tasks.filter(t => new Date(t.date).toDateString() === new Date().toDateString()).length === 0 ? (
+                            <div className="py-20 text-center flex flex-col items-center gap-6 bg-card/40 border border-dashed border-border rounded-[3rem]">
+                              <div className="w-20 h-20 bg-muted/20 rounded-full flex items-center justify-center">
+                                <BookOpen className="w-8 h-8 text-muted-foreground/30" />
+                              </div>
+                              <p className="text-muted-foreground font-medium italic">Your schedule is clear. Ready to plan?</p>
+                              <button 
+                                onClick={() => setShowAddModal(true)}
+                                className="px-8 py-3 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all"
+                              >
+                                Create First Task
+                              </button>
+                            </div>
+                          ) : (
+                            tasks.filter(t => new Date(t.date).toDateString() === new Date().toDateString()).map(task => (
+                              <TaskItem key={task._id} task={task} onToggle={toggleTask} onDelete={deleteTask} />
+                            ))
+                          )}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </motion.div>
+              )}
+
+              {activeTab === 'timer' && (
+                <motion.div 
+                  key="timer"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                >
+                  <PomodoroTimer />
+                </motion.div>
+              )}
+
+              {activeTab === 'weekly' && (
+                <motion.div 
+                  key="weekly"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                >
+                  <WeeklyView tasks={tasks} />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </main>
+        </div>
+      </div>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="lg:hidden fixed bottom-6 left-6 right-6 z-50">
+        <div className="bg-black/80 backdrop-blur-2xl border border-white/10 rounded-full p-2 flex items-center justify-between shadow-2xl">
+          <MobileNavButton active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} icon={<LayoutDashboard size={20} />} label="Dash" />
+          <MobileNavButton active={activeTab === 'weekly'} onClick={() => setActiveTab('weekly')} icon={<Calendar size={20} />} label="Cal" />
+          <MobileNavButton active={activeTab === 'timer'} onClick={() => setActiveTab('timer')} icon={<TimerIcon size={20} />} label="Timer" />
+          <button 
+            onClick={() => setShowAddModal(true)}
+            className="w-14 h-14 bg-primary text-primary-foreground rounded-full flex items-center justify-center shadow-lg shadow-primary/40 transform active:scale-90 transition-transform"
+          >
+            <Plus size={24} />
+          </button>
+        </div>
+      </div>
+
+      {/* Modals as Bottom Sheets on Mobile */}
+      <BottomSheet isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="New Study Task">
+        <AddTaskForm onAdd={addTask} />
+      </BottomSheet>
+
+      <BottomSheet isOpen={showAIModal} onClose={() => setShowAIModal(false)} title="AI Academic Weaver">
+        <AIMagicForm 
+          loading={aiLoading} 
+          onGenerate={async (goal: string, hours: number) => {
+            setAILoading(true);
+            try {
+              const token = localStorage.getItem('token');
+              if (!token) { alert("Please login to use AI Magic Plan!"); return; }
+              const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/study-planner/ai-generate`, { goal, hoursPerDay: hours }, {
                 headers: { Authorization: `Bearer ${token}` }
               });
+              for (const task of response.data) {
+                await axios.post(`${import.meta.env.VITE_API_URL}/api/study-planner/tasks`, task, {
+                  headers: { Authorization: `Bearer ${token}` }
+                });
+              }
+              fetchTasks();
+              setShowAIModal(false);
+            } catch (err) {
+              console.error(err);
+              alert("Failed to generate AI plan. Please try again.");
+            } finally {
+              setAILoading(false);
             }
-            fetchTasks();
-            setShowAIModal(false);
-          } catch (err) {
-            console.error(err);
-            alert("Failed to generate AI plan. Please try again.");
-          } finally {
-            setAILoading(false);
-          }
-        }}
-      />
+          }} 
+        />
+      </BottomSheet>
     </div>
   );
 };
 
-const AIMagicModal = ({ isOpen, onClose, onGenerate, loading }: any) => {
-  const [goal, setGoal] = useState('');
-  const [hours, setHours] = useState(4);
+// --- Sub-Components ---
 
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={onClose} />
-      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="relative bg-card border border-border w-full max-w-lg rounded-[3rem] shadow-2xl p-8 space-y-8 overflow-hidden">
-        <div className="flex items-center gap-3 text-primary">
-          <Sparkles className="w-8 h-8" />
-          <h3 className="text-3xl font-black tracking-tight">AI Magic Plan</h3>
-        </div>
-
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-sm font-bold ml-1">What are you preparing for?</label>
-            <textarea 
-              placeholder="e.g. Preparing for CUET PG MCA entrance exam in 2 months, focusing on Mathematics and Computer Science."
-              className="w-full px-4 py-3 rounded-2xl bg-muted border border-border outline-none focus:ring-2 focus:ring-primary min-h-[120px] resize-none font-medium"
-              value={goal}
-              onChange={e => setGoal(e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-bold ml-1">Study Hours per Day</label>
-            <div className="flex items-center gap-4">
-              <input 
-                type="range" min="1" max="12" step="1"
-                className="flex-grow accent-primary"
-                value={hours}
-                onChange={e => setHours(parseInt(e.target.value))}
-              />
-              <span className="w-12 text-center font-black text-xl">{hours}h</span>
-            </div>
-          </div>
-        </div>
-
-        <button 
-          onClick={() => onGenerate(goal, hours)}
-          disabled={loading || !goal}
-          className="w-full py-4 bg-primary text-primary-foreground rounded-2xl font-black text-lg shadow-lg hover:shadow-primary/25 transition-all disabled:opacity-70 flex items-center justify-center gap-2"
+const BottomSheet = ({ isOpen, onClose, title, children }: any) => (
+  <AnimatePresence>
+    {isOpen && (
+      <>
+        <motion.div 
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
+          onClick={onClose}
+        />
+        <motion.div 
+          initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
+          transition={{ type: "spring", damping: 25, stiffness: 200 }}
+          className="fixed bottom-0 left-0 right-0 z-[70] bg-card border-t border-white/10 rounded-t-[3.5rem] p-8 pb-12 shadow-2xl max-w-2xl mx-auto"
         >
-          {loading ? <><Loader2 className="w-5 h-5 animate-spin" /> Crafting your schedule...</> : <><Sparkles className="w-5 h-5" /> Generate 7-Day Plan</>}
-        </button>
-
-        <p className="text-[10px] text-center text-muted-foreground uppercase tracking-widest font-bold">Powered by Gemini 3.0 Flash</p>
-      </motion.div>
-    </div>
-  );
-};
+          <div className="w-12 h-1.5 bg-white/10 rounded-full mx-auto mb-8" />
+          <div className="flex items-center justify-between mb-8 px-2">
+            <h3 className="text-2xl font-black tracking-tight">{title}</h3>
+            <button onClick={onClose} className="p-2 bg-white/5 rounded-full"><X className="w-5 h-5" /></button>
+          </div>
+          {children}
+        </motion.div>
+      </>
+    )}
+  </AnimatePresence>
+);
 
 const NavButton = ({ active, onClick, icon, label }: any) => (
   <button 
     onClick={onClick}
-    className={`w-full flex items-center gap-3 px-6 py-4 rounded-2xl font-bold transition-all shrink-0 whitespace-nowrap ${
-      active ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-[1.02]' : 'hover:bg-muted text-muted-foreground'
+    className={`w-full flex items-center gap-4 px-8 py-5 rounded-[2rem] font-bold transition-all ${
+      active ? 'bg-primary text-primary-foreground shadow-xl shadow-primary/20 scale-[1.05]' : 'hover:bg-white/5 text-muted-foreground'
     }`}
   >
     {icon}
-    <span>{label}</span>
+    <span className="tracking-tight text-lg">{label}</span>
   </button>
 );
 
-const StatCard = ({ label, value, icon, color }: any) => (
-  <div className="bg-card border border-border p-6 rounded-[2rem] space-y-3 shadow-sm">
-    <div className={`p-2 w-fit rounded-lg bg-${color}/10 text-${color}`}>
+const MobileNavButton = ({ active, onClick, icon, label }: any) => (
+  <button 
+    onClick={onClick}
+    className={`flex-grow flex flex-col items-center justify-center py-2 transition-all ${
+      active ? 'text-primary' : 'text-muted-foreground'
+    }`}
+  >
+    {icon}
+    <span className="text-[8px] font-black uppercase tracking-widest mt-1">{label}</span>
+    {active && <motion.div layoutId="mobileNavDot" className="w-1 h-1 bg-primary rounded-full mt-1" />}
+  </button>
+);
+
+const StatCard = ({ label, value, icon, className }: any) => (
+  <div className={`bg-card border border-border p-8 rounded-[2.5rem] space-y-4 shadow-xl group hover:border-primary/20 transition-all ${className}`}>
+    <div className="w-12 h-12 bg-primary/5 text-primary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
       {icon}
     </div>
     <div>
-      <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{label}</p>
-      <h3 className="text-3xl font-black">{value}</h3>
+      <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.2em]">{label}</p>
+      <h3 className="text-3xl font-black tracking-tight">{value}</h3>
     </div>
   </div>
 );
 
 const TaskItem = ({ task, onToggle, onDelete }: any) => (
-  <div className={`group flex items-center justify-between p-5 rounded-2xl border transition-all ${
-    task.completed ? 'bg-muted/50 border-transparent opacity-60' : 'bg-card border-border hover:border-primary/30 shadow-sm'
+  <motion.div 
+    layout
+    className={`group flex items-center justify-between p-6 rounded-[2rem] border transition-all ${
+    task.completed ? 'bg-muted/30 border-transparent opacity-40' : 'bg-card border-border hover:border-primary/30 shadow-xl'
   }`}>
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-6">
       <button 
         onClick={() => onToggle(task._id, !task.completed)}
-        className="text-primary hover:scale-110 transition-transform"
+        className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all ${
+            task.completed ? 'bg-primary border-primary text-primary-foreground' : 'border-border hover:border-primary/50'
+        }`}
       >
-        {task.completed ? <CheckCircle2 className="w-6 h-6" /> : <Circle className="w-6 h-6" />}
+        {task.completed && <CheckCircle2 className="w-5 h-5" />}
       </button>
       <div>
-        <h4 className={`font-bold text-lg ${task.completed ? 'line-through' : ''}`}>{task.subject}</h4>
-        <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium">
-          <span className="flex items-center gap-1"><BookOpen className="w-3.5 h-3.5" /> {task.topic}</span>
-          <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {task.duration}m</span>
-          <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${
-            task.priority === 'High' ? 'bg-rose-500/10 text-rose-500' :
-            task.priority === 'Medium' ? 'bg-amber-500/10 text-amber-500' :
-            'bg-emerald-500/10 text-emerald-500'
+        <h4 className={`font-bold text-lg tracking-tight ${task.completed ? 'line-through' : ''}`}>{task.subject}</h4>
+        <div className="flex items-center gap-4 text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">
+          <span className="flex items-center gap-1.5"><BookOpen size={12} /> {task.topic}</span>
+          <span className="flex items-center gap-1.5"><Clock size={12} /> {task.duration}m</span>
+          <span className={`px-2 py-0.5 rounded-lg border ${
+            task.priority === 'High' ? 'border-rose-500/20 text-rose-500 bg-rose-500/5' :
+            task.priority === 'Medium' ? 'border-amber-500/20 text-amber-500 bg-amber-500/5' :
+            'border-emerald-500/20 text-emerald-500 bg-emerald-500/5'
           }`}>{task.priority}</span>
         </div>
       </div>
     </div>
-    <button 
-      onClick={() => onDelete(task._id)}
-      className="p-2 text-muted-foreground hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"
-    >
-      <Trash2 className="w-5 h-5" />
+    <button onClick={() => onDelete(task._id)} className="p-3 text-muted-foreground hover:text-rose-500 transition-colors">
+      <Trash2 size={18} />
     </button>
-  </div>
+  </motion.div>
 );
 
 const PomodoroTimer = () => {
@@ -408,7 +407,6 @@ const PomodoroTimer = () => {
       setMode(nextMode);
       setTimeLeft(nextMode === 'focus' ? 25 * 60 : 5 * 60);
       setIsActive(false);
-      alert(mode === 'focus' ? "Break time! Great job." : "Time to focus!");
     }
     return () => clearInterval(interval);
   }, [isActive, timeLeft]);
@@ -420,35 +418,34 @@ const PomodoroTimer = () => {
   };
 
   return (
-    <div className="bg-card border border-border rounded-[2.5rem] p-12 shadow-xl text-center space-y-12">
+    <div className="bg-card border border-border rounded-[3.5rem] p-12 md:p-20 shadow-2xl text-center space-y-12 relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-2 bg-muted/20">
+         <motion.div 
+            className="h-full bg-primary"
+            initial={{ width: 0 }}
+            animate={{ width: `${(1 - timeLeft / (mode === 'focus' ? 25 * 60 : 5 * 60)) * 100}%` }}
+         />
+      </div>
+
       <div className="space-y-4">
-        <h2 className="text-3xl font-black tracking-tight">{mode === 'focus' ? 'Focus Session' : 'Short Break'}</h2>
-        <div className="flex justify-center gap-2">
-          <button onClick={() => { setMode('focus'); setTimeLeft(25 * 60); setIsActive(false); }} className={`px-4 py-2 rounded-xl text-sm font-bold ${mode === 'focus' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>Focus</button>
-          <button onClick={() => { setMode('break'); setTimeLeft(5 * 60); setIsActive(false); }} className={`px-4 py-2 rounded-xl text-sm font-bold ${mode === 'break' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>Break</button>
+        <h2 className="text-3xl font-black uppercase tracking-widest">{mode === 'focus' ? 'Deep Work' : 'Refuel'}</h2>
+        <div className="inline-flex bg-muted/50 p-1.5 rounded-2xl">
+          <button onClick={() => { setMode('focus'); setTimeLeft(25 * 60); setIsActive(false); }} className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${mode === 'focus' ? 'bg-primary text-primary-foreground shadow-lg' : 'text-muted-foreground'}`}>Focus</button>
+          <button onClick={() => { setMode('break'); setTimeLeft(5 * 60); setIsActive(false); }} className={`px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${mode === 'break' ? 'bg-primary text-primary-foreground shadow-lg' : 'text-muted-foreground'}`}>Break</button>
         </div>
       </div>
 
-      <div className="relative inline-flex items-center justify-center">
-        <svg className="w-64 h-64 -rotate-90">
-          <circle cx="128" cy="128" r="120" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-muted/30" />
-          <circle 
-            cx="128" cy="128" r="120" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-primary transition-all duration-1000"
-            strokeDasharray={754} strokeDashoffset={754 - (754 * timeLeft) / (mode === 'focus' ? 25 * 60 : 5 * 60)}
-          />
-        </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-6xl font-black tracking-tighter">{formatTime(timeLeft)}</span>
-          <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-2">Remaining</span>
-        </div>
+      <div className="space-y-2">
+        <span className="text-7xl md:text-9xl font-black tracking-tighter tabular-nums">{formatTime(timeLeft)}</span>
+        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground opacity-50">Remaining Units</p>
       </div>
 
-      <div className="flex justify-center items-center gap-6">
-        <button onClick={() => setIsActive(!isActive)} className="p-6 bg-primary text-primary-foreground rounded-full shadow-2xl shadow-primary/40 hover:scale-110 transition-all">
-          {isActive ? <Pause className="w-8 h-8 fill-current" /> : <Play className="w-8 h-8 fill-current ml-1" />}
+      <div className="flex justify-center items-center gap-8">
+        <button onClick={() => setIsActive(!isActive)} className="w-24 h-24 bg-primary text-primary-foreground rounded-full shadow-2xl shadow-primary/40 flex items-center justify-center hover:scale-110 transition-all">
+          {isActive ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" className="ml-2" />}
         </button>
-        <button onClick={() => { setIsActive(false); setTimeLeft(mode === 'focus' ? 25 * 60 : 5 * 60); }} className="p-4 bg-muted text-muted-foreground rounded-full hover:bg-muted/80 transition-all">
-          <RotateCcw className="w-6 h-6" />
+        <button onClick={() => { setIsActive(false); setTimeLeft(mode === 'focus' ? 25 * 60 : 5 * 60); }} className="w-16 h-16 bg-white/5 border border-white/5 rounded-full text-muted-foreground hover:bg-white/10 transition-all flex items-center justify-center">
+          <RotateCcw size={24} />
         </button>
       </div>
     </div>
@@ -460,34 +457,35 @@ const WeeklyView = ({ tasks }: any) => {
   const today = new Date();
   
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-black tracking-tight">Weekly Overview</h2>
+    <div className="space-y-8">
+      <div className="flex items-center justify-between px-2">
+        <h2 className="text-2xl font-black tracking-tight">Calendar</h2>
         <div className="flex gap-2">
-          <button className="p-2 bg-muted rounded-xl hover:bg-muted/80"><ChevronLeft className="w-5 h-5" /></button>
-          <button className="p-2 bg-muted rounded-xl hover:bg-muted/80"><ChevronRight className="w-5 h-5" /></button>
+          <button className="p-3 bg-white/5 border border-white/5 rounded-xl hover:bg-white/10"><ChevronLeft size={20} /></button>
+          <button className="p-3 bg-white/5 border border-white/5 rounded-xl hover:bg-white/10"><ChevronRight size={20} /></button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
+      <div className="flex overflow-x-auto pb-6 gap-4 no-scrollbar snap-x">
         {days.map((day, idx) => {
           const date = new Date(today);
           date.setDate(today.getDate() - today.getDay() + idx);
           const dayTasks = tasks.filter((t: any) => new Date(t.date).toDateString() === date.toDateString());
+          const isToday = date.toDateString() === today.toDateString();
           
           return (
-            <div key={day} className={`bg-card border p-4 rounded-3xl space-y-4 min-h-[150px] ${date.toDateString() === today.toDateString() ? 'border-primary ring-4 ring-primary/5' : 'border-border'}`}>
+            <div key={day} className={`min-w-[140px] flex-shrink-0 snap-center bg-card border p-8 rounded-[2.5rem] space-y-6 transition-all ${isToday ? 'border-primary ring-4 ring-primary/5 scale-105 shadow-2xl shadow-primary/10' : 'border-border'}`}>
               <div className="text-center">
-                <p className="text-[10px] font-black uppercase text-muted-foreground">{day}</p>
-                <p className={`text-lg font-black ${date.toDateString() === today.toDateString() ? 'text-primary' : ''}`}>{date.getDate()}</p>
+                <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mb-1">{day}</p>
+                <p className={`text-3xl font-black ${isToday ? 'text-primary' : ''}`}>{date.getDate()}</p>
               </div>
               <div className="space-y-2">
                 {dayTasks.map((t: any) => (
-                  <div key={t._id} className={`p-2 rounded-xl text-[10px] font-bold truncate ${t.completed ? 'bg-muted text-muted-foreground' : 'bg-primary/10 text-primary border border-primary/20'}`}>
+                  <div key={t._id} className={`p-2 rounded-xl text-[9px] font-black uppercase tracking-tight text-center truncate ${t.completed ? 'bg-muted/50 text-muted-foreground' : 'bg-primary/10 text-primary border border-primary/20'}`}>
                     {t.subject}
                   </div>
                 ))}
-                {dayTasks.length === 0 && <p className="text-[10px] text-muted-foreground text-center italic py-4">Free</p>}
+                {dayTasks.length === 0 && <p className="text-[10px] text-muted-foreground/30 text-center italic font-bold">Clear</p>}
               </div>
             </div>
           );
@@ -497,33 +495,77 @@ const WeeklyView = ({ tasks }: any) => {
   );
 };
 
-const AddTaskModal = ({ isOpen, onClose, onAdd }: any) => {
+const AddTaskForm = ({ onAdd }: any) => {
   const [formData, setFormData] = useState({
     subject: '', topic: '', duration: 60, priority: 'Medium', date: new Date().toISOString().split('T')[0]
   });
 
-  if (!isOpen) return null;
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input placeholder="Subject" className="w-full px-6 py-4 rounded-2xl bg-white/5 border border-white/5 outline-none focus:ring-2 focus:ring-primary font-medium" value={formData.subject} onChange={e => setFormData({...formData, subject: e.target.value})} />
+        <input placeholder="Topic" className="w-full px-6 py-4 rounded-2xl bg-white/5 border border-white/5 outline-none focus:ring-2 focus:ring-primary font-medium" value={formData.topic} onChange={e => setFormData({...formData, topic: e.target.value})} />
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+            <label className="text-[9px] font-black uppercase text-muted-foreground ml-2">Duration (min)</label>
+            <input type="number" className="w-full px-6 py-4 rounded-2xl bg-white/5 border border-white/5 outline-none focus:ring-2 focus:ring-primary font-black" value={formData.duration} onChange={e => setFormData({...formData, duration: parseInt(e.target.value)})} />
+        </div>
+        <div className="space-y-2">
+            <label className="text-[9px] font-black uppercase text-muted-foreground ml-2">Priority</label>
+            <select className="w-full px-6 py-4 rounded-2xl bg-white/5 border border-white/5 outline-none focus:ring-2 focus:ring-primary font-black uppercase tracking-widest text-[10px]" value={formData.priority} onChange={e => setFormData({...formData, priority: e.target.value})}>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+            </select>
+        </div>
+      </div>
+      <div className="space-y-2">
+          <label className="text-[9px] font-black uppercase text-muted-foreground ml-2">Target Date</label>
+          <input type="date" className="w-full px-6 py-4 rounded-2xl bg-white/5 border border-white/5 outline-none focus:ring-2 focus:ring-primary font-black" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
+      </div>
+      <button onClick={() => onAdd(formData)} className="w-full py-5 bg-primary text-primary-foreground rounded-[2rem] font-black text-lg shadow-xl shadow-primary/20 mt-4">Schedule Session</button>
+    </div>
+  );
+};
+
+const AIMagicForm = ({ onGenerate, loading }: any) => {
+  const [goal, setGoal] = useState('');
+  const [hours, setHours] = useState(4);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={onClose} />
-      <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="relative bg-card border border-border w-full max-w-md rounded-[2.5rem] shadow-2xl p-8 space-y-6">
-        <h3 className="text-2xl font-black">Add Study Task</h3>
-        <div className="space-y-4">
-          <input placeholder="Subject (e.g. Data Structures)" className="w-full px-4 py-3 rounded-xl bg-muted border border-border outline-none focus:ring-2 focus:ring-primary" value={formData.subject} onChange={e => setFormData({...formData, subject: e.target.value})} />
-          <input placeholder="Topic (e.g. Binary Search)" className="w-full px-4 py-3 rounded-xl bg-muted border border-border outline-none focus:ring-2 focus:ring-primary" value={formData.topic} onChange={e => setFormData({...formData, topic: e.target.value})} />
-          <div className="grid grid-cols-2 gap-4">
-            <input type="number" placeholder="Duration (min)" className="w-full px-4 py-3 rounded-xl bg-muted border border-border outline-none focus:ring-2 focus:ring-primary" value={formData.duration} onChange={e => setFormData({...formData, duration: parseInt(e.target.value)})} />
-            <select className="w-full px-4 py-3 rounded-xl bg-muted border border-border outline-none focus:ring-2 focus:ring-primary font-bold" value={formData.priority} onChange={e => setFormData({...formData, priority: e.target.value})}>
-              <option value="High">High Priority</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
-            </select>
-          </div>
-          <input type="date" className="w-full px-4 py-3 rounded-xl bg-muted border border-border outline-none focus:ring-2 focus:ring-primary font-bold" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} />
+    <div className="space-y-8">
+      <div className="space-y-4">
+        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Main Goal / Exam</label>
+        <textarea 
+          placeholder="e.g. Preparing for NIMCET in 3 months..."
+          className="w-full px-6 py-5 rounded-[2rem] bg-white/5 border border-white/5 outline-none focus:ring-2 focus:ring-primary min-h-[140px] resize-none font-medium leading-relaxed"
+          value={goal}
+          onChange={e => setGoal(e.target.value)}
+        />
+      </div>
+
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Study Intensity</label>
+            <span className="px-4 py-1 bg-primary/10 text-primary rounded-full font-black text-sm">{hours}h / day</span>
         </div>
-        <button onClick={() => onAdd(formData)} className="w-full py-4 bg-primary text-primary-foreground rounded-2xl font-black text-lg shadow-lg">Schedule Task</button>
-      </motion.div>
+        <input 
+          type="range" min="1" max="12" step="1"
+          className="w-full accent-primary h-2 bg-white/5 rounded-full appearance-none"
+          value={hours}
+          onChange={e => setHours(parseInt(e.target.value))}
+        />
+      </div>
+
+      <button 
+        onClick={() => onGenerate(goal, hours)}
+        disabled={loading || !goal}
+        className="w-full py-6 bg-primary text-primary-foreground rounded-[2rem] font-black text-xl shadow-xl shadow-primary/30 disabled:opacity-50 transition-all flex items-center justify-center gap-4"
+      >
+        {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Sparkles className="w-6 h-6" /> Generate 7-Day Plan</>}
+      </button>
+      <p className="text-[9px] text-center text-muted-foreground font-black uppercase tracking-widest opacity-30">AI Weaver v3.0 Powered by SatByte AI</p>
     </div>
   );
 };
