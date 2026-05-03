@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { MessageSquare, Star, Send, ThumbsUp, Sparkles, Heart } from 'lucide-react';
 
 const Feedback = () => {
