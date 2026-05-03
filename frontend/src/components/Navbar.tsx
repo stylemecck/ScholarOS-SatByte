@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
-import { Moon, Sun, Menu, X, Zap, ShieldCheck, Sparkles } from 'lucide-react';
+import { Moon, Sun, Menu, X, Zap, ShieldCheck, Sparkles, BarChart3 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -208,95 +208,161 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay */}
+      {/* Professional Full-Screen Mobile Menu */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: -20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -20 }}
-            className="md:hidden mt-4 max-w-sm mx-auto bg-background/95 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] shadow-2xl p-6 pointer-events-auto overflow-hidden relative"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] md:hidden bg-background/60 backdrop-blur-2xl pointer-events-auto"
           >
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-indigo-500 to-amber-500" />
-            
-            <div className="space-y-6 max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
-              {/* Main Links */}
-              <div className="grid grid-cols-2 gap-3">
-                {navLinks.map((link) => (
-                  <Link 
-                    key={link.path}
-                    to={link.path} 
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`flex items-center justify-center py-4 rounded-2xl border transition-all ${
-                      location.pathname === link.path 
-                        ? 'bg-primary/10 border-primary/20 text-primary' 
-                        : 'bg-white/5 border-white/5 text-muted-foreground'
-                    }`}
-                  >
-                    <span className="text-[10px] font-black uppercase tracking-widest">{link.name}</span>
-                  </Link>
-                ))}
-              </div>
-
-              {/* Tools Section */}
-              <div className="space-y-4">
-                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-40 px-2">Popular Tools</h3>
-                <div className="grid grid-cols-1 gap-2">
-                    <Link to="/tools/pdf/merge" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 group hover:bg-rose-500/10 transition-all">
-                        <div className="w-10 h-10 bg-rose-500/10 rounded-xl flex items-center justify-center text-rose-500"><Zap className="w-5 h-5" /></div>
-                        <span className="text-xs font-bold">Merge PDF</span>
-                    </Link>
-                    <Link to="/tools/image/compress" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 group hover:bg-indigo-500/10 transition-all">
-                        <div className="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-500"><Menu className="w-5 h-5" /></div>
-                        <span className="text-xs font-bold">Compress Image</span>
-                    </Link>
-                    <Link to="/tools/rank-predictor" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 group hover:bg-amber-500/10 transition-all">
-                        <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500"><Sparkles className="w-5 h-5" /></div>
-                        <span className="text-xs font-bold">Rank Predictor</span>
-                    </Link>
-                    <Link to="/tools/resume-builder" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 group hover:bg-primary/10 transition-all">
-                        <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary"><ShieldCheck className="w-5 h-5" /></div>
-                        <span className="text-xs font-bold">Resume Builder</span>
-                    </Link>
+            {/* Header / Logo in Menu */}
+            <div className="flex items-center justify-between px-6 h-24 border-b border-white/5">
+              <Link to="/" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center overflow-hidden border border-primary/20">
+                  <img src="/logo.svg" alt="STP Logo" className="w-full h-full object-cover" />
                 </div>
-              </div>
+                <span className="text-lg font-black tracking-tight uppercase">STP <span className="text-primary italic">PRO</span></span>
+              </Link>
+              <button 
+                onClick={() => setIsMenuOpen(false)}
+                className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-muted-foreground border border-white/10"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
 
-              <div className="pt-4 border-t border-white/10">
+            <div className="h-[calc(100vh-6rem)] overflow-y-auto custom-scrollbar p-6 space-y-10">
+              {/* User Profile Section */}
+              <div className="p-1 bg-gradient-to-r from-primary/20 via-indigo-500/20 to-amber-500/20 rounded-[2.5rem]">
                 {user ? (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-4 p-4 bg-primary/5 rounded-2xl border border-primary/10">
-                      <div className="w-12 h-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center text-lg font-black shadow-lg shadow-primary/20">
+                  <div className="bg-background/40 backdrop-blur-md rounded-[2.4rem] p-6 space-y-4 border border-white/5">
+                    <div className="flex items-center gap-4">
+                      <div className="w-14 h-14 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center text-xl font-black shadow-xl shadow-primary/20">
                         {user.name.charAt(0).toUpperCase()}
                       </div>
                       <div className="flex-grow">
-                        <p className="text-sm font-black leading-none">{user.name}</p>
-                        <div className="flex items-center justify-between mt-1.5">
-                            <span className="text-[10px] font-black text-primary uppercase tracking-widest">{user.credits} Credits</span>
-                            <span className="text-[8px] font-bold text-muted-foreground uppercase opacity-40">{user.role}</span>
+                        <p className="text-lg font-black leading-none">{user.name}</p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="text-[10px] font-black bg-primary/10 text-primary px-2 py-0.5 rounded-full uppercase tracking-widest">{user.credits} Credits</span>
+                          <span className="text-[10px] font-black bg-white/5 text-muted-foreground px-2 py-0.5 rounded-full uppercase tracking-widest">{user.role}</span>
                         </div>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                        <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-center py-4 bg-white/5 text-foreground border border-white/10 rounded-2xl font-black text-[10px] uppercase tracking-widest">
-                            Dashboard
-                        </Link>
-                        <button 
-                            onClick={() => { logout(); setIsMenuOpen(false); }}
-                            className="flex items-center justify-center py-4 bg-rose-500/10 text-rose-500 border border-rose-500/10 rounded-2xl font-black text-[10px] uppercase tracking-widest"
-                        >
-                            Logout
-                        </button>
+                      <Link 
+                        to="/dashboard" 
+                        onClick={() => setIsMenuOpen(false)}
+                        className="flex items-center justify-center py-4 bg-primary text-primary-foreground rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-primary/20"
+                      >
+                        Dashboard
+                      </Link>
+                      <button 
+                        onClick={() => { logout(); setIsMenuOpen(false); }}
+                        className="flex items-center justify-center py-4 bg-white/5 text-rose-500 border border-rose-500/10 rounded-2xl font-black text-[10px] uppercase tracking-widest"
+                      >
+                        Logout
+                      </button>
                     </div>
                   </div>
                 ) : (
-                  <Link 
-                    to="/login" 
-                    onClick={() => setIsMenuOpen(false)}
-                    className="block w-full py-5 bg-primary text-primary-foreground text-center rounded-[2rem] font-black text-sm uppercase tracking-[0.2em] shadow-[0_20px_40px_rgba(59,130,246,0.3)]"
-                  >
-                    Get Started Free
-                  </Link>
+                  <div className="bg-background/40 backdrop-blur-md rounded-[2.4rem] p-8 text-center space-y-6 border border-white/5">
+                    <div className="space-y-2">
+                      <h3 className="text-xl font-black uppercase tracking-tight">Ready for <span className="text-primary italic">Pro?</span></h3>
+                      <p className="text-xs text-muted-foreground font-medium px-4">Join 850K+ students and unlock elite AI-powered academic tools.</p>
+                    </div>
+                    <Link 
+                      to="/login" 
+                      onClick={() => setIsMenuOpen(false)}
+                      className="block w-full py-5 bg-primary text-primary-foreground rounded-[2rem] font-black text-sm uppercase tracking-[0.2em] shadow-2xl shadow-primary/30 active:scale-95 transition-all"
+                    >
+                      Get Started Free
+                    </Link>
+                  </div>
                 )}
+              </div>
+
+              {/* Tool Categories */}
+              <div className="grid grid-cols-1 gap-10">
+                {/* PDF & Image Section */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 px-2">
+                    <div className="w-1 h-4 bg-rose-500 rounded-full" />
+                    <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground/60">Creative & PDF</h3>
+                  </div>
+                  <div className="grid grid-cols-1 gap-2">
+                    {[
+                      { name: 'Merge PDF', path: '/tools/pdf/merge', icon: Zap, color: 'text-rose-500', bg: 'bg-rose-500/10' },
+                      { name: 'Compress Image', path: '/tools/image/compress', icon: Menu, color: 'text-indigo-500', bg: 'bg-indigo-500/10' },
+                      { name: 'Rotate PDF', path: '/tools/pdf/rotate', icon: ShieldCheck, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+                    ].map((tool) => (
+                      <Link 
+                        key={tool.path} 
+                        to={tool.path} 
+                        onClick={() => setIsMenuOpen(false)}
+                        className="flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-2xl active:bg-white/10 transition-all group"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className={`w-10 h-10 ${tool.bg} ${tool.color} rounded-xl flex items-center justify-center`}>
+                            <tool.icon className="w-5 h-5" />
+                          </div>
+                          <span className="text-sm font-bold">{tool.name}</span>
+                        </div>
+                        <Zap className="w-4 h-4 text-muted-foreground/20" />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Academic Section */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 px-2">
+                    <div className="w-1 h-4 bg-primary rounded-full" />
+                    <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground/60">Success & Academic</h3>
+                  </div>
+                  <div className="grid grid-cols-1 gap-2">
+                    {[
+                      { name: 'Rank Predictor', path: '/tools/rank-predictor', icon: Sparkles, color: 'text-primary', bg: 'bg-primary/10' },
+                      { name: 'Resume Builder', path: '/tools/resume-builder', icon: ShieldCheck, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+                      { name: 'Study Planner', path: '/tools/study-planner', icon: BarChart3, color: 'text-purple-500', bg: 'bg-purple-500/10' },
+                    ].map((tool) => (
+                      <Link 
+                        key={tool.path} 
+                        to={tool.path} 
+                        onClick={() => setIsMenuOpen(false)}
+                        className="flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-2xl active:bg-white/10 transition-all group"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className={`w-10 h-10 ${tool.bg} ${tool.color} rounded-xl flex items-center justify-center`}>
+                            <tool.icon className="w-5 h-5" />
+                          </div>
+                          <span className="text-sm font-bold">{tool.name}</span>
+                        </div>
+                        <Zap className="w-4 h-4 text-muted-foreground/20" />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Links Footer */}
+              <div className="pt-10 border-t border-white/5 pb-10">
+                <div className="grid grid-cols-2 gap-4">
+                  {navLinks.map((link) => (
+                    <Link 
+                      key={link.path}
+                      to={link.path}
+                      onClick={() => setIsMenuOpen(false)}
+                      className="text-center py-4 bg-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest text-muted-foreground"
+                    >
+                      {link.name}
+                    </Link>
+                  ))}
+                </div>
+                <p className="text-center mt-8 text-[8px] font-black uppercase tracking-[0.4em] text-muted-foreground opacity-30">
+                  Product of SatByte Technologies
+                </p>
               </div>
             </div>
           </motion.div>

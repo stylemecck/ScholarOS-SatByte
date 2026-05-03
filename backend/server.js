@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const path = require('path');
+const fs = require('fs');
 
 const authRoutes = require('./routes/auth');
 const toolsRoutes = require('./routes/tools');
@@ -18,7 +20,9 @@ const settingRoutes = require('./routes/settingRoutes');
 const app = express();
 
 // Middlewares
-app.use(helmet()); // Security headers
+app.use(helmet({
+  contentSecurityPolicy: false, // Disable CSP for development to avoid blocking scripts
+}));
 app.use(morgan('dev')); // Logging
 app.use(cors({
   origin: ['http://localhost:5173', 'https://toolkit.satbyte.in'],
