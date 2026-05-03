@@ -88,8 +88,23 @@ const ToolBase: React.FC<ToolBaseProps> = ({
       setResult(url);
     } catch (err: any) {
       console.error('Processing error:', err);
-      const errorMessage = err.response?.data?.error || err.response?.data?.details || 'Failed to process files. Please try again.';
-      alert(errorMessage);
+      let errorMessage = 'Failed to process files. Please try again.';
+      
+      if (err.response?.data instanceof Blob) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const errorObj = JSON.parse(reader.result as string);
+            alert(errorObj.error || errorObj.details || errorMessage);
+          } catch (e) {
+            alert(errorMessage);
+          }
+        };
+        reader.readAsText(err.response.data);
+      } else {
+        errorMessage = err.response?.data?.error || err.response?.data?.details || errorMessage;
+        alert(errorMessage);
+      }
     } finally {
       setIsProcessing(false);
     }

@@ -17,7 +17,7 @@ exports.mergePDFs = async (req, res) => {
 
     for (const file of req.files) {
       const pdfBytes = file.buffer;
-      const pdf = await PDFDocument.load(pdfBytes);
+      const pdf = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
       const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
       copiedPages.forEach((page) => mergedPdf.addPage(page));
     }
@@ -43,7 +43,7 @@ exports.compressPDF = async (req, res) => {
     }
 
     const pdfBytes = req.file.buffer;
-    const pdfDoc = await PDFDocument.load(pdfBytes);
+    const pdfDoc = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
     
     const compressedPdfBytes = await pdfDoc.save({ 
       useObjectStreams: true,
@@ -69,7 +69,7 @@ exports.splitPDF = async (req, res) => {
     }
 
     const pdfBytes = req.file.buffer;
-    const pdfDoc = await PDFDocument.load(pdfBytes);
+    const pdfDoc = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
     const pageCount = pdfDoc.getPageCount();
 
     if (pageCount <= 1) {
@@ -108,7 +108,7 @@ exports.rotatePDF = async (req, res) => {
     const rotation = parseInt(req.body.rotation) || 90;
 
     const pdfBytes = req.file.buffer;
-    const pdfDoc = await PDFDocument.load(pdfBytes);
+    const pdfDoc = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
     const pages = pdfDoc.getPages();
 
     pages.forEach(page => {
@@ -180,7 +180,7 @@ exports.addWatermark = async (req, res) => {
     const opacity = parseFloat(req.body.opacity) || 0.3;
 
     const pdfBytes = req.file.buffer;
-    const pdfDoc = await PDFDocument.load(pdfBytes);
+    const pdfDoc = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
     const pages = pdfDoc.getPages();
 
     for (const page of pages) {
