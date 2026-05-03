@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Trash2, ExternalLink, 
-  BarChart3, Target, Loader2, Coins, Zap, ShieldCheck, TrendingUp, Share2
+  BarChart3, Target, Loader2, Coins, Zap, ShieldCheck, TrendingUp, Share2,
+  X, Sparkles, Award, MapPin, IndianRupee, Users, Briefcase, Clock, AlertCircle, Zap as ZapIcon, Info, AlignLeft
 } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../context/useAuth';
@@ -16,6 +17,7 @@ const Dashboard = () => {
   const [credits, setCredits] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'results' | 'credits' | 'network'>('results');
+  const [selectedResult, setSelectedResult] = useState<any | null>(null);
 
   useEffect(() => {
     if (!isLoading && user) {
@@ -39,7 +41,15 @@ const Dashboard = () => {
   };
 
   const deleteResult = async (_id: string) => {
-    alert("Delete functionality coming soon! All results are currently preserved for your history.");
+    if (!confirm("Are you sure you want to delete this result?")) return;
+    try {
+        await axios.delete(`${import.meta.env.VITE_API_URL}/api/tools/delete-result/${_id}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        });
+        fetchUserData();
+    } catch (err) {
+        alert("Failed to delete result. Please try again.");
+    }
   };
 
   if (isLoading) {
@@ -227,12 +237,19 @@ const Dashboard = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.05 }}
-                    className="backdrop-blur-md bg-card/40 border border-white/10 p-6 rounded-[2rem] hover:bg-card/60 transition-all group"
+                    className="backdrop-blur-md bg-card/40 border border-white/10 p-6 rounded-[2rem] hover:bg-card/60 transition-all group cursor-pointer"
+                    onClick={() => setSelectedResult(res)}
                   >
                     <div className="space-y-4">
                       <div className="flex justify-between items-start">
-                        <div className={`p-2.5 rounded-xl ${res.toolName === 'Rank Predictor' ? 'bg-amber-500/10 text-amber-500' : 'bg-primary/10 text-primary'}`}>
-                          {res.toolName === 'Rank Predictor' ? <TrendingUp className="w-5 h-5" /> : <BarChart3 className="w-5 h-5" />}
+                        <div className={`p-2.5 rounded-xl ${
+                          res.toolName.includes('Rank') ? 'bg-amber-500/10 text-amber-500' : 
+                          res.toolName.includes('Percentile') ? 'bg-indigo-500/10 text-indigo-500' :
+                          'bg-primary/10 text-primary'
+                        }`}>
+                          {res.toolName.includes('Rank') ? <Target className="w-5 h-5" /> : 
+                           res.toolName.includes('Percentile') ? <TrendingUp className="w-5 h-5" /> : 
+                           <Sparkles className="w-5 h-5" />}
                         </div>
                         <span className="text-[10px] font-black text-muted-foreground bg-white/5 px-2 py-1 rounded-lg uppercase">
                           {new Date(res.date).toLocaleDateString()}
@@ -240,29 +257,33 @@ const Dashboard = () => {
                       </div>
                       <div>
                         <h4 className="font-black text-lg">{res.toolName}</h4>
-                        <p className="text-xs text-muted-foreground font-medium">{res.data.exam}</p>
+                        <p className="text-xs text-muted-foreground font-medium">{res.data.exam || res.data.jobTitle || 'AI Analysis'}</p>
                       </div>
                       <div className="grid grid-cols-2 gap-2 pt-2">
                         <div className="bg-white/5 p-3 rounded-2xl">
                           <p className="text-[9px] font-black uppercase text-muted-foreground opacity-60">Result</p>
-                          <p className="text-xs font-black text-primary">
-                            {res.toolName === 'Rank Predictor' ? res.data.predictedRank : `${res.data.percentile}%`}
+                          <p className="text-xs font-black text-primary truncate">
+                            {res.toolName === 'Rank Predictor' ? res.data.predictedRank : 
+                             res.toolName === 'Marks vs Percentile' ? `${res.data.percentile}%` : 
+                             res.toolName.includes('Resume') ? 'Generated' : 'Analyzed'}
                           </p>
                         </div>
                         <div className="bg-white/5 p-3 rounded-2xl">
-                          <p className="text-[9px] font-black uppercase text-muted-foreground opacity-60">Status</p>
-                          <p className="text-xs font-black truncate">{res.data.performanceLevel || res.data.admissionChances}</p>
+                          <p className="text-[9px] font-black uppercase text-muted-foreground opacity-60">Detail</p>
+                          <p className="text-xs font-black truncate">
+                            {res.data.performanceLevel || res.data.admissionChances || res.data.marks || 'View More'}
+                          </p>
                         </div>
                       </div>
                       <div className="flex gap-2 pt-2">
-                        <Link 
-                          to={res.toolName === 'Rank Predictor' ? '/tools/rank-predictor' : '/tools/marks-percentile'}
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); setSelectedResult(res); }}
                           className="flex-grow flex items-center justify-center gap-2 py-2.5 bg-primary/10 text-primary rounded-xl text-xs font-black hover:bg-primary hover:text-primary-foreground transition-all"
                         >
-                          <ExternalLink className="w-3.5 h-3.5" /> Re-Analyze
-                        </Link>
+                          <ExternalLink className="w-3.5 h-3.5" /> View Analysis
+                        </button>
                         <button 
-                          onClick={() => deleteResult(res._id)}
+                          onClick={(e) => { e.stopPropagation(); deleteResult(res._id); }}
                           className="p-2.5 bg-white/5 text-muted-foreground rounded-xl hover:bg-rose-500/20 hover:text-rose-500 transition-all"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -322,8 +343,259 @@ const Dashboard = () => {
           <ReferralNetwork />
         )}
       </div>
+
+      {/* Analysis Detail Modal */}
+      <AnalysisDetailModal 
+        isOpen={!!selectedResult} 
+        onClose={() => setSelectedResult(null)} 
+        result={selectedResult} 
+      />
     </div>
   );
 };
+
+const AnalysisDetailModal = ({ isOpen, onClose, result }: { isOpen: boolean, onClose: () => void, result: any }) => {
+  if (!isOpen || !result) return null;
+
+  const data = result.data;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <motion.div 
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }} 
+        exit={{ opacity: 0 }}
+        className="absolute inset-0 bg-background/90 backdrop-blur-md" 
+        onClick={onClose} 
+      />
+      
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        className="relative bg-card border border-border w-full max-w-4xl max-h-[85vh] rounded-[3rem] shadow-2xl overflow-hidden flex flex-col"
+      >
+        {/* Modal Header */}
+        <div className="p-8 border-b border-border flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-primary/10 text-primary rounded-2xl">
+                {result.toolName.includes('Rank') ? <Target className="w-6 h-6" /> : 
+                 result.toolName.includes('Percentile') ? <TrendingUp className="w-6 h-6" /> : 
+                 <Sparkles className="w-6 h-6" />}
+            </div>
+            <div>
+              <h3 className="text-2xl font-black">{result.toolName}</h3>
+              <p className="text-sm text-muted-foreground font-medium">Analysis from {new Date(result.date).toLocaleDateString()}</p>
+            </div>
+          </div>
+          <button 
+            onClick={onClose}
+            className="p-3 bg-muted hover:bg-rose-500/10 hover:text-rose-500 rounded-2xl transition-all"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        {/* Modal Body */}
+        <div className="p-8 overflow-y-auto custom-scrollbar flex-grow space-y-8">
+          
+          {/* Quick Stats Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+             {result.toolName === 'Rank Predictor' ? (
+               <>
+                 <StatItem label="Predicted Rank" value={data.predictedRank} icon={Target} color="text-primary" bg="bg-primary/10" />
+                 <StatItem label="Percentile" value={data.predictedPercentile} icon={TrendingUp} color="text-indigo-500" bg="bg-indigo-500/10" />
+                 <StatItem label="Admission" value={data.admissionChances} icon={Award} color="text-amber-500" bg="bg-amber-500/10" />
+                 <StatItem label="Exam" value={data.exam} icon={Info} color="text-emerald-500" bg="bg-emerald-500/10" />
+               </>
+             ) : result.toolName === 'Marks vs Percentile' ? (
+               <>
+                 <StatItem label="Percentile" value={`${data.percentile}%`} icon={TrendingUp} color="text-primary" bg="bg-primary/10" />
+                 <StatItem label="Performance" value={data.performanceLevel} icon={Award} color="text-indigo-500" bg="bg-indigo-500/10" />
+                 <StatItem label="Better Than" value={data.betterThan} icon={BarChart3} color="text-amber-500" bg="bg-amber-500/10" />
+                 <StatItem label="Confidence" value={data.confidence} icon={ShieldCheck} color="text-emerald-500" bg="bg-emerald-500/10" />
+               </>
+             ) : result.toolName === 'Resume AI Summary' ? (
+               <>
+                 <StatItem label="Job Title" value={data.jobTitle} icon={Briefcase} color="text-primary" bg="bg-primary/10" />
+                 <StatItem label="Tool" value="Resume AI" icon={ZapIcon} color="text-indigo-500" bg="bg-indigo-500/10" />
+                 <StatItem label="Status" value="Generated" icon={Award} color="text-amber-500" bg="bg-amber-500/10" />
+                 <StatItem label="Credits" value="1 Spent" icon={Coins} color="text-emerald-500" bg="bg-emerald-500/10" />
+               </>
+             ) : result.toolName === 'Resume Bullet Enhancer' ? (
+               <>
+                 <StatItem label="Tool" value="Enhancer" icon={ZapIcon} color="text-primary" bg="bg-primary/10" />
+                 <StatItem label="Status" value="Enhanced" icon={Sparkles} color="text-indigo-500" bg="bg-indigo-500/10" />
+                 <StatItem label="Credits" value="1 Spent" icon={Coins} color="text-amber-500" bg="bg-amber-500/10" />
+                 <StatItem label="Type" value="Bullet" icon={Info} color="text-emerald-500" bg="bg-emerald-500/10" />
+               </>
+             ) : (
+                <div className="col-span-4 bg-muted/30 p-4 rounded-2xl border border-border">
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Details</p>
+                    <pre className="text-xs font-medium whitespace-pre-wrap">{JSON.stringify(data, null, 2)}</pre>
+                </div>
+             )}
+          </div>
+
+          {/* AI Analysis Text / Summary / Enhanced Bullet */}
+          {result.toolName === 'Resume AI Summary' && (
+            <div className="bg-primary/5 border border-primary/10 p-6 rounded-3xl space-y-3">
+              <div className="flex items-center gap-2 text-primary">
+                <AlignLeft className="w-5 h-5" />
+                <h4 className="font-black uppercase tracking-wider text-xs">Generated Professional Summary</h4>
+              </div>
+              <p className="text-sm leading-relaxed text-muted-foreground font-medium italic">
+                "{data.summary}"
+              </p>
+            </div>
+          )}
+
+          {result.toolName === 'Resume Bullet Enhancer' && (
+            <div className="space-y-6">
+              <div className="p-6 bg-muted/30 rounded-3xl border border-border space-y-2">
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Original Bullet</p>
+                <p className="text-sm font-medium text-muted-foreground">{data.original}</p>
+              </div>
+              <div className="p-6 bg-primary/5 rounded-3xl border border-primary/10 space-y-2">
+                <div className="flex items-center gap-2 text-primary">
+                    <Sparkles className="w-4 h-4" />
+                    <p className="text-[10px] font-black uppercase tracking-widest">Enhanced with AI</p>
+                </div>
+                <p className="text-sm font-black text-foreground leading-relaxed">{data.enhanced}</p>
+              </div>
+            </div>
+          )}
+
+          {data.analysis && (
+            <div className="bg-primary/5 border border-primary/10 p-6 rounded-3xl space-y-3">
+              <div className="flex items-center gap-2 text-primary">
+                <Sparkles className="w-5 h-5" />
+                <h4 className="font-black uppercase tracking-wider text-xs">Expert AI Analysis</h4>
+              </div>
+              <p className="text-sm leading-relaxed text-muted-foreground font-medium italic">
+                "{data.analysis}"
+              </p>
+            </div>
+          )}
+
+          {/* Insights for Percentile */}
+          {data.insights && (
+            <div className="bg-indigo-500/5 border border-indigo-500/10 p-6 rounded-3xl space-y-3">
+              <div className="flex items-center gap-2 text-indigo-500">
+                <Info className="w-5 h-5" />
+                <h4 className="font-black uppercase tracking-wider text-xs">AI Performance Insights</h4>
+              </div>
+              <p className="text-sm leading-relaxed text-muted-foreground font-medium italic">
+                "{data.insights}"
+              </p>
+              {data.suggestions && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                    {data.suggestions.map((s: string, i: number) => (
+                        <div key={i} className="flex gap-3 p-3 bg-white/5 rounded-xl border border-border/50 text-[11px] font-bold">
+                            <div className="w-5 h-5 rounded-lg bg-indigo-500 text-white flex items-center justify-center shrink-0">{i+1}</div>
+                            {s}
+                        </div>
+                    ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Paper Difficulty Analysis (Rank Predictor specific) */}
+          {data.paperDifficultyAnalysis && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-orange-500">
+                <ZapIcon className="w-5 h-5" />
+                <h4 className="font-black uppercase tracking-wider text-sm">Historical Difficulty Analysis</h4>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                 <div className="bg-card border border-border p-4 rounded-2xl text-center">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase">Level</p>
+                    <p className="text-lg font-black text-orange-500">{data.paperDifficultyAnalysis.currentYear?.difficultyLevel || 'N/A'}</p>
+                 </div>
+                 <div className="bg-card border border-border p-4 rounded-2xl text-center">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase">Avg Marks</p>
+                    <p className="text-lg font-black">{data.paperDifficultyAnalysis.currentYear?.avgMarksScored || 'N/A'}</p>
+                 </div>
+                 <div className="bg-card border border-border p-4 rounded-2xl text-center">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase">Normalized</p>
+                    <p className="text-lg font-black text-emerald-500">{data.paperDifficultyAnalysis.yourPerformance?.normalizedScore || 'N/A'}</p>
+                 </div>
+                 <div className="bg-card border border-border p-4 rounded-2xl text-center">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase">Verdict</p>
+                    <p className="text-xs font-black">{data.paperDifficultyAnalysis.yourPerformance?.verdict || 'N/A'}</p>
+                 </div>
+              </div>
+              <p className="text-xs text-muted-foreground italic leading-relaxed px-2">{data.paperDifficultyAnalysis.paperInsight}</p>
+            </div>
+          )}
+
+          {/* Suggested Colleges (Rank Predictor specific) */}
+          {data.collegeDetails && data.collegeDetails.length > 0 && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-primary">
+                <Briefcase className="w-5 h-5" />
+                <h4 className="font-black uppercase tracking-wider text-sm">Eligible Institutions</h4>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {data.collegeDetails.slice(0, 6).map((college: any, idx: number) => (
+                  <div key={idx} className="bg-card border border-border p-5 rounded-[2rem] space-y-3 shadow-sm">
+                    <div className="flex justify-between items-start gap-2">
+                        <h5 className="font-black text-sm leading-tight">{college.name}</h5>
+                        {college.naacGrade && <span className="px-2 py-0.5 bg-primary/10 text-primary text-[9px] font-black rounded-lg">NAAC {college.naacGrade}</span>}
+                    </div>
+                    <div className="grid grid-cols-2 gap-y-2 gap-x-4">
+                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground">
+                            <IndianRupee className="w-3 h-3 text-emerald-500" /> {college.fee}
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground">
+                            <Users className="w-3 h-3 text-blue-500" /> {college.totalSeats || 'N/A'} seats
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground">
+                            <Target className="w-3 h-3 text-orange-500" /> {college.cutoffRange}
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground">
+                            <Briefcase className="w-3 h-3 text-violet-500" /> {college.avgPlacement || 'N/A'}
+                        </div>
+                    </div>
+                    <div className="pt-2 flex items-center gap-1.5 text-[9px] font-bold text-muted-foreground italic">
+                        <MapPin className="w-3 h-3" /> {college.location || 'N/A'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Modal Footer */}
+        <div className="p-8 border-t border-border flex items-center justify-between shrink-0 bg-muted/10">
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Saved on {new Date(result.date).toLocaleDateString()}</p>
+          <div className="flex gap-4">
+            <button 
+              onClick={onClose}
+              className="px-6 py-2.5 bg-muted text-muted-foreground rounded-xl text-xs font-black hover:bg-muted/80 transition-all"
+            >
+              Close
+            </button>
+            <Link 
+              to={result.toolName === 'Rank Predictor' ? '/tools/rank-predictor' : '/tools/marks-percentile'}
+              className="px-6 py-2.5 bg-primary text-primary-foreground rounded-xl text-xs font-black hover:scale-105 transition-all shadow-lg"
+            >
+              Run New Analysis
+            </Link>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+const StatItem = ({ label, value, icon: Icon, color, bg }: any) => (
+  <div className="bg-card border border-border p-4 rounded-2xl space-y-2 shadow-sm">
+    <div className={`p-1.5 rounded-lg ${bg} ${color} w-fit`}><Icon className="w-4 h-4" /></div>
+    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{label}</p>
+    <p className={`text-lg font-black ${color} truncate`}>{value || 'N/A'}</p>
+  </div>
+);
 
 export default Dashboard;

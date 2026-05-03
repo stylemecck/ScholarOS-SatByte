@@ -176,10 +176,22 @@ exports.predictRank = async (req, res) => {
 
     const resultText = await generateWithFallback(prompt);
     
-    // Deduct credits
+    // Deduct credits and Save Result
     if (user) {
       user.credits -= 2;
       user.creditHistory.push({ type: 'spent', amount: 2, description: `Used ${exam} AI Analysis`, date: new Date() });
+      
+      // Save to history automatically
+      user.savedResults.push({
+        toolName: 'Rank Predictor',
+        data: { ...req.body, ...aiResult, 
+          collegeDetails: localResult?.collegeDetails || [],
+          paperDifficultyAnalysis: localResult?.paperDifficultyAnalysis || null,
+          spotRoundAnalysis: localResult?.spotRoundAnalysis || null
+        },
+        date: new Date()
+      });
+
       await user.save();
     }
     
@@ -247,11 +259,20 @@ exports.predictPercentile = async (req, res) => {
     if (user) {
       user.credits -= 2;
       user.creditHistory.push({ type: 'spent', amount: 2, description: `Analyzed ${exam} Percentile (AI)`, date: new Date() });
-      await user.save();
-    }
+      
+      // Save to history automatically
+      const aiResponseData = JSON.parse(responseText);
+      user.savedResults.push({
+        toolName: 'Marks vs Percentile',
+        data: { ...req.body, ...aiResponseData },
+        date: new Date()
+      });
 
-    const responseText = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
-    res.json(JSON.parse(responseText));
+      await user.save();
+      res.json(aiResponseData);
+    } else {
+      res.json(JSON.parse(responseText));
+    }
 
   } catch (err) {
     console.error("PERCENTILE AI FAILED:", err.message);
@@ -326,6 +347,7 @@ exports.generateResumeSummary = async (req, res) => {
     }
 
     const result = await generateWithFallback(prompt);
+    const summary = result.trim();
     
     if (user) {
       user.credits -= 1;
@@ -335,10 +357,18 @@ exports.generateResumeSummary = async (req, res) => {
         description: `Generated Resume Summary for ${jobTitle}`,
         date: new Date()
       });
+
+      // Save to history automatically
+      user.savedResults.push({
+        toolName: 'Resume AI Summary',
+        data: { jobTitle, summary },
+        date: new Date()
+      });
+
       await user.save();
     }
     
-    res.json({ summary: result.trim() });
+    res.json({ summary });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to generate summary' });
@@ -362,6 +392,7 @@ exports.enhanceResumeBullet = async (req, res) => {
     }
 
     const result = await generateWithFallback(prompt);
+    const enhanced = result.trim();
     
     if (user) {
       user.credits -= 1;
@@ -371,10 +402,18 @@ exports.enhanceResumeBullet = async (req, res) => {
         description: 'Enhanced Resume Bullet Point',
         date: new Date()
       });
+
+      // Save to history automatically
+      user.savedResults.push({
+        toolName: 'Resume Bullet Enhancer',
+        data: { original: bulletText, enhanced },
+        date: new Date()
+      });
+
       await user.save();
     }
 
-    res.json({ enhanced: result.trim() });
+    res.json({ enhanced });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to enhance bullet point' });
@@ -396,6 +435,24 @@ exports.saveResult = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to save result' });
+  }
+};
+
+exports.deleteResult = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.userId;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    user.savedResults = user.savedResults.filter(r => r._id.toString() !== id);
+    await user.save();
+
+    res.json({ message: 'Result deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to delete result' });
   }
 };
 

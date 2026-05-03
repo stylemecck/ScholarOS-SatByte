@@ -162,21 +162,9 @@ const RankPredictor = () => {
         });
       }
       
-      // Update usage count and Save Result if logged in
+      // Update usage count for non-logged in users
       if (!token) {
         localStorage.setItem('rank_prediction_count', (usageCount + 1).toString());
-      } else {
-        // Automatically save to dashboard if logged in
-        try {
-          await axios.post(`${import.meta.env.VITE_API_URL}/api/tools/save-result`, {
-            toolName: 'Rank Predictor',
-            data: { ...formData, ...response.data }
-          }, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-        } catch (saveErr) {
-          console.error("Failed to save result:", saveErr);
-        }
       }
     } catch (err: any) {
       console.error(err);

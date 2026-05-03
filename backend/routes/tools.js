@@ -12,6 +12,7 @@ router.post('/predict-percentile', toolsController.predictPercentile);
 router.post('/generate-summary', toolsController.generateResumeSummary);
 router.post('/enhance-bullet', toolsController.enhanceResumeBullet);
 router.post('/save-result', authMiddleware, toolsController.saveResult);
+router.delete('/delete-result/:id', authMiddleware, toolsController.deleteResult);
 router.post('/deduct-credits', authMiddleware, toolsController.deductCredits);
 router.post('/chat', (req, res, next) => {
     // Optional auth: if token exists, verify it, but don't block if missing
