@@ -55,8 +55,8 @@ const Navbar = () => {
           className="flex items-center gap-2 group" 
           onClick={() => setIsMenuOpen(false)}
         >
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform duration-300">
-            <Zap className="w-5 h-5 text-primary-foreground fill-primary-foreground" />
+          <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center overflow-hidden shadow-lg shadow-primary/5 group-hover:scale-110 transition-transform duration-300 border border-primary/20">
+            <img src="/logo.svg" alt="STP Pro Logo" className="w-full h-full object-cover" />
           </div>
           <div className="flex flex-col">
             <span className="text-lg font-black tracking-tight leading-none">STP <span className="text-primary italic">PRO</span></span>

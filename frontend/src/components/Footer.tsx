@@ -6,10 +6,10 @@ const Footer = () => {
 
   const footerLinks = {
     Tools: [
+      { name: 'PDF Tools', path: '/tools/pdf/merge' },
+      { name: 'Image Tools', path: '/tools/image/compress' },
       { name: 'Rank Predictor', path: '/tools/rank-predictor' },
-      { name: 'Percentile Calc', path: '/tools/marks-percentile' },
       { name: 'Study Planner', path: '/tools/study-planner' },
-      { name: 'Resume Builder', path: '/tools/resume-builder' },
     ],
     Company: [
       { name: 'About Us', path: '/about' },
@@ -36,12 +36,12 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="lg:col-span-2 space-y-6">
             <Link to="/" className="flex items-center gap-2 group w-fit">
-              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform duration-300">
-                <Zap className="w-5 h-5 text-primary-foreground fill-primary-foreground" />
+              <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center overflow-hidden shadow-lg shadow-primary/5 group-hover:scale-110 transition-transform duration-300 border border-primary/20">
+                <img src="/logo.svg" alt="STP Pro Logo" className="w-full h-full object-cover" />
               </div>
               <div className="flex flex-col">
-                <span className="text-xl font-black tracking-tight text-white">STP <span className="text-primary">PRO</span></span>
-                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-60">Success Platform</span>
+                <span className="text-xl font-black tracking-tight text-white uppercase leading-none">STP <span className="text-primary italic">PRO</span></span>
+                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-60 mt-1">Success Platform</span>
               </div>
             </Link>
             <p className="text-muted-foreground text-sm max-w-sm leading-relaxed font-medium">

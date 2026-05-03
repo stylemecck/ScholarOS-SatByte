@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../context/useAuth';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Loader2 } from 'lucide-react';
@@ -14,6 +14,8 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/dashboard';
 
   const handleGoogleSuccess = async (response: any) => {
     try {
@@ -22,7 +24,7 @@ const Login = () => {
         credential: response.credential
       });
       login(res.data.token, res.data.user);
-      navigate('/dashboard');
+      navigate(redirectTo);
     } catch (err: any) {
       setError(err.response?.data?.error || 'Google login failed');
     } finally {
@@ -37,7 +39,7 @@ const Login = () => {
     try {
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, { email, password });
       login(res.data.token, res.data.user);
-      navigate('/');
+      navigate(redirectTo);
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to login');
     } finally {
