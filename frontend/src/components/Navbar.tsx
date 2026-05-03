@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
-import { Moon, Sun, Menu, X, Zap, ShieldCheck } from 'lucide-react';
+import { Moon, Sun, Menu, X, Zap, ShieldCheck, Sparkles } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -215,42 +215,74 @@ const Navbar = () => {
             initial={{ opacity: 0, scale: 0.95, y: -20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -20 }}
-            className="md:hidden mt-4 max-w-sm mx-auto bg-background/90 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] shadow-2xl p-6 pointer-events-auto"
+            className="md:hidden mt-4 max-w-sm mx-auto bg-background/95 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] shadow-2xl p-6 pointer-events-auto overflow-hidden relative"
           >
-            <div className="space-y-4">
-              {navLinks.map((link) => (
-                <Link 
-                  key={link.path}
-                  to={link.path} 
-                  onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-primary/10 transition-all group"
-                >
-                  <span className="text-sm font-black uppercase tracking-widest text-muted-foreground group-hover:text-primary">{link.name}</span>
-                  <div className="p-2 rounded-lg bg-white/5 text-muted-foreground group-hover:text-primary group-hover:bg-primary/10">
-                    <Zap className="w-4 h-4" />
-                  </div>
-                </Link>
-              ))}
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-indigo-500 to-amber-500" />
+            
+            <div className="space-y-6 max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
+              {/* Main Links */}
+              <div className="grid grid-cols-2 gap-3">
+                {navLinks.map((link) => (
+                  <Link 
+                    key={link.path}
+                    to={link.path} 
+                    onClick={() => setIsMenuOpen(false)}
+                    className={`flex items-center justify-center py-4 rounded-2xl border transition-all ${
+                      location.pathname === link.path 
+                        ? 'bg-primary/10 border-primary/20 text-primary' 
+                        : 'bg-white/5 border-white/5 text-muted-foreground'
+                    }`}
+                  >
+                    <span className="text-[10px] font-black uppercase tracking-widest">{link.name}</span>
+                  </Link>
+                ))}
+              </div>
+
+              {/* Tools Section */}
+              <div className="space-y-4">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-40 px-2">Popular Tools</h3>
+                <div className="grid grid-cols-1 gap-2">
+                    <Link to="/tools/pdf/merge" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 group hover:bg-rose-500/10 transition-all">
+                        <div className="w-10 h-10 bg-rose-500/10 rounded-xl flex items-center justify-center text-rose-500"><Zap className="w-5 h-5" /></div>
+                        <span className="text-xs font-bold">Merge PDF</span>
+                    </Link>
+                    <Link to="/tools/image/compress" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 group hover:bg-indigo-500/10 transition-all">
+                        <div className="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-500"><Menu className="w-5 h-5" /></div>
+                        <span className="text-xs font-bold">Compress Image</span>
+                    </Link>
+                    <Link to="/tools/rank-predictor" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 group hover:bg-amber-500/10 transition-all">
+                        <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500"><Sparkles className="w-5 h-5" /></div>
+                        <span className="text-xs font-bold">Rank Predictor</span>
+                    </Link>
+                    <Link to="/tools/resume-builder" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 group hover:bg-primary/10 transition-all">
+                        <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary"><ShieldCheck className="w-5 h-5" /></div>
+                        <span className="text-xs font-bold">Resume Builder</span>
+                    </Link>
+                </div>
+              </div>
 
               <div className="pt-4 border-t border-white/10">
                 {user ? (
                   <div className="space-y-4">
-                    <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-2xl">
-                      <div className="w-12 h-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center text-lg font-black">
+                    <div className="flex items-center gap-4 p-4 bg-primary/5 rounded-2xl border border-primary/10">
+                      <div className="w-12 h-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center text-lg font-black shadow-lg shadow-primary/20">
                         {user.name.charAt(0).toUpperCase()}
                       </div>
-                      <div>
-                        <p className="font-black leading-none">{user.name}</p>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">{user.role}</p>
+                      <div className="flex-grow">
+                        <p className="text-sm font-black leading-none">{user.name}</p>
+                        <div className="flex items-center justify-between mt-1.5">
+                            <span className="text-[10px] font-black text-primary uppercase tracking-widest">{user.credits} Credits</span>
+                            <span className="text-[8px] font-bold text-muted-foreground uppercase opacity-40">{user.role}</span>
+                        </div>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                        <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-center py-4 bg-primary/10 text-primary rounded-2xl font-black text-xs uppercase tracking-widest">
-                            Profile
+                        <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-center py-4 bg-white/5 text-foreground border border-white/10 rounded-2xl font-black text-[10px] uppercase tracking-widest">
+                            Dashboard
                         </Link>
                         <button 
                             onClick={() => { logout(); setIsMenuOpen(false); }}
-                            className="flex items-center justify-center py-4 bg-rose-500/10 text-rose-500 rounded-2xl font-black text-xs uppercase tracking-widest"
+                            className="flex items-center justify-center py-4 bg-rose-500/10 text-rose-500 border border-rose-500/10 rounded-2xl font-black text-[10px] uppercase tracking-widest"
                         >
                             Logout
                         </button>
@@ -260,9 +292,9 @@ const Navbar = () => {
                   <Link 
                     to="/login" 
                     onClick={() => setIsMenuOpen(false)}
-                    className="block w-full py-5 bg-primary text-primary-foreground text-center rounded-[2rem] font-black text-sm uppercase tracking-[0.2em] shadow-lg shadow-primary/20"
+                    className="block w-full py-5 bg-primary text-primary-foreground text-center rounded-[2rem] font-black text-sm uppercase tracking-[0.2em] shadow-[0_20px_40px_rgba(59,130,246,0.3)]"
                   >
-                    Login / Sign Up
+                    Get Started Free
                   </Link>
                 )}
               </div>
