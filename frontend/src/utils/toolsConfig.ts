@@ -7,7 +7,13 @@ import {
   Layout, 
   FileText, 
   Type, 
-  FileSearch 
+  FileSearch,
+  FilePlus,
+  Scissors,
+  FileMinus,
+  Image as ImageIcon,
+  Maximize,
+  RefreshCw
 } from 'lucide-react';
 
 export interface Tool {
@@ -15,7 +21,7 @@ export interface Tool {
   name: string;
   description: string;
   icon: any;
-  category: 'Academic' | 'Exam' | 'Utility';
+  category: 'Academic' | 'Exam' | 'Utility' | 'PDF' | 'Image';
   path: string;
 }
 
@@ -91,5 +97,55 @@ export const tools: Tool[] = [
     icon: FileSearch,
     category: 'Utility',
     path: '/tools/pdf-to-text'
+  },
+  // PDF Tools
+  {
+    id: 'pdf-merge',
+    name: 'Merge PDF',
+    description: 'Combine multiple PDF files into one easily.',
+    icon: FilePlus,
+    category: 'PDF',
+    path: '/tools/pdf/merge'
+  },
+  {
+    id: 'pdf-split',
+    name: 'Split PDF',
+    description: 'Separate one page or a whole set for easy conversion into independent PDF files.',
+    icon: Scissors,
+    category: 'PDF',
+    path: '/tools/pdf/split'
+  },
+  {
+    id: 'pdf-compress',
+    name: 'Compress PDF',
+    description: 'Reduce file size while optimizing for maximal PDF quality.',
+    icon: FileMinus,
+    category: 'PDF',
+    path: '/tools/pdf/compress'
+  },
+  // Image Tools
+  {
+    id: 'image-compress',
+    name: 'Compress Image',
+    description: 'Compress JPG, PNG, SVG or GIF with the best quality and compression.',
+    icon: ImageIcon,
+    category: 'Image',
+    path: '/tools/image/compress'
+  },
+  {
+    id: 'image-resize',
+    name: 'Resize Image',
+    description: 'Define your dimensions, by pixels or percentage, and resize your JPG, PNG, SVG or GIF images.',
+    icon: Maximize,
+    category: 'Image',
+    path: '/tools/image/resize'
+  },
+  {
+    id: 'image-convert',
+    name: 'Convert Image',
+    description: 'Convert JPG to PNG, PNG to JPG, or any image to WebP.',
+    icon: RefreshCw,
+    category: 'Image',
+    path: '/tools/image/convert'
   }
 ];

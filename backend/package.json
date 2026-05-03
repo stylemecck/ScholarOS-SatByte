@@ -16,6 +16,7 @@
   "dependencies": {
     "@google/genai": "^1.51.0",
     "@google/generative-ai": "^0.24.1",
+    "archiver": "^7.0.1",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "crypto": "^1.0.1",
@@ -28,8 +29,10 @@
     "morgan": "^1.10.1",
     "multer": "^2.1.1",
     "nodemailer": "^8.0.7",
+    "pdf-lib": "^1.17.1",
     "pdf-parse": "^2.4.5",
-    "razorpay": "^2.9.6"
+    "razorpay": "^2.9.6",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"

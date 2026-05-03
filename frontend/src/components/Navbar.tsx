@@ -30,19 +30,23 @@ const Navbar = () => {
     }
   };
 
+  const [isToolsOpen, setIsToolsOpen] = useState(false);
+
+
+
   const navLinks = [
-    { name: 'Tools', path: '/' },
-    { name: 'Dashboard', path: '/dashboard' },
+    { name: 'Home', path: '/' },
     { name: 'Pricing', path: '/pricing' },
+    { name: 'About', path: '/about' },
   ];
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 px-4 py-4 pointer-events-none">
       <nav className={`
-        max-w-6xl mx-auto flex items-center justify-between px-6 h-16 pointer-events-auto
+        max-w-7xl mx-auto flex items-center justify-between px-6 h-16 pointer-events-auto
         transition-all duration-500 rounded-[2rem]
         ${scrolled 
-          ? 'bg-background/70 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.1)]' 
+          ? 'bg-background/80 backdrop-blur-3xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.1)]' 
           : 'bg-background/40 backdrop-blur-md border border-white/5'}
       `}>
         {/* Logo */}
@@ -55,13 +59,83 @@ const Navbar = () => {
             <Zap className="w-5 h-5 text-primary-foreground fill-primary-foreground" />
           </div>
           <div className="flex flex-col">
-            <span className="text-lg font-black tracking-tight leading-none">STP <span className="text-primary">PRO</span></span>
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">Toolkit</span>
+            <span className="text-lg font-black tracking-tight leading-none">STP <span className="text-primary italic">PRO</span></span>
+            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-60">Mega Toolkit</span>
           </div>
         </Link>
         
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-1 bg-white/5 p-1 rounded-2xl border border-white/5">
+        <div className="hidden md:flex items-center gap-1">
+          {/* Tools Mega Menu Trigger */}
+          <div 
+            className="relative"
+            onMouseEnter={() => setIsToolsOpen(true)}
+            onMouseLeave={() => setIsToolsOpen(false)}
+          >
+            <button className={`
+              px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2
+              ${isToolsOpen ? 'text-primary bg-primary/5' : 'text-muted-foreground hover:text-foreground'}
+            `}>
+              Tools <Menu className={`w-3 h-3 transition-transform ${isToolsOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {/* Mega Menu Overlay */}
+            <AnimatePresence>
+              {isToolsOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  className="absolute top-full left-0 mt-2 w-[480px] bg-background/95 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-6 shadow-2xl grid grid-cols-2 gap-4"
+                >
+                  <div className="space-y-4">
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50 px-2">PDF & Image</h3>
+                    <div className="space-y-1">
+                        <Link to="/tools/pdf/merge" className="flex items-center gap-3 p-3 rounded-2xl hover:bg-rose-500/10 group transition-all">
+                            <div className="w-8 h-8 bg-rose-500/10 rounded-lg flex items-center justify-center text-rose-500 group-hover:scale-110 transition-transform"><Zap className="w-4 h-4" /></div>
+                            <div>
+                                <p className="text-xs font-bold">Merge PDF</p>
+                                <p className="text-[9px] text-muted-foreground font-medium">Combine files</p>
+                            </div>
+                        </Link>
+                        <Link to="/tools/image/compress" className="flex items-center gap-3 p-3 rounded-2xl hover:bg-indigo-500/10 group transition-all">
+                            <div className="w-8 h-8 bg-indigo-500/10 rounded-lg flex items-center justify-center text-indigo-500 group-hover:scale-110 transition-transform"><Menu className="w-4 h-4" /></div>
+                            <div>
+                                <p className="text-xs font-bold">Compress Image</p>
+                                <p className="text-[9px] text-muted-foreground font-medium">Optimize size</p>
+                            </div>
+                        </Link>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-50 px-2">Academic & AI</h3>
+                    <div className="space-y-1">
+                        <Link to="/tools/rank-predictor" className="flex items-center gap-3 p-3 rounded-2xl hover:bg-amber-500/10 group transition-all">
+                            <div className="w-8 h-8 bg-amber-500/10 rounded-lg flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform"><Zap className="w-4 h-4" /></div>
+                            <div>
+                                <p className="text-xs font-bold">Rank Predictor</p>
+                                <p className="text-[9px] text-muted-foreground font-medium">AI Insights</p>
+                            </div>
+                        </Link>
+                        <Link to="/tools/resume-builder" className="flex items-center gap-3 p-3 rounded-2xl hover:bg-primary/10 group transition-all">
+                            <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center text-primary group-hover:scale-110 transition-transform"><ShieldCheck className="w-4 h-4" /></div>
+                            <div>
+                                <p className="text-xs font-bold">Resume Builder</p>
+                                <p className="text-[9px] text-muted-foreground font-medium">Pro Templates</p>
+                            </div>
+                        </Link>
+                    </div>
+                  </div>
+                  <Link to="/" className="col-span-2 mt-2 p-3 bg-white/5 rounded-2xl text-center text-[10px] font-black uppercase tracking-[0.2em] hover:bg-primary hover:text-white transition-all">
+                    View All 15+ Tools
+                  </Link>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          <div className="h-4 w-px bg-white/10 mx-2" />
+
           {navLinks.map((link) => (
             <Link
               key={link.path}
@@ -105,9 +179,9 @@ const Navbar = () => {
                 <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center text-xs font-black shadow-lg shadow-primary/20">
                   {user.name.charAt(0).toUpperCase()}
                 </div>
-                <div className="flex flex-col">
+                <div className="flex flex-col text-left">
                     <span className="text-[10px] font-black text-foreground leading-none">{user.name.split(' ')[0]}</span>
-                    <span className="text-[9px] font-black text-primary uppercase tracking-tighter mt-0.5">{user.credits} Credits</span>
+                    <span className="text-[8px] font-black text-primary uppercase tracking-tighter mt-0.5">{user.credits} Credits</span>
                 </div>
               </Link>
               <button 

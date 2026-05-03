@@ -11,6 +11,8 @@ const studyPlannerRoutes = require('./routes/studyPlanner');
 const paymentRoutes = require('./routes/payment');
 const adminRoutes = require('./routes/admin');
 const referralRoutes = require('./routes/referral');
+const pdfRoutes = require('./routes/pdf');
+const imageRoutes = require('./routes/image');
 
 const app = express();
 
@@ -40,6 +42,8 @@ app.use('/api/study-planner', studyPlannerRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/referrals', referralRoutes);
+app.use('/api/pdf', pdfRoutes);
+app.use('/api/image', imageRoutes);
 
 // Global Error Handler
 app.use((err, req, res, next) => {
@@ -59,6 +63,27 @@ mongoose.connect(process.env.MONGO_URI, {
   console.error('❌ MongoDB Connection Error:', err.message);
   // If we can't connect to DB, the server is useless, so we log it clearly
 });
+
+// Temp file cleanup system (Runs every hour)
+const CLEANUP_INTERVAL = 60 * 60 * 1000; // 1 hour
+setInterval(() => {
+  const tempDir = path.join(__dirname, 'temp');
+  if (fs.existsSync(tempDir)) {
+    fs.readdir(tempDir, (err, files) => {
+      if (err) return console.error('Cleanup Error:', err);
+      const now = Date.now();
+      files.forEach(file => {
+        const filePath = path.join(tempDir, file);
+        fs.stat(filePath, (err, stats) => {
+          if (err) return;
+          if (now - stats.mtimeMs > CLEANUP_INTERVAL) {
+            fs.unlink(filePath, () => {});
+          }
+        });
+      });
+    });
+  }
+}, CLEANUP_INTERVAL);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

@@ -16,6 +16,14 @@ import PDFToText from './pages/tools/PDFToText';
 import ResumeBuilder from './pages/tools/ResumeBuilder';
 import StudyPlanner from './pages/tools/StudyPlanner';
 import MarksVsPercentile from './pages/tools/MarksVsPercentile';
+// PDF Tools
+import MergePDF from './pages/tools/pdf/MergePDF';
+import SplitPDF from './pages/tools/pdf/SplitPDF';
+import CompressPDF from './pages/tools/pdf/CompressPDF';
+// Image Tools
+import CompressImage from './pages/tools/image/CompressImage';
+import ResizeImage from './pages/tools/image/ResizeImage';
+import ConvertImage from './pages/tools/image/ConvertImage';
 import About from './pages/About';
 import Privacy from './pages/Privacy';
 import Contact from './pages/Contact';
@@ -57,6 +65,16 @@ function App() {
               <Route path="/tools/study-planner" element={<StudyPlanner />} />
               <Route path="/tools/marks-percentile" element={<MarksVsPercentile />} />
               <Route path="/tools/marks-vs-percentile" element={<MarksVsPercentile />} />
+
+              {/* PDF Tools */}
+              <Route path="/tools/pdf/merge" element={<MergePDF />} />
+              <Route path="/tools/pdf/split" element={<SplitPDF />} />
+              <Route path="/tools/pdf/compress" element={<CompressPDF />} />
+
+              {/* Image Tools */}
+              <Route path="/tools/image/compress" element={<CompressImage />} />
+              <Route path="/tools/image/resize" element={<ResizeImage />} />
+              <Route path="/tools/image/convert" element={<ConvertImage />} />
 
               {/* Informational Pages */}
               <Route path="/about" element={<About />} />
