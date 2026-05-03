@@ -24,6 +24,24 @@ class ReportPDF(FPDF):
         self.set_text_color(150, 150, 150)
         self.cell(0, 10, f'Page {self.page_no()} | Generated on {datetime.now().strftime("%Y-%m-%d %H:%M")} | Powered by Student Toolkit Pro', align='C')
 
+def safe_text(text):
+    if not isinstance(text, str):
+        return str(text)
+    # FPDF's default fonts only support Latin-1. Replace common non-latin characters.
+    replacements = {
+        '₹': 'Rs.',
+        '–': '-', # En dash
+        '—': '-', # Em dash
+        '‘': "'",
+        '’': "'",
+        '“': '"',
+        '”': '"',
+    }
+    for char, rep in replacements.items():
+        text = text.replace(char, rep)
+    # Encode to latin-1 and ignore errors to prevent crashes
+    return text.encode('latin-1', 'ignore').decode('latin-1')
+
 def generate_pdf(data):
     pdf = ReportPDF()
     pdf.add_page()
@@ -31,12 +49,12 @@ def generate_pdf(data):
     # User & Exam Info
     pdf.set_font('helvetica', 'B', 14)
     pdf.set_text_color(0, 0, 0)
-    pdf.cell(0, 10, f"Analysis for: {data.get('userName', 'Student')}", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(0, 10, f"Analysis for: {safe_text(data.get('userName', 'Student'))}", new_x="LMARGIN", new_y="NEXT")
     
     pdf.set_font('helvetica', '', 11)
-    pdf.cell(50, 8, f"Exam: {data.get('exam', 'N/A')}", border=0)
-    pdf.cell(50, 8, f"Category: {data.get('category', 'General')}", border=0)
-    pdf.cell(50, 8, f"Score: {data.get('marks', 'N/A')}", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(50, 8, f"Exam: {safe_text(data.get('exam', 'N/A'))}", border=0)
+    pdf.cell(50, 8, f"Category: {safe_text(data.get('category', 'General'))}", border=0)
+    pdf.cell(50, 8, f"Score: {safe_text(data.get('marks', 'N/A'))}", new_x="LMARGIN", new_y="NEXT")
     pdf.ln(5)
 
     # Summary Stats Box
@@ -61,7 +79,7 @@ def generate_pdf(data):
     if 'High' in chance: pdf.set_text_color(16, 185, 129)
     elif 'Moderate' in chance: pdf.set_text_color(245, 158, 11)
     else: pdf.set_text_color(239, 68, 68)
-    pdf.cell(60, 10, chance, align='C', new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(60, 10, safe_text(chance), align='C', new_x="LMARGIN", new_y="NEXT")
     
     pdf.ln(15)
 
@@ -73,7 +91,7 @@ def generate_pdf(data):
         pdf.cell(0, 10, 'PAPER DIFFICULTY ANALYSIS', new_x="LMARGIN", new_y="NEXT")
         pdf.set_font('helvetica', '', 10)
         pdf.set_text_color(50, 50, 50)
-        pdf.multi_cell(0, 6, diff.get('paperInsight', 'N/A'))
+        pdf.multi_cell(0, 6, safe_text(diff.get('paperInsight', 'N/A')))
         pdf.ln(5)
 
     # College Suggestions Table
@@ -101,11 +119,11 @@ def generate_pdf(data):
             name = c.get('name', 'N/A')
             if len(name) > 45: name = name[:42] + "..."
             
-            pdf.cell(80, 7, name, border=1)
-            pdf.cell(35, 7, c.get('location', 'N/A')[:20], border=1)
-            pdf.cell(25, 7, c.get('fee', 'N/A'), border=1)
-            pdf.cell(30, 7, c.get('cutoffRange', 'N/A'), border=1)
-            pdf.cell(20, 7, c.get('naacGrade', 'N/A'), border=1, new_x="LMARGIN", new_y="NEXT")
+            pdf.cell(80, 7, safe_text(name), border=1)
+            pdf.cell(35, 7, safe_text(c.get('location', 'N/A')[:20]), border=1)
+            pdf.cell(25, 7, safe_text(c.get('fee', 'N/A')), border=1)
+            pdf.cell(30, 7, safe_text(c.get('cutoffRange', 'N/A')), border=1)
+            pdf.cell(20, 7, safe_text(c.get('naacGrade', 'N/A')), border=1, new_x="LMARGIN", new_y="NEXT")
         pdf.ln(10)
 
     # Counseling Rounds
@@ -121,14 +139,14 @@ def generate_pdf(data):
         for r_name, r_colleges in rounds.items():
             if r_colleges:
                 pdf.set_font('helvetica', 'B', 9)
-                pdf.cell(30, 6, f"{r_name.capitalize()}: ", ln=0)
+                pdf.cell(30, 6, f"{safe_text(r_name).capitalize()}: ", ln=0)
                 pdf.set_font('helvetica', '', 9)
-                pdf.multi_cell(0, 6, ", ".join(r_colleges))
+                pdf.multi_cell(0, 6, ", ".join([safe_text(rc) for rc in r_colleges]))
         
         pdf.ln(5)
         pdf.set_font('helvetica', 'I', 9)
         pdf.set_text_color(100, 100, 100)
-        pdf.multi_cell(0, 5, f"Counselor Tip: {spot.get('tip', 'N/A')}")
+        pdf.multi_cell(0, 5, f"Counselor Tip: {safe_text(spot.get('tip', 'N/A'))}")
 
     # Final AI Analysis
     pdf.ln(5)
@@ -137,7 +155,7 @@ def generate_pdf(data):
     pdf.set_text_color(0, 0, 0)
     pdf.cell(0, 8, 'EXPERT AI ANALYSIS', fill=True, new_x="LMARGIN", new_y="NEXT")
     pdf.set_font('helvetica', '', 9)
-    pdf.multi_cell(0, 5, data.get('analysis', 'N/A'))
+    pdf.multi_cell(0, 5, safe_text(data.get('analysis', 'N/A')))
 
     # Disclaimer
     pdf.ln(10)

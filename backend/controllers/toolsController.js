@@ -480,51 +480,72 @@ exports.exportCounselingPdf = async (req, res) => {
 
     fs.writeFileSync(inputDataPath, JSON.stringify(pythonData));
 
-    const pythonProcess = spawn('python', [
-      path.join(__dirname, '../utils/pdf_generator.py'),
-      inputDataPath
-    ]);
+    const startPythonProcess = (cmd) => {
+      return spawn(cmd, [
+        path.join(__dirname, '../utils/pdf_generator.py'),
+        inputDataPath
+      ]);
+    };
 
-    let errorData = '';
-    let stdoutData = '';
-    pythonProcess.stderr.on('data', (data) => errorData += data.toString());
-    pythonProcess.stdout.on('data', (data) => stdoutData += data.toString());
-    
+    let pythonProcess = startPythonProcess('python');
+
     pythonProcess.on('error', (err) => {
-      console.error('Failed to start Python process:', err);
-      if (fs.existsSync(inputDataPath)) fs.unlinkSync(inputDataPath);
-      if (!res.headersSent) {
-        res.status(500).json({ error: 'Python environment not found' });
-      }
+      console.warn(`'python' command failed, trying 'py'...`);
+      pythonProcess = startPythonProcess('py');
+      
+      pythonProcess.on('error', (err2) => {
+        console.error('All Python commands failed:', err2);
+        if (fs.existsSync(inputDataPath)) fs.unlinkSync(inputDataPath);
+        if (!res.headersSent) {
+          res.status(500).json({ error: 'Python environment not found. Please ensure Python is installed and in PATH.' });
+        }
+      });
+
+      setupProcessListeners(pythonProcess);
     });
 
-    pythonProcess.on('close', (code) => {
-      if (fs.existsSync(inputDataPath)) fs.unlinkSync(inputDataPath);
+    const setupProcessListeners = (proc) => {
+      let errorData = '';
+      let stdoutData = '';
+      proc.stderr.on('data', (data) => errorData += data.toString());
+      proc.stdout.on('data', (data) => stdoutData += data.toString());
+      
+      proc.on('close', (code) => {
+        if (fs.existsSync(inputDataPath)) fs.unlinkSync(inputDataPath);
 
-      if (code !== 0 || stdoutData.startsWith('ERROR:')) {
-        const fullError = errorData || stdoutData;
-        console.error('Python PDF Error:', fullError);
-        if (!res.headersSent) {
-          res.status(500).json({ error: 'Failed to generate PDF', details: fullError });
-        }
-        return;
-      }
-
-      if (fs.existsSync(outputPath)) {
-        res.download(outputPath, `Counseling_Report.pdf`, (err) => {
-          if (err) console.error('Download Error:', err);
-          try {
-            if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
-          } catch (unlinkErr) {
-            console.error('Unlink Error:', unlinkErr);
+        if (code !== 0 || stdoutData.startsWith('ERROR:')) {
+          const fullError = errorData || stdoutData;
+          console.error('Python PDF Error:', fullError);
+          if (!res.headersSent) {
+            res.status(500).json({ 
+              error: 'Failed to generate PDF', 
+              details: fullError,
+              code: code 
+            });
           }
-        });
-      } else {
-        if (!res.headersSent) {
-          res.status(500).json({ error: 'PDF file was not created', details: stdoutData });
+          return;
         }
-      }
-    });
+
+        if (fs.existsSync(outputPath)) {
+          res.download(outputPath, `Counseling_Report.pdf`, (err) => {
+            if (err) console.error('Download Error:', err);
+            try {
+              if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
+            } catch (unlinkErr) {
+              console.error('Unlink Error:', unlinkErr);
+            }
+          });
+        } else {
+          if (!res.headersSent) {
+            res.status(500).json({ error: 'PDF file was not created', details: stdoutData });
+          }
+        }
+      });
+    };
+
+    if (pythonProcess) {
+      setupProcessListeners(pythonProcess);
+    }
 
 
   } catch (err) {
