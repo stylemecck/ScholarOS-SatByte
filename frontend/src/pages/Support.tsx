@@ -72,118 +72,133 @@ const Support = () => {
 
       const paymentObject = new (window as any).Razorpay(options);
       paymentObject.open();
-    } catch (err) {
-      alert("Failed to initiate payment.");
+    } catch (err: any) {
+      console.error("SUPPORT INITIATION ERROR:", err);
+      const errorMsg = err.response?.data?.details || err.response?.data?.error || "Failed to initiate support payment.";
+      alert(errorMsg);
     } finally {
       setLoading(null);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-12 px-4 space-y-16">
-      <div className="text-center space-y-6">
+    <div className="max-w-4xl mx-auto py-20 px-4 space-y-16">
+      <div className="text-center space-y-6 max-w-2xl mx-auto">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="inline-flex p-4 bg-amber-500/10 text-amber-500 rounded-full"
+          className="inline-flex p-6 bg-primary/10 text-primary rounded-[2.5rem] shadow-2xl shadow-primary/10"
         >
-          <Coffee className="w-12 h-12" />
+          <Coffee className="w-14 h-14" />
         </motion.div>
-        <div className="space-y-2">
-          <h1 className="text-4xl md:text-6xl font-black tracking-tight">Buy Me a <span className="text-primary">Coffee</span></h1>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Fuel our development! Choose how many coffees you'd like to send.
+        <div className="space-y-4">
+          <h1 className="text-5xl md:text-7xl font-black tracking-tight uppercase leading-[0.9]">Fuel the <br /><span className="text-primary italic">Innovation.</span></h1>
+          <p className="text-muted-foreground text-lg font-medium leading-relaxed">
+            Student Toolkit Pro is built solo with love. Your support helps cover server costs and keeps these tools free for everyone.
           </p>
         </div>
 
         {/* Quantity Selector */}
-        <div className="flex items-center justify-center gap-4 pt-4">
-          {[1, 3, 5, 10].map((num) => (
-            <button
-              key={num}
-              onClick={() => setQuantity(num)}
-              className={`w-14 h-14 rounded-2xl font-black text-lg transition-all flex items-center justify-center border-2 ${
-                quantity === num 
-                  ? 'bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 scale-110' 
-                  : 'bg-card text-muted-foreground border-border hover:border-primary/50'
-              }`}
-            >
-              {num}x
-            </button>
-          ))}
-          <span className="text-sm font-bold text-muted-foreground ml-2">Coffees</span>
+        <div className="flex flex-col items-center gap-4 pt-8">
+            <label className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-50">Select Coffee Batch</label>
+            <div className="flex items-center justify-center gap-3">
+            {[1, 2, 5, 10].map((num) => (
+                <button
+                key={num}
+                onClick={() => setQuantity(num)}
+                className={`w-16 h-16 rounded-[1.5rem] font-black text-lg transition-all flex items-center justify-center border-2 ${
+                    quantity === num 
+                    ? 'bg-primary text-primary-foreground border-primary shadow-[0_10px_30px_rgba(59,130,246,0.3)] scale-110' 
+                    : 'bg-white/5 text-muted-foreground border-white/5 hover:border-primary/30 hover:bg-white/10'
+                }`}
+                >
+                {num}x
+                </button>
+            ))}
+            </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <CoffeeCard 
-          amount={50 * quantity} 
+          amount={49 * quantity} 
           label="Single Shot" 
           icon={<Coffee className="w-6 h-6" />}
-          description="A small token of appreciation. Every drop counts!"
+          description="Perfect for a quick 'Thank You' note. Every bit helps!"
           loading={loading === "Single Shot"}
-          onClick={() => handleSupport(50, "Single Shot")}
+          onClick={() => handleSupport(49, "Single Shot")}
         />
         <CoffeeCard 
-          amount={150 * quantity} 
+          amount={149 * quantity} 
           label="Double Espresso" 
-          icon={<Zap className="w-6 h-6" />}
+          icon={<Zap className="w-6 h-6 text-amber-500" />}
           popular={true}
-          description="A significant boost to our development speed!"
+          description="The ultimate fuel for adding complex new features!"
           loading={loading === "Double Espresso"}
-          onClick={() => handleSupport(150, "Double Espresso")}
+          onClick={() => handleSupport(149, "Double Espresso")}
         />
         <CoffeeCard 
-          amount={500 * quantity} 
+          amount={499 * quantity} 
           label="The Whole Pot" 
-          icon={<Sparkles className="w-6 h-6" />}
-          description="Fuel for late-night coding sessions and new features."
+          icon={<Sparkles className="w-6 h-6 text-primary" />}
+          description="Sponsor a whole day of coding and maintenance."
           loading={loading === "The Whole Pot"}
-          onClick={() => handleSupport(500, "The Whole Pot")}
+          onClick={() => handleSupport(499, "The Whole Pot")}
         />
       </div>
 
-      <div className="bg-card border border-border p-12 rounded-[3.5rem] shadow-2xl text-center space-y-8 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-amber-500/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+      <div className="bg-card/40 backdrop-blur-3xl border border-white/5 p-12 md:p-20 rounded-[4rem] shadow-2xl text-center space-y-10 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-500/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2" />
         
-        <h3 className="text-3xl font-black tracking-tight flex items-center justify-center gap-3">
-          <Heart className="fill-rose-500 text-rose-500 w-8 h-8" />
-          Thank You for Supporting!
-        </h3>
-        <p className="text-muted-foreground font-medium max-w-lg mx-auto">
-          All contributions go directly towards maintaining the AI infrastructure and adding more free tools for everyone.
-        </p>
+        <div className="space-y-4">
+            <h3 className="text-4xl font-black tracking-tight flex items-center justify-center gap-4">
+            <Heart className="fill-rose-500 text-rose-500 w-10 h-10 animate-pulse" />
+            Support Satyam Kumar
+            </h3>
+            <p className="text-muted-foreground font-medium max-w-xl mx-auto text-lg leading-relaxed">
+            All contributions go directly towards maintaining the API infrastructure and keeping Student Toolkit Pro ad-free and open for everyone.
+            </p>
+        </div>
         
-        <div className="max-w-xs mx-auto space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Your Mobile Number (Optional)</label>
+        <div className="max-w-xs mx-auto space-y-3">
+          <label className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-50">Mobile Number (Optional)</label>
           <input 
             type="tel"
             name="support_phone_guest"
             autoComplete="off"
-            placeholder="e.g. 9988776655"
+            placeholder="91XXXXXXXX"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="w-full px-5 py-3 rounded-xl bg-background border border-border focus:ring-2 focus:ring-primary outline-none transition-all text-center font-bold"
+            className="w-full px-8 py-4 rounded-2xl bg-white/5 border border-white/5 focus:ring-2 focus:ring-primary outline-none transition-all text-center font-black tracking-widest text-lg"
           />
         </div>
 
-        <div className="pt-4 flex flex-col items-center gap-4">
+        <div className="pt-6 flex flex-col items-center gap-6">
           <button 
-            onClick={() => handleSupport(100, "Coffee")}
+            onClick={() => handleSupport(100, "Support")}
             disabled={loading !== null}
-            className="w-full md:w-auto px-6 md:px-12 py-4 md:py-5 bg-[#FFDD00] text-black rounded-2xl md:rounded-[2rem] font-black text-lg md:text-xl shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-70"
+            className="group w-full md:w-auto px-12 py-6 bg-primary text-primary-foreground rounded-[2rem] font-black text-xl shadow-[0_20px_50px_rgba(59,130,246,0.3)] hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center gap-4 disabled:opacity-70"
           >
-            {loading === "Coffee" ? (
-              <Loader2 className="w-6 h-6 animate-spin shrink-0" />
+            {loading === "Support" ? (
+              <Loader2 className="w-8 h-8 animate-spin" />
             ) : (
-              <Coffee className="w-6 h-6 shrink-0 fill-black/10" />
+              <Coffee className="w-8 h-8 fill-primary-foreground/20 group-hover:rotate-12 transition-transform" />
             )}
-            <span className="whitespace-nowrap">Buy {quantity} Coffee(s) (₹{100 * quantity})</span>
+            <span className="whitespace-nowrap uppercase tracking-widest">Send {quantity} Coffee(s) (₹{100 * quantity})</span>
           </button>
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Securely via Razorpay</p>
+          
+          <div className="flex flex-wrap items-center justify-center gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+            <div className="flex items-center gap-2">
+                <Star className="w-4 h-4 text-amber-500 fill-amber-500" /> Top Contributor Badge
+            </div>
+            <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-primary" /> Instant Confirmation
+            </div>
+          </div>
         </div>
       </div>
+
     </div>
   );
 };

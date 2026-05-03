@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, X, FileText, Download, Loader2, Plus, Settings } from 'lucide-react';
+import { Upload, X, FileText, Download, Loader2, Plus, Settings, ShieldCheck } from 'lucide-react';
 import axios from 'axios';
 import { useEffect } from 'react';
 
@@ -24,6 +24,7 @@ const ToolBase: React.FC<ToolBaseProps> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState<string | null>(null);
+  const [previews, setPreviews] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Dynamic SEO management
@@ -39,11 +40,17 @@ const ToolBase: React.FC<ToolBaseProps> = ({
     if (e.target.files) {
       const newFiles = Array.from(e.target.files);
       setFiles(prev => multiple ? [...prev, ...newFiles] : newFiles);
+      
+      // Generate previews
+      const newPreviews = newFiles.map(file => URL.createObjectURL(file));
+      setPreviews(prev => multiple ? [...prev, ...newPreviews] : newPreviews);
     }
   };
 
   const removeFile = (index: number) => {
+    URL.revokeObjectURL(previews[index]);
     setFiles(prev => prev.filter((_, i) => i !== index));
+    setPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleProcess = async () => {
@@ -85,17 +92,26 @@ const ToolBase: React.FC<ToolBaseProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 py-10 px-4">
+    <div className="max-w-6xl mx-auto space-y-12 py-12 px-4">
       <div className="text-center space-y-4">
-        <div className="inline-flex p-4 bg-primary/10 rounded-3xl">
-          <Icon className="w-12 h-12 text-primary" />
-        </div>
-        <h1 className="text-4xl font-black tracking-tight">{title}</h1>
-        <p className="text-muted-foreground max-w-xl mx-auto font-medium">{description}</p>
+        <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="inline-flex p-5 bg-primary/10 rounded-[2rem]"
+        >
+          <Icon className="w-14 h-14 text-primary" />
+        </motion.div>
+        <h1 className="text-5xl font-black tracking-tight uppercase leading-none">{title}</h1>
+        <p className="text-muted-foreground max-w-xl mx-auto font-medium text-lg leading-relaxed">{description}</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
+      {/* Top Ad Slot */}
+      <div className="w-full h-24 bg-white/5 border border-dashed border-white/10 rounded-3xl flex items-center justify-center text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground/30">
+        Advertisement Placeholder
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
+        <div className="lg:col-span-3 space-y-8">
           {/* Upload Area */}
           <div 
             onClick={() => fileInputRef.current?.click()}
@@ -104,14 +120,18 @@ const ToolBase: React.FC<ToolBaseProps> = ({
               e.preventDefault();
               const droppedFiles = Array.from(e.dataTransfer.files);
               setFiles(prev => multiple ? [...prev, ...droppedFiles] : droppedFiles);
+              const newPreviews = droppedFiles.map(file => URL.createObjectURL(file));
+              setPreviews(prev => multiple ? [...prev, ...newPreviews] : newPreviews);
             }}
             className="relative group cursor-pointer"
           >
-            <div className="absolute -inset-1 bg-gradient-to-r from-primary to-amber-500 rounded-[2.5rem] blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-            <div className="relative aspect-video flex flex-col items-center justify-center border-2 border-dashed border-white/10 bg-card/50 backdrop-blur-xl rounded-[2.5rem] p-12 text-center group-hover:border-primary/50 transition-all">
-              <Upload className="w-16 h-16 text-primary mb-4 group-hover:scale-110 transition-transform" />
-              <p className="text-xl font-bold">Drop your files here</p>
-              <p className="text-muted-foreground mt-2">or click to browse from device</p>
+            <div className="absolute -inset-2 bg-gradient-to-r from-primary via-indigo-500 to-amber-500 rounded-[3rem] blur opacity-10 group-hover:opacity-30 transition duration-1000"></div>
+            <div className="relative aspect-[21/9] flex flex-col items-center justify-center border-2 border-dashed border-white/10 bg-card/40 backdrop-blur-3xl rounded-[3rem] p-12 text-center group-hover:border-primary/50 transition-all border-spacing-4">
+              <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                <Upload className="w-10 h-10 text-primary" />
+              </div>
+              <p className="text-2xl font-black uppercase tracking-tight">Drop your files here</p>
+              <p className="text-muted-foreground mt-2 font-medium">or click to select from your device</p>
               <input 
                 type="file" 
                 ref={fileInputRef}
@@ -123,36 +143,49 @@ const ToolBase: React.FC<ToolBaseProps> = ({
             </div>
           </div>
 
-          {/* File List */}
+          {/* Previews Grid */}
           <AnimatePresence>
             {files.length > 0 && (
               <motion.div 
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="space-y-3"
+                className="grid grid-cols-2 md:grid-cols-4 gap-4"
               >
                 {files.map((file, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-2xl">
-                    <div className="flex items-center gap-3">
-                      <FileText className="w-5 h-5 text-primary" />
-                      <div>
-                        <p className="text-sm font-bold truncate max-w-[200px] sm:max-w-xs">{file.name}</p>
-                        <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest">
-                          {(file.size / (1024 * 1024)).toFixed(2)} MB
-                        </p>
+                  <motion.div 
+                    key={idx} 
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="relative aspect-[3/4] bg-white/5 rounded-3xl overflow-hidden border border-white/10 group/file"
+                  >
+                    {file.type.startsWith('image/') ? (
+                      <img src={previews[idx]} alt="preview" className="w-full h-full object-cover opacity-60 group-hover/file:opacity-100 transition-opacity" />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center p-4">
+                        <FileText className="w-12 h-12 text-primary mb-3 opacity-40" />
+                        <p className="text-[10px] font-black uppercase tracking-widest text-center truncate w-full">{file.name}</p>
                       </div>
-                    </div>
-                    <button onClick={() => removeFile(idx)} className="p-2 hover:bg-white/10 rounded-xl transition-colors">
-                      <X className="w-4 h-4 text-muted-foreground" />
+                    )}
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); removeFile(idx); }}
+                        className="absolute top-3 right-3 p-2 bg-rose-500/80 text-white rounded-xl backdrop-blur-md opacity-0 group-hover/file:opacity-100 transition-all hover:bg-rose-500"
+                    >
+                      <X className="w-4 h-4" />
                     </button>
-                  </div>
+                    <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
+                        <p className="text-[9px] font-black text-white uppercase tracking-tighter">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
+                    </div>
+                  </motion.div>
                 ))}
                 {multiple && (
                   <button 
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-full py-4 border-2 border-dashed border-white/5 rounded-2xl text-muted-foreground hover:text-foreground hover:border-primary/50 transition-all flex items-center justify-center gap-2 font-bold"
+                    className="aspect-[3/4] border-2 border-dashed border-white/5 rounded-3xl text-muted-foreground hover:text-primary hover:border-primary/50 transition-all flex flex-col items-center justify-center gap-2 group"
                   >
-                    <Plus className="w-4 h-4" /> Add More Files
+                    <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-primary/10 group-hover:text-primary transition-all">
+                        <Plus className="w-5 h-5" />
+                    </div>
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">Add More</span>
                   </button>
                 )}
               </motion.div>
@@ -161,50 +194,65 @@ const ToolBase: React.FC<ToolBaseProps> = ({
         </div>
 
         {/* Sidebar Controls */}
-        <div className="space-y-6">
-          <div className="bg-card/50 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-6 space-y-6">
-            <div className="flex items-center gap-2 mb-2">
-              <Settings className="w-4 h-4 text-primary" />
-              <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground">Options</h3>
+        <div className="space-y-8">
+          <div className="bg-card/40 backdrop-blur-3xl border border-white/10 rounded-[3rem] p-8 space-y-8 shadow-2xl">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                <Settings className="w-4 h-4 text-primary" />
+              </div>
+              <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground">Tool Options</h3>
             </div>
             
-            {options ? options : (
-              <div className="text-center py-8">
-                <p className="text-xs text-muted-foreground font-medium">No extra options for this tool.</p>
-              </div>
-            )}
+            <div className="min-h-[100px]">
+                {options ? options : (
+                <div className="text-center py-4">
+                    <p className="text-xs text-muted-foreground font-medium opacity-50 italic">No extra options for this tool.</p>
+                </div>
+                )}
+            </div>
 
-            <button
-              onClick={handleProcess}
-              disabled={files.length === 0 || isProcessing}
-              className="w-full py-4 bg-primary text-primary-foreground rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:hover:scale-100 transition-all flex items-center justify-center gap-3"
-            >
-              {isProcessing ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  {progress < 100 ? `Uploading ${progress}%` : 'Processing...'}
-                </>
-              ) : (
-                'Process Now'
-              )}
-            </button>
+            <div className="space-y-4">
+                <button
+                onClick={handleProcess}
+                disabled={files.length === 0 || isProcessing}
+                className="w-full py-5 bg-primary text-primary-foreground rounded-[1.5rem] font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:hover:scale-100 transition-all flex items-center justify-center gap-3"
+                >
+                {isProcessing ? (
+                    <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    {progress < 100 ? `${progress}%` : 'Processing...'}
+                    </>
+                ) : (
+                    'Process Now'
+                )}
+                </button>
 
-            {result && (
-              <a 
-                href={result} 
-                download={resultFilename}
-                className="w-full py-4 bg-amber-500 text-amber-950 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-amber-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
-              >
-                <Download className="w-5 h-5" />
-                Download Result
-              </a>
-            )}
+                {result && (
+                <a 
+                    href={result} 
+                    download={resultFilename}
+                    className="w-full py-5 bg-amber-500 text-amber-950 rounded-[1.5rem] font-black uppercase tracking-[0.2em] shadow-xl shadow-amber-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 animate-pulse"
+                >
+                    <Download className="w-5 h-5" />
+                    Download
+                </a>
+                )}
+            </div>
           </div>
 
-          <div className="bg-primary/5 border border-primary/10 rounded-3xl p-6">
-            <h4 className="text-xs font-black uppercase tracking-widest text-primary mb-2">Pro Tip</h4>
-            <p className="text-[11px] text-muted-foreground leading-relaxed">
-              Files are processed securely and deleted automatically from our servers after 1 hour.
+          {/* Sidebar Ad Slot */}
+          <div className="w-full aspect-square bg-white/5 border border-dashed border-white/10 rounded-[3rem] flex flex-col items-center justify-center text-center p-8 space-y-2">
+            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/30">Sponsored</p>
+            <div className="w-12 h-12 bg-white/5 rounded-2xl" />
+          </div>
+
+          <div className="bg-primary/5 border border-primary/10 rounded-[2rem] p-8 space-y-3">
+            <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-primary" />
+                <h4 className="text-[10px] font-black uppercase tracking-widest text-primary">Secure Processing</h4>
+            </div>
+            <p className="text-[11px] text-muted-foreground leading-relaxed font-medium">
+              Your files are encrypted during transit and deleted automatically from our cloud after processing.
             </p>
           </div>
         </div>
@@ -214,3 +262,4 @@ const ToolBase: React.FC<ToolBaseProps> = ({
 };
 
 export default ToolBase;
+
