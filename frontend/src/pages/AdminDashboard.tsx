@@ -225,8 +225,6 @@ const AdminDashboard = () => {
             ))}
           </div>
         </div>
-
-        </div>
       </div>
 
       {/* Site Settings Section */}
