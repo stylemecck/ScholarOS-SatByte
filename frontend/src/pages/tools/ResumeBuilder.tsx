@@ -1,4 +1,4 @@
-import { useResume } from '../../context/ResumeContext';
+import { ResumeProvider, useResume } from '../../context/ResumeContext';
 import ResumeForm from '../../components/ResumeBuilder/ResumeForm';
 import ResumePreview from '../../components/ResumeBuilder/ResumePreview';
 import { Download, Layout, Palette, Eye, Edit3 } from 'lucide-react';
@@ -21,7 +21,7 @@ const ResumeBuilderContent = () => {
         filename: `${resumeData.personalInfo.fullName || 'resume'}.pdf`,
         image: { type: 'jpeg' as const, quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' as const }
       };
       
       // Use html2pdf.js which is already in package.json
