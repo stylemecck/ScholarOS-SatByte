@@ -9,5 +9,7 @@ router.post('/google', authController.googleLogin);
 router.get('/me', authMiddleware, authController.getMe);
 router.post('/gift-credits', authMiddleware, authController.giftCredits);
 router.get('/leaderboard', authController.getLeaderboard);
+router.put('/update-profile', authMiddleware, authController.updateProfile);
+router.put('/change-password', authMiddleware, authController.changePassword);
 
 module.exports = router;

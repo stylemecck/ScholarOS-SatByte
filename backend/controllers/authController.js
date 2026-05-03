@@ -206,3 +206,45 @@ exports.getLeaderboard = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch leaderboard' });
   }
 };
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const { name, avatar } = req.body;
+    const user = await User.findById(req.user.userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    if (name) user.name = name;
+    if (avatar) user.avatar = avatar;
+
+    await user.save();
+    res.json({ message: 'Profile updated successfully', user: { name: user.name, avatar: user.avatar } });
+  } catch (err) {
+    console.error("UPDATE PROFILE ERROR:", err);
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+};
+
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.user.userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    // For Google users, they might not have a password set or should manage via Google
+    if (user.isGoogleUser) {
+      return res.status(400).json({ error: 'Google users manage security through their Google account' });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) return res.status(400).json({ error: 'Incorrect current password' });
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    await user.save();
+
+    res.json({ message: 'Password changed successfully' });
+  } catch (err) {
+    console.error("CHANGE PASSWORD ERROR:", err);
+    res.status(500).json({ error: 'Failed to change password' });
+  }
+};

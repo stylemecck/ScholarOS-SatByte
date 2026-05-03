@@ -34,6 +34,7 @@ import Support from './pages/Support';
 import Terms from './pages/Terms';
 import Status from './pages/Status';
 import Feedback from './pages/Feedback';
+import AccountSettings from './pages/AccountSettings';
 import AdminDashboard from './pages/AdminDashboard';
 import { AuthProvider } from './context/AuthContext';
 import { SettingsProvider, useSettings } from './context/SettingsContext';
@@ -127,6 +128,7 @@ function AppContent() {
           <Route path="/status" element={<Status />} />
           <Route path="/feedback" element={<Feedback />} />
           <Route path="/support" element={<Support />} />
+          <Route path="/settings" element={<AccountSettings />} />
           <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
         <AIChatBubble />

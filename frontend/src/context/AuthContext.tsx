@@ -9,6 +9,8 @@ interface User {
   credits: number;
   referralCode?: string;
   referralsCount?: number;
+  avatar?: string;
+  isGoogleUser?: boolean;
 }
 
 interface AuthContextType {
@@ -45,7 +47,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           role: res.data.role,
           credits: res.data.credits,
           referralCode: res.data.referralCode,
-          referralsCount: res.data.referralsCount
+          referralsCount: res.data.referralsCount,
+          avatar: res.data.avatar,
+          isGoogleUser: res.data.isGoogleUser
         });
       } catch (err) {
         console.error('Token validation failed');

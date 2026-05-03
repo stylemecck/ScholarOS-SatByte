@@ -206,8 +206,12 @@ const Navbar = () => {
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className="flex items-center gap-2.5 p-1 pr-4 bg-white/5 hover:bg-white/10 rounded-full border border-white/5 transition-all group"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-indigo-600 text-white flex items-center justify-center text-xs font-black shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
-                    {user.name.charAt(0).toUpperCase()}
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-indigo-600 text-white flex items-center justify-center text-xs font-black shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform overflow-hidden border border-white/20">
+                    {user.avatar ? (
+                      <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                    ) : (
+                      user.name.charAt(0).toUpperCase()
+                    )}
                   </div>
                   <span className="text-xs font-bold hidden lg:block">{user.name.split(' ')[0]}</span>
                   <ChevronDown className={`w-3.5 h-3.5 text-muted-foreground transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} />
