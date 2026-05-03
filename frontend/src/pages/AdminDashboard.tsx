@@ -18,7 +18,11 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [settings, setSettings] = useState({
+  const [settings, setSettings] = useState<{
+    adsCode: string;
+    announcement: string;
+    googleVerification: string;
+  }>({
     adsCode: '',
     announcement: '',
     googleVerification: ''
