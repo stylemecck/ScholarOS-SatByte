@@ -33,13 +33,39 @@ import Contact from './pages/Contact';
 import Support from './pages/Support';
 import AdminDashboard from './pages/AdminDashboard';
 import { AuthProvider } from './context/AuthContext';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import ChatAssistant from './components/ChatAssistant';
 
 function App() {
-  // Use light mode by default
+  const [announcement, setAnnouncement] = useState('');
+
   useEffect(() => {
+    // Default to light mode
     document.documentElement.classList.remove('dark');
+    
+    // Fetch and inject ads code & announcement
+    const initSiteSettings = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/settings`);
+        
+        // 1. Inject Ads Code (Google AdSense etc.)
+        if (response.data.adsCode) {
+          const range = document.createRange();
+          const documentFragment = range.createContextualFragment(response.data.adsCode);
+          document.head.appendChild(documentFragment);
+        }
+
+        // 2. Set Announcement
+        if (response.data.announcement) {
+          setAnnouncement(response.data.announcement);
+        }
+      } catch (err) {
+        console.error("Failed to load site settings:", err);
+      }
+    };
+
+    initSiteSettings();
   }, []);
 
   return (
@@ -47,6 +73,11 @@ function App() {
       <Router>
         <ScrollToTop />
         <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
+          {announcement && (
+            <div className="bg-primary text-primary-foreground py-2 text-center text-[10px] font-black uppercase tracking-[0.3em] relative z-[60] shadow-lg">
+              {announcement}
+            </div>
+          )}
           <Navbar />
           <main className="flex-grow container mx-auto px-4 pt-28 pb-12 relative">
             <Routes>

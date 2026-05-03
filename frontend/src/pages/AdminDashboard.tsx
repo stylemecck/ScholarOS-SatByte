@@ -17,10 +17,16 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [settings, setSettings] = useState({
+    adsCode: '',
+    announcement: ''
+  });
 
   useEffect(() => {
     if (user?.role === 'admin') {
       fetchStats();
+      fetchSettings();
     }
   }, [user]);
 
@@ -35,6 +41,36 @@ const AdminDashboard = () => {
       setError(err.response?.data?.error || "Failed to load dashboard data.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchSettings = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/settings`);
+      setSettings({
+        adsCode: response.data.adsCode || '',
+        announcement: response.data.announcement || ''
+      });
+    } catch (err) {
+      console.error("Failed to fetch settings:", err);
+    }
+  };
+
+  const handleSaveSettings = async () => {
+    setSaving(true);
+    try {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/settings`, { key: 'adsCode', value: settings.adsCode }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/settings`, { key: 'announcement', value: settings.announcement }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      alert('Settings saved successfully!');
+    } catch (err) {
+      console.error("Failed to save settings:", err);
+      alert('Failed to save settings.');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -190,33 +226,63 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Revenue Growth Chart */}
-        <div className="lg:col-span-12 bg-card border border-border p-8 rounded-[2.5rem] shadow-sm space-y-6">
-          <div className="flex items-center justify-between">
+        </div>
+      </div>
+
+      {/* Site Settings Section */}
+      <div className="bg-card border border-border p-8 rounded-[2.5rem] shadow-sm space-y-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1">
             <h3 className="text-xl font-black flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-emerald-500" />
-              Monthly Revenue Performance
+              <ShieldCheck className="w-5 h-5 text-primary" />
+              Site Configuration
             </h3>
+            <p className="text-sm text-muted-foreground font-medium">Manage global scripts, ads, and platform-wide settings.</p>
           </div>
-          <div className="h-[300px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={stats.revenueHistory}>
-                <defs>
-                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#88888820" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 600 }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 600 }} />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#18181b', border: 'none', borderRadius: '12px', color: '#fff' }}
-                  itemStyle={{ color: '#10b981' }}
+          <button 
+            onClick={handleSaveSettings}
+            disabled={saving}
+            className="bg-primary text-primary-foreground px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-primary/20 disabled:opacity-50 flex items-center gap-2"
+          >
+            {saving ? <Loader2 className="w-3 h-3 animate-spin" /> : <ShieldCheck className="w-3 h-3" />}
+            Save All Settings
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* AdSense / Script Injection */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Ads & Scripts (Header)</label>
+              <span className="text-[8px] font-bold bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded-full uppercase">Google AdSense</span>
+            </div>
+            <textarea 
+              value={settings.adsCode}
+              onChange={(e) => setSettings({ ...settings, adsCode: e.target.value })}
+              placeholder="Paste your <script> tags here for AdSense, Analytics, or other tracking tools..."
+              className="w-full h-48 bg-muted/30 border border-border rounded-2xl p-4 text-xs font-mono focus:ring-2 focus:ring-primary outline-none transition-all resize-none"
+            />
+            <p className="text-[10px] text-muted-foreground italic">Code injected here will be placed in the &lt;head&gt; of all pages.</p>
+          </div>
+
+          {/* Other Settings */}
+          <div className="space-y-6">
+            <div className="space-y-4">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Global Announcement Bar</label>
+                <input 
+                    type="text"
+                    value={settings.announcement}
+                    onChange={(e) => setSettings({ ...settings, announcement: e.target.value })}
+                    placeholder="E.g. New PDF compression engine is now live!"
+                    className="w-full bg-muted/30 border border-border rounded-xl p-4 text-sm font-bold focus:ring-2 focus:ring-primary outline-none transition-all"
                 />
-                <Area type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
-              </AreaChart>
-            </ResponsiveContainer>
+            </div>
+            <div className="p-6 bg-primary/5 border border-primary/10 rounded-2xl space-y-2">
+                <h4 className="text-xs font-black uppercase tracking-widest text-primary">Admin Warning</h4>
+                <p className="text-[10px] text-muted-foreground leading-relaxed">
+                    Changes made here take effect immediately for all visitors. Be extremely careful when pasting script tags as malformed code can break the entire frontend application.
+                </p>
+            </div>
           </div>
         </div>
       </div>

@@ -13,6 +13,7 @@ const adminRoutes = require('./routes/admin');
 const referralRoutes = require('./routes/referral');
 const pdfRoutes = require('./routes/pdf');
 const imageRoutes = require('./routes/image');
+const settingRoutes = require('./routes/settingRoutes');
 
 const app = express();
 
@@ -44,6 +45,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/referrals', referralRoutes);
 app.use('/api/pdf', pdfRoutes);
 app.use('/api/image', imageRoutes);
+app.use('/api/settings', settingRoutes);
 
 // Global Error Handler
 app.use((err, req, res, next) => {
