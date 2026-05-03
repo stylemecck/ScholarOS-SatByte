@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Trash2, ExternalLink, 
   BarChart3, Target, Loader2, Coins, Zap, ShieldCheck, TrendingUp, Share2,
-  X, Sparkles, Award, MapPin, IndianRupee, Users, Briefcase, Clock, AlertCircle, Zap as ZapIcon, Info, AlignLeft
+  X, Sparkles, Award, MapPin, IndianRupee, Users, Briefcase, Zap as ZapIcon, Info, AlignLeft
 } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../context/useAuth';
@@ -15,6 +15,8 @@ const Dashboard = () => {
   const [results, setResults] = useState<any[]>([]);
   const [creditHistory, setCreditHistory] = useState<any[]>([]);
   const [credits, setCredits] = useState<number>(0);
+  const [referralCode, setReferralCode] = useState<string>('');
+  const [referralsCount, setReferralsCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'results' | 'credits' | 'network'>('results');
   const [selectedResult, setSelectedResult] = useState<any | null>(null);
@@ -33,6 +35,8 @@ const Dashboard = () => {
       setResults(response.data.savedResults.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()));
       setCreditHistory(response.data.creditHistory?.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()) || []);
       setCredits(response.data.credits || 0);
+      setReferralCode(response.data.referralCode || '');
+      setReferralsCount(response.data.referralsCount || 0);
     } catch (err) {
       console.error("Failed to fetch user data:", err);
     } finally {
@@ -166,18 +170,18 @@ const Dashboard = () => {
             </div>
             <div className="text-right">
                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-70">Referrals</p>
-                <h3 className="text-xl font-black text-indigo-500">{user?.referralsCount || 0}</h3>
+                <h3 className="text-xl font-black text-indigo-500">{referralsCount}</h3>
             </div>
           </div>
           <div className="space-y-4">
             <div>
               <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-70">Your Code</p>
-              <h3 className="text-lg font-black tracking-widest">{user?.referralCode || 'N/A'}</h3>
+              <h3 className="text-lg font-black tracking-widest">{referralCode || 'GENERATING...'}</h3>
             </div>
             <button 
               onClick={() => {
-                if (user?.referralCode) {
-                    navigator.clipboard.writeText(user.referralCode);
+                if (referralCode) {
+                    navigator.clipboard.writeText(referralCode);
                     alert("Referral code copied to clipboard!");
                 }
               }}

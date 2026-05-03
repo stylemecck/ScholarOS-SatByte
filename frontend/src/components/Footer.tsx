@@ -102,7 +102,7 @@ const Footer = () => {
               Designed with <Heart size={14} className="text-rose-500 fill-rose-500 animate-pulse" /> for Students
             </div>
             <a 
-              href="https://satbyte.com" 
+              href="https://satbyte.in" 
               target="_blank" 
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/5 rounded-lg text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-white hover:bg-white/10 transition-all"

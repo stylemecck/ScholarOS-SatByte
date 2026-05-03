@@ -1,9 +1,8 @@
-import { ResumeProvider, useResume } from '../../context/ResumeContext';
+import { useResume } from '../../context/ResumeContext';
 import ResumeForm from '../../components/ResumeBuilder/ResumeForm';
 import ResumePreview from '../../components/ResumeBuilder/ResumePreview';
 import { Download, Layout, Palette, Eye, Edit3 } from 'lucide-react';
 import { useState } from 'react';
-import axios from 'axios';
 
 const ResumeBuilderContent = () => {
   const { resumeData, setResumeData } = useResume();
@@ -17,32 +16,21 @@ const ResumeBuilderContent = () => {
 
     setIsGenerating(true);
     try {
-      // Grab all styles to ensure the PDF looks like the preview
-      const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
-        .map(style => style.outerHTML)
-        .join('\n');
+      const opt = {
+        margin: 0,
+        filename: `${resumeData.personalInfo.fullName || 'resume'}.pdf`,
+        image: { type: 'jpeg' as const, quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
       
-      const fullHtml = `<html><head>${styles}</head><body>${element.outerHTML}</body></html>`;
-
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/tools/generate-pdf`, {
-        html: fullHtml
-      }, {
-        responseType: 'blob',
-        timeout: 60000 // 1 minute timeout
-      });
-
-      // Create a link and trigger download
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `${resumeData.personalInfo.fullName || 'resume'}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      // Use html2pdf.js which is already in package.json
+      const html2pdf = (await import('html2pdf.js')).default;
+      await html2pdf().set(opt).from(element).save();
+      
     } catch (err: any) {
       console.error("PDF Export Error:", err);
-      const errorMsg = err.response?.data?.error || err.message || "Failed to generate PDF";
-      alert(`Error: ${errorMsg}. Please make sure the backend is running and Python/Playwright is set up.`);
+      alert("Failed to generate PDF. Please try again.");
     } finally {
       setIsGenerating(false);
     }

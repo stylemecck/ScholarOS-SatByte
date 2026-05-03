@@ -37,7 +37,7 @@ exports.googleLogin = async (req, res) => {
     }
 
     const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+    res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role, credits: user.credits, referralCode: user.referralCode } });
   } catch (err) {
     console.error("GOOGLE LOGIN ERROR:", err);
     res.status(500).json({ error: 'Google authentication failed' });
@@ -96,7 +96,7 @@ exports.register = async (req, res) => {
     await user.save();
 
     const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
-    res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+    res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role, credits: user.credits, referralCode: user.referralCode } });
   } catch (err) {
     console.error("LOGIN ERROR:", err.message);
     res.status(500).json({ error: 'Server error' });
@@ -113,7 +113,7 @@ exports.login = async (req, res) => {
     if (!isMatch) return res.status(400).json({ error: 'Invalid credentials' });
 
     const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+    res.json({ token, user: { id: user._id, name: user.name, email: user.email, role: user.role, credits: user.credits, referralCode: user.referralCode } });
   } catch (err) {
     console.error("LOGIN ERROR:", err.message);
     res.status(500).json({ error: 'Server error' });
@@ -123,6 +123,10 @@ exports.login = async (req, res) => {
 exports.getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.userId).select('-password');
+    if (user && !user.referralCode) {
+      user.referralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      await user.save();
+    }
     res.json(user);
   } catch (err) {
     console.error("LOGIN ERROR:", err.message);
