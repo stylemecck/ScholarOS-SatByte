@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Target, TrendingUp, School, ShieldCheck, AlertCircle, Loader2, Sparkles, Download, MapPin, IndianRupee, Users, Award, Briefcase, BarChart3, Clock, Zap } from 'lucide-react';
 import axios from 'axios';
@@ -61,9 +61,11 @@ const RankPredictor = () => {
   const [formData, setFormData] = useState({
     exam: 'CUET PG (MCA)',
     marks: '',
+    totalMarks: '300',
     category: 'General',
     year: '2026'
   });
+  const [examsConfig, setExamsConfig] = useState<{name: string, maxMarks: number, type: string}[]>([]);
   const [prediction, setPrediction] = useState<Prediction | null>(null);
   const [loading, setLoading] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
@@ -122,13 +124,95 @@ const RankPredictor = () => {
 
   };
 
-  const exams = [
-    'CUET PG (MCA)', 'CUET UG', 'NIMCET', 'MAH MCA CET', 'WBJECA', 'TANCET',
-    'JEE Mains', 'JEE Advanced', 'NEET UG', 'NEET PG',
-    'GATE', 'JAM', 'CAT', 'XAT', 'MAT', 'CMAT',
-    'CLAT', 'LSAT', 'NDA', 'CDS', 'SSC CGL', 'UPSC Prelims',
-    'IPU CET', 'BITSAT', 'VITEEE', 'SRMJEEE', 'COMEDK'
-  ];
+  const EXAM_MAX_MARKS: Record<string, number> = {
+    // CUET
+    'CUET PG (MCA)': 300,
+    'CUET UG': 800, // varies depending on subjects
+
+    // MCA / Tech Entrance
+    'NIMCET': 1000,
+    'MAH MCA CET': 200,
+    'WBJECA': 120,
+    'TANCET': 100,
+
+    // Engineering
+    'JEE Mains': 300,
+    'JEE Advanced': 360,
+    'BITSAT': 390,
+    'VITEEE': 125,
+    'SRMJEEE': 125,
+    'COMEDK': 180,
+
+    // Medical
+    'NEET UG': 720,
+    'NEET PG': 800,
+
+    // Postgrad / Research
+    'GATE': 100,
+    'JAM': 100,
+
+    // MBA
+    'CAT': 228, // raw score varies (scaled percentile matters more)
+    'XAT': 100,
+    'MAT': 200,
+    'CMAT': 400,
+
+    // Law
+    'CLAT': 150,
+    'LSAT': 100, // actually scaled, not fixed marks
+
+    // Defence
+    'NDA': 900,
+    'CDS': 300,
+
+    // Government Jobs
+    'SSC CGL': 200, // Tier-wise different
+    'UPSC Prelims': 200,
+
+    // Others
+    'IPU CET': 400
+  };
+
+  useEffect(() => {
+    const fetchExams = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/tools/exams-config`);
+        setExamsConfig(response.data);
+        if (response.data.length > 0) {
+          const defaultExam = response.data.find((e: any) => e.name === 'CUET PG (MCA)') || response.data[0];
+          setFormData(prev => ({
+            ...prev,
+            exam: defaultExam.name,
+            totalMarks: defaultExam.maxMarks.toString()
+          }));
+        }
+      } catch (err) {
+        console.error("Failed to fetch exams config:", err);
+        // Fallback to static list if backend fails
+        const fallbackConfig = Object.keys(EXAM_MAX_MARKS).map(name => ({
+          name,
+          maxMarks: EXAM_MAX_MARKS[name],
+          type: name === 'CAT' || name === 'JEE Mains' || name === 'GATE' ? 'scaled' : 'direct'
+        }));
+        setExamsConfig(fallbackConfig);
+      }
+    };
+    fetchExams();
+  }, []);
+
+  const CUET_SUBJECTS = {
+    'CUET PG (MCA)': ['Computer Science (SCQP09)', 'Data Science', 'Information Technology'],
+    'CUET UG': [
+      'Physics', 'Chemistry', 'Mathematics', 'Biology', 
+      'English', 'General Test', 'History', 'Geography', 
+      'Economics', 'Accountancy', 'Business Studies'
+    ],
+    'Others': [
+      'Computer Science', 'Mathematics', 'Physics', 'Chemistry', 
+      'Economics', 'Statistics', 'MBA', 'Law', 'Commerce'
+    ]
+  };
+
   const categories = ['General', 'OBC', 'SC', 'ST', 'EWS'];
 
   const handlePredict = async (e: React.FormEvent) => {
@@ -138,6 +222,20 @@ const RankPredictor = () => {
     const usageCount = parseInt(localStorage.getItem('rank_prediction_count') || '0');
     const token = localStorage.getItem('token');
 
+    // Validate marks
+    const marksValue = parseFloat(formData.marks);
+    const totalMarksValue = parseFloat(formData.totalMarks);
+    
+    if (marksValue > totalMarksValue) {
+      alert(`Invalid Marks: Your marks cannot exceed the total marks (${totalMarksValue}).`);
+      return;
+    }
+
+    if (marksValue < 0) {
+      alert("Invalid Marks: Marks cannot be negative.");
+      return;
+    }
+
     if (!token && usageCount >= 2) {
       setShowLimitModal(true);
       return;
@@ -145,7 +243,10 @@ const RankPredictor = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/tools/predict-rank`, formData, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/tools/predict-rank`, {
+        ...formData,
+        totalMarks: parseFloat(formData.totalMarks)
+      }, {
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
       setPrediction(response.data);
@@ -210,35 +311,64 @@ const RankPredictor = () => {
               <label className="text-sm font-bold ml-1">Select Exam</label>
               <select 
                 value={formData.exam}
-                onChange={(e) => setFormData({...formData, exam: e.target.value})}
+                onChange={(e) => {
+                  const selected = examsConfig.find(ex => ex.name === e.target.value);
+                  setFormData({
+                    ...formData, 
+                    exam: e.target.value,
+                    totalMarks: selected ? selected.maxMarks.toString() : formData.totalMarks
+                  });
+                }}
                 className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border focus:ring-2 focus:ring-primary outline-none transition-all font-medium"
               >
-                {exams.map(ex => <option key={ex} value={ex}>{ex}</option>)}
+                {examsConfig.map(ex => (
+                  <option key={ex.name} value={ex.name}>
+                    {ex.name} ({ex.type === 'scaled' ? 'Scaled' : 'Direct'})
+                  </option>
+                ))}
               </select>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-bold ml-1">Marks Obtained</label>
-              <input 
-                type="number"
-                required
-                placeholder="e.g. 240"
-                value={formData.marks}
-                onChange={(e) => setFormData({...formData, marks: e.target.value})}
-                className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border focus:ring-2 focus:ring-primary outline-none transition-all font-medium"
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-bold ml-1">Your Marks</label>
+                <input 
+                  type="number"
+                  required
+                  placeholder="e.g. 240"
+                  value={formData.marks}
+                  onChange={(e) => setFormData({...formData, marks: e.target.value})}
+                  className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border focus:ring-2 focus:ring-primary outline-none transition-all font-medium"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-bold ml-1">Total Marks</label>
+                <input 
+                  type="number"
+                  readOnly
+                  value={formData.totalMarks}
+                  className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border outline-none cursor-not-allowed font-medium text-muted-foreground"
+                  title="Total marks are fixed based on selected exam pattern"
+                />
+              </div>
             </div>
 
-            {(formData.exam.includes('CUET')) && (
+            {(formData.exam.includes('CUET') || formData.exam === 'GATE') && (
               <div className="space-y-2">
                 <label className="text-sm font-bold ml-1">Subject / Paper Code</label>
                 <input 
                   type="text"
+                  list="subject-suggestions"
                   placeholder="e.g. Computer Science (SCQP09)"
                   value={(formData as any).subject || ''}
                   onChange={(e) => setFormData({...formData, subject: e.target.value} as any)}
                   className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border focus:ring-2 focus:ring-primary outline-none transition-all font-medium"
                 />
+                <datalist id="subject-suggestions">
+                  {(CUET_SUBJECTS[formData.exam as keyof typeof CUET_SUBJECTS] || CUET_SUBJECTS['Others']).map(sub => (
+                    <option key={sub} value={sub} />
+                  ))}
+                </datalist>
               </div>
             )}
 

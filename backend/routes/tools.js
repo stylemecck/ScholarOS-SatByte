@@ -6,6 +6,7 @@ const authMiddleware = require('../middlewares/authMiddleware');
 
 const upload = multer({ storage: multer.memoryStorage() });
 
+router.get('/exams-config', toolsController.getExamsConfig);
 router.post('/pdf-to-text', upload.single('pdf'), toolsController.parsePdf);
 router.post('/predict-rank', toolsController.predictRank);
 router.post('/predict-percentile', toolsController.predictPercentile);

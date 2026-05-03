@@ -5,6 +5,8 @@ const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const predictor = require('../utils/predictor');
+const percentileService = require('../services/percentileService');
+const { EXAM_CONFIG } = require('../utils/examConfig');
 
 const getAIModel = (modelName = "gemini-1.5-flash") => {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -50,11 +52,12 @@ const generateWithFallback = async (prompt) => {
   throw lastError;
 };
 
-const callPythonAnalysis = async (exam, marks, category = 'General', year = '2026') => {
+const callPythonAnalysis = async (exam, marks, category = 'General', year = '2026', totalMarks = null) => {
   return new Promise((resolve, reject) => {
-    const pythonProcess = spawn('python', [
-      path.join(__dirname, '../utils/analysis.py'), exam, marks, category, year
-    ]);
+    const args = [path.join(__dirname, '../utils/analysis.py'), exam, marks, category, year];
+    if (totalMarks) args.push(totalMarks);
+    
+    const pythonProcess = spawn('python', args);
     let data = '';
     pythonProcess.stdout.on('data', (chunk) => data += chunk);
     pythonProcess.stderr.on('data', (chunk) => console.error('Python Error:', chunk.toString()));
@@ -67,6 +70,18 @@ const callPythonAnalysis = async (exam, marks, category = 'General', year = '202
       }
     });
   });
+};
+
+exports.getExamsConfig = async (req, res) => {
+  try {
+    // Sort alphabetically by name
+    const config = [...EXAM_CONFIG].sort((a, b) => a.name.localeCompare(b.name));
+    
+    res.json(config);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch exam configurations' });
+  }
 };
 
 exports.parsePdf = async (req, res) => {
@@ -123,7 +138,7 @@ exports.deductCredits = async (req, res) => {
 };
 
 exports.predictRank = async (req, res) => {
-  const { exam, marks, category, year } = req.body;
+  const { exam, marks, category, year, totalMarks } = req.body;
   let localResult = null;
   let suggestedColleges = [];
 
@@ -136,8 +151,8 @@ exports.predictRank = async (req, res) => {
       }
     }
     
-    // Pre-calculate local data with category and year
-    localResult = await callPythonAnalysis(exam, marks, category || 'General', year || '2026');
+    // Pre-calculate local data with category, year and totalMarks
+    localResult = await callPythonAnalysis(exam, marks, category || 'General', year || '2026', totalMarks);
     if (!localResult) localResult = predictor.predictLocal(exam, marks);
     suggestedColleges = predictor.getSuggestions(exam, marks, localResult?.predictedRank, localResult?.predictedPercentile);
 
@@ -224,69 +239,21 @@ exports.predictRank = async (req, res) => {
 };
 
 exports.predictPercentile = async (req, res) => {
-  const { exam, marks, totalMarks, category, difficulty } = req.body;
-  let localResult = null;
+  const { exam, marks } = req.body;
 
   try {
-    let user = null;
-    if (req.user) {
-      user = await User.findById(req.user.userId);
-      if (user && user.credits < 2) {
-        return res.status(403).json({ error: 'Insufficient credits. AI Analysis requires 2 credits.', needsUpgrade: true });
-      }
+    const result = percentileService.getPercentile(exam, marks);
+    
+    if (result.error) {
+      return res.status(400).json({ error: result.error });
     }
 
-    localResult = await callPythonAnalysis(exam, marks);
-    if (!localResult) localResult = predictor.predictLocal(exam, marks);
-
-    const prompt = `Act as an expert exam data analyst. Predict the percentile for:
-    Exam: ${exam}, Marks: ${marks}, Total: ${totalMarks}, Difficulty: ${difficulty}
-    ${localResult ? `- Local Baseline: ${localResult.predictedPercentile}%` : ''}
+    // Optional: Log usage or deduct credits here if required by platform policy
     
-    Return ONLY a JSON object:
-    {
-      "percentile": "value",
-      "range": "range",
-      "performanceLevel": "Excellent/Good/Average",
-      "betterThan": "X%",
-      "insights": "short summary",
-      "suggestions": ["s1", "s2"],
-      "confidence": "High (Hybrid Model)"
-    }`;
-
-    const resultText = await generateWithFallback(prompt);
-    
-    if (user) {
-      user.credits -= 2;
-      user.creditHistory.push({ type: 'spent', amount: 2, description: `Analyzed ${exam} Percentile (AI)`, date: new Date() });
-      
-      // Save to history automatically
-      const aiResponseData = JSON.parse(responseText);
-      user.savedResults.push({
-        toolName: 'Marks vs Percentile',
-        data: { ...req.body, ...aiResponseData },
-        date: new Date()
-      });
-
-      await user.save();
-      res.json(aiResponseData);
-    } else {
-      res.json(JSON.parse(responseText));
-    }
-
+    res.json(result);
   } catch (err) {
-    console.error("PERCENTILE AI FAILED:", err.message);
-
-    if (localResult) {
-      return res.json({
-        percentile: localResult.predictedPercentile || "N/A",
-        insights: "AI analysis limit reached. Prediction based on historical trends.",
-        performanceLevel: "Estimated from Data",
-        confidence: "High (Local Archive)"
-      });
-    }
-
-    res.status(500).json({ error: 'Failed to predict percentile', details: err.message });
+    console.error("PERCENTILE ENGINE FAILED:", err.message);
+    res.status(500).json({ error: 'Internal engine error during percentile calculation' });
   }
 };
 

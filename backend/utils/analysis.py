@@ -427,6 +427,7 @@ def main():
     
     category = sys.argv[3] if len(sys.argv) > 3 else "General"
     year = sys.argv[4] if len(sys.argv) > 4 else "2026"
+    user_total_marks = float(sys.argv[5]) if len(sys.argv) > 5 else None
     
     exam_data_all, historical_data_all, colleges_data = load_data()
     exam_data = exam_data_all.get(exam_name)
@@ -438,7 +439,23 @@ def main():
     # Sort by marks ascending for interpolation
     sorted_data = sorted(exam_data, key=lambda x: x['marks'])
     
-    # Core interpolation
+    # Max marks and Normalization logic
+    hist_for_exam = historical_data_all.get(exam_name, {})
+    historical_max = hist_for_exam.get('maxMarks', sorted_data[-1]['marks'] if sorted_data else 1000)
+    
+    # If user provided a different total marks, normalize the score to match historical scale
+    original_marks = marks
+    is_normalized = False
+    if user_total_marks and abs(user_total_marks - historical_max) > 0.1:
+        # Scale: (your_marks / your_total) * historical_total
+        marks = round((marks / user_total_marks) * historical_max, 2)
+        is_normalized = True
+
+    if original_marks > (user_total_marks or historical_max):
+        print(json.dumps({"error": f"Invalid marks: {original_marks} exceeds maximum allowed marks ({user_total_marks or historical_max}) for {exam_name}."}))
+        sys.exit(1)
+    
+    # Core interpolation (using normalized marks if applicable)
     percentile = interpolate_value(marks, sorted_data, 'percentile')
     rank = interpolate_rank(marks, sorted_data)
     
@@ -491,7 +508,10 @@ def main():
         "paperDifficultyAnalysis": diff_analysis,
         "spotRoundAnalysis": spot_analysis,
         "historicalContext": hist_analysis,
-        "category": category
+        "category": category,
+        "normalizationApplied": is_normalized,
+        "normalizedMarks": marks if is_normalized else None,
+        "originalMarks": original_marks
     }
     
     print(json.dumps(result))
