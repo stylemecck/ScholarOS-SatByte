@@ -36,15 +36,15 @@ const AdsterraAd: React.FC<AdsterraAdProps> = ({ type, code }) => {
 
   if (type === 'native') {
     return (
-      <div className="w-full flex flex-col items-center gap-4 py-8">
-        <div className="flex items-center gap-4 w-full px-4">
-          <div className="h-[1px] flex-grow bg-gradient-to-r from-transparent via-border/40 to-transparent" />
-          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground/60 whitespace-nowrap">Sponsored content</span>
-          <div className="h-[1px] flex-grow bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+      <div className="w-full flex flex-col items-center gap-2 py-4">
+        <div className="flex items-center gap-3 w-full opacity-40">
+          <div className="h-[1px] flex-grow bg-gradient-to-r from-transparent to-border/50" />
+          <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-muted-foreground whitespace-nowrap">Advertisement</span>
+          <div className="h-[1px] flex-grow bg-gradient-to-l from-transparent to-border/50" />
         </div>
         <div 
           ref={containerRef} 
-          className="adsterra-native-banner min-h-[120px] w-full bg-card/10 backdrop-blur-md border border-white/5 rounded-[2.5rem] overflow-hidden flex items-center justify-center text-[11px] font-bold uppercase tracking-widest text-muted-foreground/10 transition-all hover:bg-card/20 hover:border-white/10 shadow-xl" 
+          className="adsterra-native-banner w-full flex items-center justify-center" 
         />
       </div>
     );

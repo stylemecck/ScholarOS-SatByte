@@ -267,9 +267,13 @@ const ToolBase: React.FC<ToolBaseProps> = ({
           {settings.adsterraNativeBanner ? (
             <AdsterraAd type="native" code={settings.adsterraNativeBanner} />
           ) : (
-            <div className="w-full aspect-square bg-white/5 border border-dashed border-white/10 rounded-[3rem] flex flex-col items-center justify-center text-center p-8 space-y-2">
-              <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/70">Sponsored</p>
-              <div className="w-12 h-12 bg-white/5 rounded-2xl" />
+            <div className="w-full py-4 flex flex-col items-center gap-2 opacity-20">
+              <div className="flex items-center gap-3 w-full">
+                <div className="h-[1px] flex-grow bg-gradient-to-r from-transparent to-border/50" />
+                <span className="text-[8px] font-bold uppercase tracking-[0.3em]">Advertisement</span>
+                <div className="h-[1px] flex-grow bg-gradient-to-l from-transparent to-border/50" />
+              </div>
+              <div className="w-full aspect-video bg-white/5 rounded-2xl border border-dashed border-white/10" />
             </div>
           )}
 
