@@ -38,7 +38,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import { AuthProvider } from './context/AuthContext';
 import { SettingsProvider, useSettings } from './context/SettingsContext';
 import { useEffect } from 'react';
-import ChatAssistant from './components/ChatAssistant';
+import AIChatBubble from './components/AIChatBubble';
 
 import { useAuth } from './context/useAuth';
 
@@ -129,7 +129,7 @@ function AppContent() {
           <Route path="/support" element={<Support />} />
           <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
-        <ChatAssistant />
+        <AIChatBubble />
       </main>
       <Footer />
     </div>

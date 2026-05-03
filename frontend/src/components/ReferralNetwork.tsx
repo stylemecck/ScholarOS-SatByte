@@ -21,25 +21,37 @@ interface NetworkData {
   referrals: Referral[];
 }
 
+interface LeaderboardUser {
+  _id: string;
+  name: string;
+  referralsCount: number;
+  avatar?: string;
+}
+
 const ReferralNetwork = () => {
   const [data, setData] = useState<NetworkData | null>(null);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchNetwork = async () => {
+    const fetchNetworkAndLeaderboard = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/referrals/network`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        });
-        setData(response.data);
+        const [networkRes, leaderboardRes] = await Promise.all([
+          axios.get(`${import.meta.env.VITE_API_URL}/api/referrals/network`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+          }),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/auth/leaderboard`)
+        ]);
+        setData(networkRes.data);
+        setLeaderboard(leaderboardRes.data);
       } catch (err) {
-        console.error("Failed to fetch referral network:", err);
+        console.error("Failed to fetch referral data:", err);
       } finally {
         setLoading(false);
       }
     };
-    fetchNetwork();
+    fetchNetworkAndLeaderboard();
   }, []);
 
   if (loading) return (
@@ -239,6 +251,71 @@ const ReferralNetwork = () => {
                 </h4>
             </div>
          </div>
+      </div>
+      
+      {/* Community Leaderboard */}
+      <div className="space-y-8">
+        <div className="flex items-center gap-3">
+            <div className="p-3 bg-amber-500/10 text-amber-500 rounded-2xl">
+                <Users className="w-6 h-6" />
+            </div>
+            <div>
+                <h3 className="text-2xl font-black tracking-tight uppercase">Community <span className="text-primary italic">Giants</span></h3>
+                <p className="text-xs text-muted-foreground font-medium">Top contributors expanding the SatByte community.</p>
+            </div>
+        </div>
+
+        <div className="bg-card/40 backdrop-blur-md border border-white/10 rounded-[3rem] overflow-hidden shadow-2xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 divide-x divide-white/5">
+                {leaderboard.map((user, i) => (
+                    <motion.div 
+                        key={user._id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.1 }}
+                        className="p-8 flex items-center gap-6 hover:bg-white/5 transition-all relative group"
+                    >
+                        <div className="relative">
+                            <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-white/10 group-hover:border-primary/50 transition-all">
+                                <img 
+                                    src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} 
+                                    alt={user.name} 
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                            <div className={`absolute -top-3 -left-3 w-8 h-8 rounded-full flex items-center justify-center font-black text-xs border-2 border-background shadow-lg ${
+                                i === 0 ? 'bg-amber-400 text-amber-950' :
+                                i === 1 ? 'bg-slate-300 text-slate-800' :
+                                i === 2 ? 'bg-orange-400 text-orange-950' :
+                                'bg-white/10 text-muted-foreground'
+                            }`}>
+                                {i + 1}
+                            </div>
+                        </div>
+
+                        <div className="min-w-0">
+                            <h4 className="font-black text-sm truncate uppercase tracking-tight">{user.name}</h4>
+                            <div className="flex items-center gap-2 mt-1">
+                                <Network className="w-3 h-3 text-primary" />
+                                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                                    {user.referralsCount} Referrals
+                                </p>
+                            </div>
+                        </div>
+
+                        {i < 3 && (
+                            <div className="absolute top-4 right-6 opacity-10 group-hover:opacity-30 transition-opacity">
+                                <Star className={`w-12 h-12 ${
+                                    i === 0 ? 'text-amber-400 fill-amber-400' :
+                                    i === 1 ? 'text-slate-300 fill-slate-300' :
+                                    'text-orange-400 fill-orange-400'
+                                }`} />
+                            </div>
+                        )}
+                    </motion.div>
+                ))}
+            </div>
+        </div>
       </div>
     </div>
   );

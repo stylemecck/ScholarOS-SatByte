@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Trash2, ExternalLink, 
-  BarChart3, Target, Loader2, Coins, Zap, ShieldCheck, TrendingUp, Share2,
-  X, Sparkles, Award, MapPin, IndianRupee, Users, Briefcase, Zap as ZapIcon, Info, AlignLeft
+  BarChart3, Target, Loader2, Coins, Zap, ShieldCheck, TrendingUp,
+  X, Sparkles, Award, MapPin, IndianRupee, Users, Briefcase, Zap as ZapIcon, Info, AlignLeft,
+  Calendar, Gift, Send, Mail
 } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../context/useAuth';
@@ -15,11 +16,13 @@ const Dashboard = () => {
   const [results, setResults] = useState<any[]>([]);
   const [creditHistory, setCreditHistory] = useState<any[]>([]);
   const [credits, setCredits] = useState<number>(0);
-  const [referralCode, setReferralCode] = useState<string>('');
-  const [referralsCount, setReferralsCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'results' | 'credits' | 'network'>('results');
   const [selectedResult, setSelectedResult] = useState<any | null>(null);
+  const [pulse, setPulse] = useState<any[]>([]);
+  const [isGiftModalOpen, setIsGiftModalOpen] = useState(false);
+  const [giftData, setGiftData] = useState({ email: '', amount: 5 });
+  const [giftLoading, setGiftLoading] = useState(false);
 
   useEffect(() => {
     if (!isLoading && user) {
@@ -35,12 +38,32 @@ const Dashboard = () => {
       setResults(response.data.savedResults.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()));
       setCreditHistory(response.data.creditHistory?.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()) || []);
       setCredits(response.data.credits || 0);
-      setReferralCode(response.data.referralCode || '');
-      setReferralsCount(response.data.referralsCount || 0);
+      setPulse(response.data.studyPlannerPulse || []);
     } catch (err) {
       console.error("Failed to fetch user data:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGiftCredits = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setGiftLoading(true);
+    try {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/gift-credits`, {
+        recipientEmail: giftData.email,
+        amount: giftData.amount
+      }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      alert("Credits gifted successfully!");
+      setIsGiftModalOpen(false);
+      setGiftData({ email: '', amount: 5 });
+      fetchUserData();
+    } catch (err: any) {
+      alert(err.response?.data?.error || "Failed to gift credits");
+    } finally {
+      setGiftLoading(false);
     }
   };
 
@@ -100,6 +123,12 @@ const Dashboard = () => {
               <ShieldCheck className="w-3.5 h-3.5" /> Admin Panel
             </Link>
           )}
+          <button 
+            onClick={() => setIsGiftModalOpen(true)}
+            className="flex items-center gap-2 text-xs font-black text-amber-500 bg-amber-500/10 px-4 py-2 rounded-xl border border-amber-500/20"
+          >
+            <Gift className="w-3.5 h-3.5" /> Gift Credits
+          </button>
           <Link to="/pricing" className="flex items-center gap-2 text-xs font-black text-primary bg-primary/10 px-4 py-2 rounded-xl border border-primary/20">
             <Zap className="w-3.5 h-3.5" /> Buy Credits
           </Link>
@@ -162,34 +191,49 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="backdrop-blur-md bg-card/40 border border-white/10 p-8 rounded-[2.5rem] shadow-xl flex flex-col justify-between group"
+          className="md:col-span-1 backdrop-blur-md bg-card/40 border border-white/10 p-6 rounded-[2.5rem] shadow-xl flex flex-col justify-between group overflow-hidden relative"
         >
-          <div className="flex justify-between items-start">
-            <div className="p-4 bg-indigo-500/10 rounded-2xl w-fit">
-              <Share2 className="w-6 h-6 text-indigo-500" />
-            </div>
-            <div className="text-right">
-                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-70">Referrals</p>
-                <h3 className="text-xl font-black text-indigo-500">{referralsCount}</h3>
-            </div>
+          <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform">
+             <Calendar className="w-20 h-20" />
           </div>
-          <div className="space-y-4">
-            <div>
-              <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-70">Your Code</p>
-              <h3 className="text-lg font-black tracking-widest">{referralCode || 'GENERATING...'}</h3>
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-primary/10 rounded-xl">
+                <Calendar className="w-4 h-4 text-primary" />
+              </div>
+              <h3 className="text-sm font-black uppercase tracking-widest text-primary">Academic Pulse</h3>
             </div>
-            <button 
-              onClick={() => {
-                if (referralCode) {
-                    navigator.clipboard.writeText(referralCode);
-                    alert("Referral code copied to clipboard!");
-                }
-              }}
-              className="w-full py-2 bg-indigo-500/10 text-indigo-500 rounded-xl text-[10px] font-black hover:bg-indigo-500 hover:text-white transition-all border border-indigo-500/20"
-            >
-              Copy Code
-            </button>
+            {pulse.length > 0 && <div className="w-2 h-2 bg-emerald-500 rounded-full animate-ping" />}
           </div>
+          
+          <div className="space-y-3 mb-4">
+            {pulse.length > 0 ? (
+              pulse.map((task, i) => (
+                <div key={i} className="bg-white/5 p-3 rounded-2xl border border-white/5 flex items-center justify-between group/task">
+                   <div className="min-w-0">
+                      <p className="text-[10px] font-black text-foreground truncate uppercase">{task.subject}</p>
+                      <p className="text-[9px] text-muted-foreground truncate font-medium">{task.topic}</p>
+                   </div>
+                   <div className={`text-[8px] font-black px-1.5 py-0.5 rounded uppercase ${
+                      task.priority === 'High' ? 'bg-rose-500/10 text-rose-500' :
+                      task.priority === 'Medium' ? 'bg-amber-500/10 text-amber-500' :
+                      'bg-emerald-500/10 text-emerald-500'
+                   }`}>
+                      {task.priority}
+                   </div>
+                </div>
+              ))
+            ) : (
+              <div className="py-4 text-center space-y-2 opacity-30">
+                <Sparkles className="w-6 h-6 mx-auto" />
+                <p className="text-[9px] font-black uppercase">No tasks today</p>
+              </div>
+            )}
+          </div>
+
+          <Link to="/tools/study-planner" className="w-full py-2.5 bg-primary/10 text-primary rounded-xl text-[10px] font-black hover:bg-primary hover:text-white transition-all border border-primary/20 text-center block uppercase tracking-widest">
+            Planner
+          </Link>
         </motion.div>
       </div>
 
@@ -347,6 +391,93 @@ const Dashboard = () => {
           <ReferralNetwork />
         )}
       </div>
+
+      {/* Gifting Modal */}
+      <AnimatePresence>
+        {isGiftModalOpen && (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-background/90 backdrop-blur-md" 
+              onClick={() => setIsGiftModalOpen(false)} 
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative bg-card border border-white/10 w-full max-w-md rounded-[3rem] shadow-2xl p-10 overflow-hidden"
+            >
+              <div className="absolute -right-10 -top-10 opacity-5">
+                 <Gift className="w-40 h-40" />
+              </div>
+
+              <div className="space-y-8 relative z-10">
+                <div className="text-center space-y-2">
+                  <div className="w-16 h-16 bg-amber-500/10 text-amber-500 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                     <Gift className="w-8 h-8" />
+                  </div>
+                  <h3 className="text-2xl font-black uppercase tracking-tighter">Gift Credits</h3>
+                  <p className="text-xs text-muted-foreground font-medium">Spread the academic fuel to your friends.</p>
+                </div>
+
+                <form onSubmit={handleGiftCredits} className="space-y-6">
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-2">Recipient Email</label>
+                    <div className="relative">
+                       <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                       <input 
+                         type="email" required
+                         placeholder="friend@example.com"
+                         value={giftData.email}
+                         onChange={(e) => setGiftData({ ...giftData, email: e.target.value })}
+                         className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 pl-14 pr-6 focus:ring-4 focus:ring-amber-500/20 outline-none transition-all font-bold"
+                       />
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-2">Amount to Gift</label>
+                    <div className="grid grid-cols-3 gap-3">
+                       {[5, 10, 20].map(amt => (
+                         <button 
+                           key={amt} type="button"
+                           onClick={() => setGiftData({ ...giftData, amount: amt })}
+                           className={`py-3 rounded-xl text-sm font-black border transition-all ${giftData.amount === amt ? 'bg-amber-500 text-amber-950 border-amber-500' : 'bg-white/5 border-white/5 hover:bg-white/10'}`}
+                         >
+                           {amt}
+                         </button>
+                       ))}
+                    </div>
+                  </div>
+
+                  <div className="bg-amber-500/5 p-4 rounded-2xl border border-amber-500/10">
+                     <p className="text-[10px] font-bold text-amber-500/80 leading-relaxed text-center">
+                        This will deduct <span className="font-black underline">{giftData.amount} credits</span> from your balance of {credits}.
+                     </p>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <button 
+                      type="button" onClick={() => setIsGiftModalOpen(false)}
+                      className="flex-grow py-4 bg-muted text-muted-foreground rounded-2xl font-black uppercase tracking-widest text-xs"
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      type="submit" disabled={giftLoading || credits < giftData.amount}
+                      className="flex-[2] py-4 bg-amber-500 text-amber-950 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-amber-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                    >
+                      {giftLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Send className="w-4 h-4" /> Send Gift</>}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Analysis Detail Modal */}
       <AnalysisDetailModal 

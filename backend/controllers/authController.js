@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
+const StudyPlan = require('../models/StudyPlan');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -123,13 +124,85 @@ exports.login = async (req, res) => {
 exports.getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.userId).select('-password');
-    if (user && !user.referralCode) {
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    if (!user.referralCode) {
       user.referralCode = Math.random().toString(36).substring(2, 8).toUpperCase();
       await user.save();
     }
-    res.json(user);
+
+    // Get Study Planner Pulse (Upcoming 3 incomplete tasks)
+    const studyPlan = await StudyPlan.findOne({ user: user._id });
+    const pulse = studyPlan ? studyPlan.tasks
+      .filter(t => !t.completed)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .slice(0, 3) : [];
+
+    res.json({
+      ...user.toObject(),
+      studyPlannerPulse: pulse
+    });
   } catch (err) {
-    console.error("LOGIN ERROR:", err.message);
+    console.error("GET ME ERROR:", err.message);
     res.status(500).json({ error: 'Server error' });
+  }
+};
+
+exports.giftCredits = async (req, res) => {
+  try {
+    const { recipientEmail, amount } = req.body;
+    const sender = await User.findById(req.user.userId);
+    
+    if (sender.credits < amount) {
+      return res.status(403).json({ error: 'Insufficient credits' });
+    }
+
+    const recipient = await User.findOne({ email: recipientEmail });
+    if (!recipient) {
+      return res.status(404).json({ error: 'Recipient user not found' });
+    }
+
+    if (sender.email === recipientEmail) {
+      return res.status(400).json({ error: 'You cannot gift credits to yourself' });
+    }
+
+    // Process Transaction
+    sender.credits -= amount;
+    sender.creditHistory.push({
+      type: 'spent',
+      amount,
+      description: `Gifted credits to ${recipient.name}`,
+      date: new Date()
+    });
+
+    recipient.credits += amount;
+    recipient.creditHistory.push({
+      type: 'added',
+      amount,
+      description: `Received gift credits from ${sender.name}`,
+      date: new Date()
+    });
+
+    await sender.save();
+    await recipient.save();
+
+    res.json({ message: 'Credits gifted successfully', remainingCredits: sender.credits });
+  } catch (err) {
+    console.error("GIFT ERROR:", err);
+    res.status(500).json({ error: 'Failed to gift credits' });
+  }
+};
+
+exports.getLeaderboard = async (req, res) => {
+  try {
+    const leaderboard = await User.find()
+      .select('name referralsCount avatar')
+      .sort({ referralsCount: -1 })
+      .limit(10);
+    
+    res.json(leaderboard);
+  } catch (err) {
+    console.error("LEADERBOARD ERROR:", err);
+    res.status(500).json({ error: 'Failed to fetch leaderboard' });
   }
 };
