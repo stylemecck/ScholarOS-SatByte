@@ -1,6 +1,5 @@
-import React from 'react';
 import ToolBase from '../../../components/ToolBase';
-import { FileMinus } from 'lucide-react';
+import { Minimize2 } from 'lucide-react';
 
 const CompressPDF = () => {
   return (

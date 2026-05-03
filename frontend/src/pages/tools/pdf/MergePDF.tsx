@@ -1,4 +1,3 @@
-import React from 'react';
 import ToolBase from '../../../components/ToolBase';
 import { FilePlus } from 'lucide-react';
 

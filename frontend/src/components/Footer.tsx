@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Zap, Heart, Mail, ExternalLink, Code2, Globe, Users } from 'lucide-react';
+import { Heart, Mail, ExternalLink, Code2, Globe, Users } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
