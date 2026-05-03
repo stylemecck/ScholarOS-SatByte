@@ -4,8 +4,11 @@ import ToolCard from '../components/ToolCard';
 import { Search, Zap, Sparkles, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useSettings } from '../context/SettingsContext';
+import AdsterraAd from '../components/AdsterraAd';
 
 const Home = () => {
+  const { settings } = useSettings();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('All');
 
@@ -116,6 +119,15 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Ad Section */}
+      {settings.adsterraNativeBanner && (
+        <section className="px-4">
+          <div className="max-w-7xl mx-auto">
+            <AdsterraAd type="native" code={settings.adsterraNativeBanner} />
+          </div>
+        </section>
+      )}
+
       {/* Featured Bento Section */}
       <section className="px-4">
         <div className="max-w-7xl mx-auto space-y-8 md:space-y-12">
@@ -157,6 +169,15 @@ const Home = () => {
             </div>
         </div>
       </section>
+
+      {/* Ad Section */}
+      {settings.adsterraNativeBanner && (
+        <section className="px-4">
+          <div className="max-w-7xl mx-auto">
+            <AdsterraAd type="native" code={settings.adsterraNativeBanner} />
+          </div>
+        </section>
+      )}
 
       {/* Modern Categorized Tools Section */}
       <section className="px-4 space-y-16 md:space-y-32">

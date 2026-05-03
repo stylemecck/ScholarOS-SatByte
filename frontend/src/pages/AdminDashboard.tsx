@@ -22,10 +22,18 @@ const AdminDashboard = () => {
     adsCode: string;
     announcement: string;
     googleVerification: string;
+    adsterraSmartlink: string;
+    adsterraSocialBar: string;
+    adsterraNativeBanner: string;
+    adsterraPopunder: string;
   }>({
     adsCode: '',
     announcement: '',
-    googleVerification: ''
+    googleVerification: '',
+    adsterraSmartlink: '',
+    adsterraSocialBar: '',
+    adsterraNativeBanner: '',
+    adsterraPopunder: ''
   });
 
   useEffect(() => {
@@ -55,7 +63,11 @@ const AdminDashboard = () => {
       setSettings({
         adsCode: response.data.adsCode || '',
         announcement: response.data.announcement || '',
-        googleVerification: response.data.googleVerification || ''
+        googleVerification: response.data.googleVerification || '',
+        adsterraSmartlink: response.data.adsterraSmartlink || '',
+        adsterraSocialBar: response.data.adsterraSocialBar || '',
+        adsterraNativeBanner: response.data.adsterraNativeBanner || '',
+        adsterraPopunder: response.data.adsterraPopunder || ''
       });
     } catch (err) {
       console.error("Failed to fetch settings:", err);
@@ -72,6 +84,18 @@ const AdminDashboard = () => {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       await axios.post(`${import.meta.env.VITE_API_URL}/api/settings`, { key: 'googleVerification', value: settings.googleVerification }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/settings`, { key: 'adsterraSmartlink', value: settings.adsterraSmartlink }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/settings`, { key: 'adsterraSocialBar', value: settings.adsterraSocialBar }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/settings`, { key: 'adsterraNativeBanner', value: settings.adsterraNativeBanner }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/settings`, { key: 'adsterraPopunder', value: settings.adsterraPopunder }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       alert('✅ All settings saved successfully!');
@@ -285,6 +309,50 @@ const AdminDashboard = () => {
                     className="w-full bg-muted/30 border border-border rounded-xl p-4 text-sm font-bold focus:ring-2 focus:ring-primary outline-none transition-all"
                 />
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Adsterra Smartlink</label>
+                <input 
+                  type="text"
+                  value={settings.adsterraSmartlink}
+                  onChange={(e) => setSettings({ ...settings, adsterraSmartlink: e.target.value })}
+                  placeholder="Paste Smartlink URL..."
+                  className="w-full bg-muted/30 border border-border rounded-xl p-3 text-xs font-mono focus:ring-2 focus:ring-primary outline-none transition-all"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Adsterra Popunder</label>
+                <input 
+                  type="text"
+                  value={settings.adsterraPopunder}
+                  onChange={(e) => setSettings({ ...settings, adsterraPopunder: e.target.value })}
+                  placeholder="Paste Popunder Script..."
+                  className="w-full bg-muted/30 border border-border rounded-xl p-3 text-xs font-mono focus:ring-2 focus:ring-primary outline-none transition-all"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Adsterra Social Bar (Script)</label>
+              <textarea 
+                value={settings.adsterraSocialBar}
+                onChange={(e) => setSettings({ ...settings, adsterraSocialBar: e.target.value })}
+                placeholder="Paste Social Bar script here..."
+                className="w-full h-20 bg-muted/30 border border-border rounded-xl p-3 text-xs font-mono focus:ring-2 focus:ring-primary outline-none transition-all resize-none"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Adsterra Native Banner (Script)</label>
+              <textarea 
+                value={settings.adsterraNativeBanner}
+                onChange={(e) => setSettings({ ...settings, adsterraNativeBanner: e.target.value })}
+                placeholder="Paste Native Banner code here..."
+                className="w-full h-24 bg-muted/30 border border-border rounded-xl p-3 text-xs font-mono focus:ring-2 focus:ring-primary outline-none transition-all resize-none"
+              />
+            </div>
+
             <div className="space-y-4">
                 <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Google Search Console Verification</label>
                 <input 

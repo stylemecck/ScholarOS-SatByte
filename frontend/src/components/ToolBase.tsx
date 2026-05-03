@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, X, FileText, Download, Loader2, Plus, Settings, ShieldCheck } from 'lucide-react';
 import axios from 'axios';
 import { useEffect } from 'react';
+import { useSettings } from '../context/SettingsContext';
+import AdsterraAd from './AdsterraAd';
 
 interface ToolBaseProps {
   title: string;
@@ -20,6 +22,7 @@ const ToolBase: React.FC<ToolBaseProps> = ({
   title, description, icon: Icon, accept, multiple = false, 
   endpoint, options, getExtraData, resultFilename = 'result.pdf' 
 }) => {
+  const { settings } = useSettings();
   const [files, setFiles] = useState<File[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -106,9 +109,13 @@ const ToolBase: React.FC<ToolBaseProps> = ({
       </div>
 
       {/* Top Ad Slot */}
-      <div className="w-full h-24 bg-white/5 border border-dashed border-white/10 rounded-3xl flex items-center justify-center text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground/30">
-        Advertisement Placeholder
-      </div>
+      {settings.adsterraNativeBanner ? (
+        <AdsterraAd type="native" code={settings.adsterraNativeBanner} />
+      ) : (
+        <div className="w-full h-24 bg-white/5 border border-dashed border-white/10 rounded-3xl flex items-center justify-center text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground/30">
+          Advertisement Placeholder
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
         <div className="lg:col-span-3 space-y-8">
@@ -241,10 +248,14 @@ const ToolBase: React.FC<ToolBaseProps> = ({
           </div>
 
           {/* Sidebar Ad Slot */}
-          <div className="w-full aspect-square bg-white/5 border border-dashed border-white/10 rounded-[3rem] flex flex-col items-center justify-center text-center p-8 space-y-2">
-            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/30">Sponsored</p>
-            <div className="w-12 h-12 bg-white/5 rounded-2xl" />
-          </div>
+          {settings.adsterraNativeBanner ? (
+            <AdsterraAd type="native" code={settings.adsterraNativeBanner} />
+          ) : (
+            <div className="w-full aspect-square bg-white/5 border border-dashed border-white/10 rounded-[3rem] flex flex-col items-center justify-center text-center p-8 space-y-2">
+              <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/30">Sponsored</p>
+              <div className="w-12 h-12 bg-white/5 rounded-2xl" />
+            </div>
+          )}
 
           <div className="bg-primary/5 border border-primary/10 rounded-[2rem] p-8 space-y-3">
             <div className="flex items-center gap-2">

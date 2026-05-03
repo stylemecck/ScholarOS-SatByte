@@ -33,107 +33,103 @@ import Contact from './pages/Contact';
 import Support from './pages/Support';
 import AdminDashboard from './pages/AdminDashboard';
 import { AuthProvider } from './context/AuthContext';
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { SettingsProvider, useSettings } from './context/SettingsContext';
+import { useEffect } from 'react';
 import ChatAssistant from './components/ChatAssistant';
 
-function App() {
-  const [announcement, setAnnouncement] = useState('');
+function AppContent() {
+  const { settings } = useSettings();
 
   useEffect(() => {
     // Default to light mode
     document.documentElement.classList.remove('dark');
     
-    // Fetch and inject ads code & announcement
-    const initSiteSettings = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/settings`);
-        
-        // 1. Inject Ads Code (Google AdSense etc.)
-        if (response.data.adsCode) {
-          const range = document.createRange();
-          const documentFragment = range.createContextualFragment(response.data.adsCode);
-          document.head.appendChild(documentFragment);
-        }
+    // 1. Inject Ads Code (Google AdSense etc.)
+    if (settings.adsCode) {
+      const range = document.createRange();
+      const documentFragment = range.createContextualFragment(settings.adsCode);
+      document.head.appendChild(documentFragment);
+    }
 
-        // 2. Set Announcement
-        if (response.data.announcement) {
-          setAnnouncement(response.data.announcement);
-        }
+    // 2. Inject Adsterra Popunder & Social Bar
+    if (settings.adsterraPopunder) {
+      const range = document.createRange();
+      const fragment = range.createContextualFragment(settings.adsterraPopunder);
+      document.body.appendChild(fragment);
+    }
 
-        // 3. Inject Google Verification
-        if (response.data.googleVerification) {
-          const vTag = document.getElementById('google-v-tag');
-          if (vTag) {
-            vTag.setAttribute('name', 'google-site-verification');
-            vTag.setAttribute('content', response.data.googleVerification);
-          }
-        }
-      } catch (err) {
-        console.error("Failed to load site settings:", err);
-      }
-    };
-
-    initSiteSettings();
-  }, []);
+    if (settings.adsterraSocialBar) {
+      const range = document.createRange();
+      const fragment = range.createContextualFragment(settings.adsterraSocialBar);
+      document.body.appendChild(fragment);
+    }
+  }, [settings]);
 
   return (
-    <AuthProvider>
-      <Router>
-        <ScrollToTop />
-        <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
-          {announcement && (
-            <div className="bg-primary text-primary-foreground py-2 text-center text-[10px] font-black uppercase tracking-[0.3em] relative z-[60] shadow-lg">
-              {announcement}
-            </div>
-          )}
-          <Navbar />
-          <main className="flex-grow container mx-auto px-4 pt-28 pb-12 relative">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/pricing" element={<Pricing />} />
-              
-              {/* Academic Tools */}
-              <Route path="/tools/cgpa-calculator" element={<CGPACalculator />} />
-              <Route path="/tools/cgpa-converter" element={<CGPAConverter />} />
-              <Route path="/tools/attendance-calculator" element={<AttendanceCalculator />} />
-              {/* Exam & Utility Tools */}
-              <Route path="/tools/rank-predictor" element={<RankPredictor />} />
-              <Route path="/tools/resume-builder" element={<ResumeBuilder />} />
-              <Route path="/tools/word-counter" element={<WordCounter />} />
-              <Route path="/tools/pdf-to-text" element={<PDFToText />} />
-              <Route path="/tools/study-planner" element={<StudyPlanner />} />
-              <Route path="/tools/marks-percentile" element={<MarksVsPercentile />} />
-              <Route path="/tools/marks-vs-percentile" element={<MarksVsPercentile />} />
-
-              {/* PDF Tools */}
-              <Route path="/tools/pdf/merge" element={<MergePDF />} />
-              <Route path="/tools/pdf/split" element={<SplitPDF />} />
-              <Route path="/tools/pdf/compress" element={<CompressPDF />} />
-              <Route path="/tools/pdf/rotate" element={<RotatePDF />} />
-              <Route path="/tools/pdf/image-to-pdf" element={<ImageToPDF />} />
-              <Route path="/tools/pdf/watermark" element={<WatermarkPDF />} />
-
-              {/* Image Tools */}
-              <Route path="/tools/image/compress" element={<CompressImage />} />
-              <Route path="/tools/image/resize" element={<ResizeImage />} />
-              <Route path="/tools/image/convert" element={<ConvertImage />} />
-
-              {/* Informational Pages */}
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/support" element={<Support />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-            </Routes>
-            <ChatAssistant />
-          </main>
-          <Footer />
+    <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
+      {settings.announcement && (
+        <div className="bg-primary text-primary-foreground py-2 text-center text-[10px] font-black uppercase tracking-[0.3em] relative z-[60] shadow-lg">
+          {settings.announcement}
         </div>
-      </Router>
+      )}
+      <Navbar />
+      <main className="flex-grow container mx-auto px-4 pt-28 pb-12 relative">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/pricing" element={<Pricing />} />
+          
+          {/* Academic Tools */}
+          <Route path="/tools/cgpa-calculator" element={<CGPACalculator />} />
+          <Route path="/tools/cgpa-converter" element={<CGPAConverter />} />
+          <Route path="/tools/attendance-calculator" element={<AttendanceCalculator />} />
+          {/* Exam & Utility Tools */}
+          <Route path="/tools/rank-predictor" element={<RankPredictor />} />
+          <Route path="/tools/resume-builder" element={<ResumeBuilder />} />
+          <Route path="/tools/word-counter" element={<WordCounter />} />
+          <Route path="/tools/pdf-to-text" element={<PDFToText />} />
+          <Route path="/tools/study-planner" element={<StudyPlanner />} />
+          <Route path="/tools/marks-percentile" element={<MarksVsPercentile />} />
+          <Route path="/tools/marks-vs-percentile" element={<MarksVsPercentile />} />
+
+          {/* PDF Tools */}
+          <Route path="/tools/pdf/merge" element={<MergePDF />} />
+          <Route path="/tools/pdf/split" element={<SplitPDF />} />
+          <Route path="/tools/pdf/compress" element={<CompressPDF />} />
+          <Route path="/tools/pdf/rotate" element={<RotatePDF />} />
+          <Route path="/tools/pdf/image-to-pdf" element={<ImageToPDF />} />
+          <Route path="/tools/pdf/watermark" element={<WatermarkPDF />} />
+
+          {/* Image Tools */}
+          <Route path="/tools/image/compress" element={<CompressImage />} />
+          <Route path="/tools/image/resize" element={<ResizeImage />} />
+          <Route path="/tools/image/convert" element={<ConvertImage />} />
+
+          {/* Informational Pages */}
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/support" element={<Support />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+        </Routes>
+        <ChatAssistant />
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <SettingsProvider>
+        <Router>
+          <ScrollToTop />
+          <AppContent />
+        </Router>
+      </SettingsProvider>
     </AuthProvider>
   );
 }
