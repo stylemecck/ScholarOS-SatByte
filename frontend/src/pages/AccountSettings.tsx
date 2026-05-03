@@ -106,7 +106,7 @@ const AccountSettings = () => {
   };
 
   const copyReferralCode = () => {
-    navigator.clipboard.writeText(user.referralCode);
+    navigator.clipboard.writeText(user.referralCode || '');
     alert('Referral code copied!');
   };
 
@@ -208,9 +208,9 @@ const AccountSettings = () => {
                   ) : (
                     <form onSubmit={handleChangePassword} className="space-y-6">
                       <div className="space-y-4">
-                        <PasswordInput label="Current Password" value={passwordData.currentPassword} onChange={(val) => setPasswordData({...passwordData, currentPassword: val})} show={showPasswords} toggle={() => setShowPasswords(!showPasswords)} />
-                        <PasswordInput label="New Password" value={passwordData.newPassword} onChange={(val) => setPasswordData({...passwordData, newPassword: val})} show={showPasswords} toggle={() => setShowPasswords(!showPasswords)} />
-                        <PasswordInput label="Confirm New Password" value={passwordData.confirmPassword} onChange={(val) => setPasswordData({...passwordData, confirmPassword: val})} show={showPasswords} toggle={() => setShowPasswords(!showPasswords)} />
+                        <PasswordInput label="Current Password" value={passwordData.currentPassword} onChange={(val: string) => setPasswordData({...passwordData, currentPassword: val})} show={showPasswords} toggle={() => setShowPasswords(!showPasswords)} />
+                        <PasswordInput label="New Password" value={passwordData.newPassword} onChange={(val: string) => setPasswordData({...passwordData, newPassword: val})} show={showPasswords} toggle={() => setShowPasswords(!showPasswords)} />
+                        <PasswordInput label="Confirm New Password" value={passwordData.confirmPassword} onChange={(val: string) => setPasswordData({...passwordData, confirmPassword: val})} show={showPasswords} toggle={() => setShowPasswords(!showPasswords)} />
                       </div>
                       <button type="submit" disabled={loading} className="w-full py-4 bg-primary text-primary-foreground rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20 hover:scale-[1.01] transition-all flex items-center justify-center gap-2">
                         {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><Key className="w-5 h-5" /> Change Password</>}
