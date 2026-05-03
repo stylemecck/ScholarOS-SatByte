@@ -35,7 +35,18 @@
   body {
     background-color: rgb(var(--background));
     color: rgb(var(--foreground));
-    font-family: 'Outfit', system-ui, sans-serif;
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .font-black {
+    font-weight: 900;
   }
 }
 
