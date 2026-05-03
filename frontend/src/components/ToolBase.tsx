@@ -86,9 +86,10 @@ const ToolBase: React.FC<ToolBaseProps> = ({
 
       const url = window.URL.createObjectURL(new Blob([response.data]));
       setResult(url);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Processing error:', err);
-      alert('Failed to process files. Please try again.');
+      const errorMessage = err.response?.data?.error || err.response?.data?.details || 'Failed to process files. Please try again.';
+      alert(errorMessage);
     } finally {
       setIsProcessing(false);
     }
