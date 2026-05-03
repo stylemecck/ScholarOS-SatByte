@@ -19,5 +19,8 @@ const upload = multer({ storage });
 router.post('/merge', upload.array('files'), pdfController.mergePDFs);
 router.post('/compress', upload.single('file'), pdfController.compressPDF);
 router.post('/split', upload.single('file'), pdfController.splitPDF);
+router.post('/rotate', upload.single('file'), pdfController.rotatePDF);
+router.post('/image-to-pdf', upload.array('files'), pdfController.imageToPDF);
+router.post('/watermark', upload.single('file'), pdfController.addWatermark);
 
 module.exports = router;

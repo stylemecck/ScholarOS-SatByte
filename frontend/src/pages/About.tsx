@@ -31,10 +31,13 @@ const About = () => {
           className="space-y-6 text-lg text-muted-foreground leading-relaxed"
         >
           <p>
-            Hey there! I'm <span className="text-foreground font-bold underline decoration-primary/30 decoration-4">Satyam Kumar</span>. Like many of you, my days are filled with late-night coding sessions, MCA entrance prep, and the constant hustle of college life.
+            Hey there! I'm <span className="text-foreground font-bold underline decoration-primary/30 decoration-4">Satyam Kumar</span>. Like many of you, my days are filled with late-night coding sessions, competitive exam prep, and the constant hustle of student life.
           </p>
           <p>
-            The idea for <span className="text-foreground font-bold">Student Toolkit Pro</span> didn't come from a boardroom—it came from frustration. I was tired of wasting precious study hours searching for simple tools. Whether it was fighting with complex CGPA formulas, guessing my rank after an exam, or struggling to make a resume that didn't look like a 90s word doc, I felt the gap.
+            What started as a simple collection of calculators has evolved into something much bigger. I realized that students don't just need GPA formulas—they need a professional command center. That's why I've expanded <span className="text-foreground font-bold">Student Toolkit Pro</span> into a full-featured "Mega Toolkit" with industry-standard PDF manipulation, lightning-fast image processing, and AI-driven career tools.
+          </p>
+          <p>
+            The goal remains the same: No boardroom politics, no complex corporate jargon. Just a powerful, all-in-one workspace built by someone who understands the grind.
           </p>
         </motion.div>
         <motion.div 
@@ -49,7 +52,7 @@ const About = () => {
               <h3 className="font-bold">The Developer Side</h3>
             </div>
             <p className="text-sm text-muted-foreground italic">
-              "I realized that instead of complaining about the lack of tools, I could use my MERN stack journey to build them. This platform is my way of giving back to the community I belong to."
+              "Transitioning from a simple toolset to a modular multi-tool platform (like iLovePDF but for students) was a challenge, but seeing thousands of students use it daily makes every line of code worth it."
             </p>
           </div>
         </motion.div>
@@ -59,13 +62,13 @@ const About = () => {
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <FeatureCard 
           icon={<Coffee className="w-6 h-6" />}
-          title="Simplicity First"
-          description="No complex UI, no useless clicks. Just the tools you need, exactly when you need them."
+          title="All-in-One Hub"
+          description="PDF, Image, Academic, and AI tools in one unified, high-performance interface."
         />
         <FeatureCard 
           icon={<GraduationCap className="w-6 h-6" />}
-          title="Academic Focus"
-          description="Built specifically for the needs of MCA aspirants and Indian college students."
+          title="Pro Standards"
+          description="Leveraging industrial libraries like Sharp and PDF-Lib to give you pro results for free."
         />
         <FeatureCard 
           icon={<Heart className="w-6 h-6" />}
@@ -83,7 +86,7 @@ const About = () => {
       >
         <h2 className="text-3xl font-bold">My Mission</h2>
         <p className="max-w-2xl mx-auto text-muted-foreground text-lg">
-          My goal is to make <span className="text-foreground font-bold">Student Toolkit Pro</span> the go-to companion for every student in India. From calculating your first semester GPA to landing your dream job with our resume builder, I want to be part of your success story.
+          My goal is to make <span className="text-foreground font-bold">Student Toolkit Pro</span> the most comprehensive digital companion for every student. Whether you're merging your lecture notes, resizing project images, or predicting your exam rank, I want to be part of your success story.
         </p>
         <div className="pt-4">
           <p className="text-sm font-bold uppercase tracking-widest text-primary">Happy Studying!</p>

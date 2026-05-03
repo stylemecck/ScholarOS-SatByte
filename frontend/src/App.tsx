@@ -20,6 +20,9 @@ import MarksVsPercentile from './pages/tools/MarksVsPercentile';
 import MergePDF from './pages/tools/pdf/MergePDF';
 import SplitPDF from './pages/tools/pdf/SplitPDF';
 import CompressPDF from './pages/tools/pdf/CompressPDF';
+import RotatePDF from './pages/tools/pdf/RotatePDF';
+import ImageToPDF from './pages/tools/pdf/ImageToPDF';
+import WatermarkPDF from './pages/tools/pdf/WatermarkPDF';
 // Image Tools
 import CompressImage from './pages/tools/image/CompressImage';
 import ResizeImage from './pages/tools/image/ResizeImage';
@@ -70,6 +73,9 @@ function App() {
               <Route path="/tools/pdf/merge" element={<MergePDF />} />
               <Route path="/tools/pdf/split" element={<SplitPDF />} />
               <Route path="/tools/pdf/compress" element={<CompressPDF />} />
+              <Route path="/tools/pdf/rotate" element={<RotatePDF />} />
+              <Route path="/tools/pdf/image-to-pdf" element={<ImageToPDF />} />
+              <Route path="/tools/pdf/watermark" element={<WatermarkPDF />} />
 
               {/* Image Tools */}
               <Route path="/tools/image/compress" element={<CompressImage />} />

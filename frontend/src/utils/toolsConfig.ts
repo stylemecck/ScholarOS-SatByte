@@ -13,7 +13,8 @@ import {
   FileMinus,
   Image as ImageIcon,
   Maximize,
-  RefreshCw
+  RefreshCw,
+  ShieldCheck
 } from 'lucide-react';
 
 export interface Tool {
@@ -122,6 +123,30 @@ export const tools: Tool[] = [
     icon: FileMinus,
     category: 'PDF',
     path: '/tools/pdf/compress'
+  },
+  {
+    id: 'pdf-rotate',
+    name: 'Rotate PDF',
+    description: 'Rotate your PDF pages precisely as you need them.',
+    icon: RefreshCw,
+    category: 'PDF',
+    path: '/tools/pdf/rotate'
+  },
+  {
+    id: 'image-to-pdf',
+    name: 'Image to PDF',
+    description: 'Convert your JPG or PNG images into a professional PDF document.',
+    icon: FilePlus,
+    category: 'PDF',
+    path: '/tools/pdf/image-to-pdf'
+  },
+  {
+    id: 'pdf-watermark',
+    name: 'Add Watermark',
+    description: 'Protect your documents by adding a custom text watermark.',
+    icon: ShieldCheck,
+    category: 'PDF',
+    path: '/tools/pdf/watermark'
   },
   // Image Tools
   {

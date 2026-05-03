@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, X, FileText, Download, Loader2, Plus, Settings } from 'lucide-react';
 import axios from 'axios';
+import { useEffect } from 'react';
 
 interface ToolBaseProps {
   title: string;
@@ -24,6 +25,15 @@ const ToolBase: React.FC<ToolBaseProps> = ({
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Dynamic SEO management
+  useEffect(() => {
+    document.title = `${title} - Student Toolkit Pro`;
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', description);
+    }
+  }, [title, description]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
