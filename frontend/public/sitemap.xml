@@ -1,23 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Main Pages -->
   <url>
-    <loc>https://studenttoolkitpro.com/</loc>
-    <lastmod>2026-05-01</lastmod>
+    <loc>https://toolkit.satbyte.in/</loc>
+    <lastmod>2026-05-03</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://studenttoolkitpro.com/dashboard</loc>
-    <lastmod>2026-05-01</lastmod>
+    <loc>https://toolkit.satbyte.in/pricing</loc>
+    <lastmod>2026-05-03</lastmod>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://toolkit.satbyte.in/dashboard</loc>
+    <lastmod>2026-05-03</lastmod>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Academic Tools -->
+  <url>
+    <loc>https://toolkit.satbyte.in/tools/rank-predictor</loc>
+    <lastmod>2026-05-03</lastmod>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://toolkit.satbyte.in/tools/study-planner</loc>
+    <lastmod>2026-05-03</lastmod>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://toolkit.satbyte.in/tools/resume-builder</loc>
+    <lastmod>2026-05-03</lastmod>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://toolkit.satbyte.in/tools/cgpa-calculator</loc>
+    <lastmod>2026-05-03</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://studenttoolkitpro.com/pricing</loc>
-    <lastmod>2026-05-01</lastmod>
-    <priority>0.9</priority>
+    <loc>https://toolkit.satbyte.in/tools/cgpa-converter</loc>
+    <lastmod>2026-05-03</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://studenttoolkitpro.com/tools/rank-predictor</loc>
-    <lastmod>2026-05-01</lastmod>
-    <priority>0.9</priority>
+    <loc>https://toolkit.satbyte.in/tools/attendance-calculator</loc>
+    <lastmod>2026-05-03</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://toolkit.satbyte.in/tools/marks-vs-percentile</loc>
+    <lastmod>2026-05-03</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://toolkit.satbyte.in/tools/word-counter</loc>
+    <lastmod>2026-05-03</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolkit.satbyte.in/tools/pdf-to-text</loc>
+    <lastmod>2026-05-03</lastmod>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Informational Pages -->
+  <url>
+    <loc>https://toolkit.satbyte.in/about</loc>
+    <lastmod>2026-05-03</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://toolkit.satbyte.in/contact</loc>
+    <lastmod>2026-05-03</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://toolkit.satbyte.in/support</loc>
+    <lastmod>2026-05-03</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://toolkit.satbyte.in/privacy</loc>
+    <lastmod>2026-05-03</lastmod>
+    <priority>0.5</priority>
   </url>
 </urlset>

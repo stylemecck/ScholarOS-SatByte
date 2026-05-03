@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://studenttoolkitpro.com/sitemap.xml
+Sitemap: https://toolkit.satbyte.in/sitemap.xml
