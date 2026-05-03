@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const authMiddleware = (req, res, next) => {
+const protect = (req, res, next) => {
   const token = req.header('Authorization')?.split(' ')[1];
   
   if (!token) return res.status(401).json({ error: 'Access denied. No token provided.' });
@@ -14,4 +14,14 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+const admin = (req, res, next) => {
+  if (req.user && req.user.role === 'admin') {
+    next();
+  } else {
+    res.status(403).json({ error: 'Access denied. Admin only.' });
+  }
+};
+
+module.exports = protect;
+module.exports.protect = protect;
+module.exports.admin = admin;
