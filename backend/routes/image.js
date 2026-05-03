@@ -5,16 +5,10 @@ const path = require('path');
 const imageController = require('../controllers/imageController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'temp/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
 });
-
-const upload = multer({ storage });
 
 router.post('/compress', upload.single('file'), imageController.compressImage);
 router.post('/resize', upload.single('file'), imageController.resizeImage);

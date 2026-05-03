@@ -16,7 +16,7 @@ exports.mergePDFs = async (req, res) => {
     const mergedPdf = await PDFDocument.create();
 
     for (const file of req.files) {
-      const pdfBytes = fs.readFileSync(file.path);
+      const pdfBytes = file.buffer;
       const pdf = await PDFDocument.load(pdfBytes);
       const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
       copiedPages.forEach((page) => mergedPdf.addPage(page));
@@ -24,11 +24,6 @@ exports.mergePDFs = async (req, res) => {
 
     const mergedPdfBytes = await mergedPdf.save();
     
-    // Cleanup uploaded files
-    req.files.forEach(file => {
-      if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
-    });
-
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=merged_stp.pdf');
     res.send(Buffer.from(mergedPdfBytes));
@@ -43,23 +38,17 @@ exports.mergePDFs = async (req, res) => {
  */
 exports.compressPDF = async (req, res) => {
   try {
-    if (!req.file) {
+    if (!req.file || !req.file.buffer) {
       return res.status(400).json({ error: 'Please upload a PDF file to compress.' });
     }
 
-    const pdfBytes = fs.readFileSync(req.file.path);
+    const pdfBytes = req.file.buffer;
     const pdfDoc = await PDFDocument.load(pdfBytes);
     
-    // In pdf-lib, "compression" is mostly done by removing metadata or 
-    // using efficient objects. True image compression requires more complex logic.
-    // For now, we'll re-save it with compression enabled.
     const compressedPdfBytes = await pdfDoc.save({ 
       useObjectStreams: true,
       addDefaultPage: false 
     });
-
-    // Cleanup
-    if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
 
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=compressed_stp.pdf');
@@ -75,11 +64,11 @@ exports.compressPDF = async (req, res) => {
  */
 exports.splitPDF = async (req, res) => {
   try {
-    if (!req.file) {
+    if (!req.file || !req.file.buffer) {
       return res.status(400).json({ error: 'Please upload a PDF file to split.' });
     }
 
-    const pdfBytes = fs.readFileSync(req.file.path);
+    const pdfBytes = req.file.buffer;
     const pdfDoc = await PDFDocument.load(pdfBytes);
     const pageCount = pdfDoc.getPageCount();
 
@@ -102,9 +91,6 @@ exports.splitPDF = async (req, res) => {
     }
 
     await archive.finalize();
-
-    // Cleanup
-    if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
   } catch (err) {
     console.error('Split PDF Error:', err);
     if (!res.headersSent) {
@@ -118,10 +104,10 @@ exports.splitPDF = async (req, res) => {
  */
 exports.rotatePDF = async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ error: 'Please upload a PDF file.' });
+    if (!req.file || !req.file.buffer) return res.status(400).json({ error: 'Please upload a PDF file.' });
     const rotation = parseInt(req.body.rotation) || 90;
 
-    const pdfBytes = fs.readFileSync(req.file.path);
+    const pdfBytes = req.file.buffer;
     const pdfDoc = await PDFDocument.load(pdfBytes);
     const pages = pdfDoc.getPages();
 
@@ -132,8 +118,6 @@ exports.rotatePDF = async (req, res) => {
 
     const rotatedPdfBytes = await pdfDoc.save();
     
-    if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
-
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=rotated_stp.pdf');
     res.send(Buffer.from(rotatedPdfBytes));
@@ -155,7 +139,7 @@ exports.imageToPDF = async (req, res) => {
     const pdfDoc = await PDFDocument.create();
 
     for (const file of req.files) {
-      const imageBytes = fs.readFileSync(file.path);
+      const imageBytes = file.buffer;
       let image;
       
       if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg') {
@@ -177,11 +161,6 @@ exports.imageToPDF = async (req, res) => {
 
     const pdfBytes = await pdfDoc.save();
 
-    // Cleanup
-    req.files.forEach(file => {
-      if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
-    });
-
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=images_to_pdf_stp.pdf');
     res.send(Buffer.from(pdfBytes));
@@ -196,11 +175,11 @@ exports.imageToPDF = async (req, res) => {
  */
 exports.addWatermark = async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ error: 'Please upload a PDF file.' });
+    if (!req.file || !req.file.buffer) return res.status(400).json({ error: 'Please upload a PDF file.' });
     const text = req.body.text || 'Student Toolkit Pro';
     const opacity = parseFloat(req.body.opacity) || 0.3;
 
-    const pdfBytes = fs.readFileSync(req.file.path);
+    const pdfBytes = req.file.buffer;
     const pdfDoc = await PDFDocument.load(pdfBytes);
     const pages = pdfDoc.getPages();
 
@@ -217,8 +196,6 @@ exports.addWatermark = async (req, res) => {
 
     const watermarkedPdfBytes = await pdfDoc.save();
     
-    if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
-
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=watermarked_stp.pdf');
     res.send(Buffer.from(watermarkedPdfBytes));

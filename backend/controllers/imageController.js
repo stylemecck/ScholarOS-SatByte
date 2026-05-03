@@ -6,9 +6,8 @@ const fs = require('fs');
  * Compress Image
  */
 exports.compressImage = async (req, res) => {
-  let tempFilePath = req.file?.path;
   try {
-    if (!req.file) {
+    if (!req.file || !req.file.buffer) {
       return res.status(400).json({ error: 'Please upload an image to compress.' });
     }
 
@@ -17,7 +16,6 @@ exports.compressImage = async (req, res) => {
     const format = req.file.mimetype.split('/')[1].toLowerCase();
 
     let buffer;
-    let currentQuality = quality;
 
     // If targetSize is provided, we might need multiple passes (simple version)
     if (targetSizeKB && targetSizeKB > 0) {
@@ -26,7 +24,7 @@ exports.compressImage = async (req, res) => {
       
       // Try high quality first
       for (let q = 80; q >= 10; q -= 10) {
-        let p = sharp(req.file.path);
+        let p = sharp(req.file.buffer);
         if (format === 'png') {
             lastBuffer = await p.png({ quality: q, compressionLevel: 9 }).toBuffer();
         } else if (format === 'webp') {
@@ -42,7 +40,7 @@ exports.compressImage = async (req, res) => {
         buffer = lastBuffer; // Keep at least the lowest quality one
       }
     } else {
-      let p = sharp(req.file.path);
+      let p = sharp(req.file.buffer);
       if (format === 'jpeg' || format === 'jpg') {
         buffer = await p.jpeg({ quality, mozjpeg: true }).toBuffer();
       } else if (format === 'png') {
@@ -57,18 +55,11 @@ exports.compressImage = async (req, res) => {
       }
     }
 
-    // Cleanup input file
-    if (tempFilePath && fs.existsSync(tempFilePath)) {
-      fs.unlinkSync(tempFilePath);
-      tempFilePath = null;
-    }
-
     res.setHeader('Content-Type', buffer.length > 0 ? (format === 'png' ? 'image/png' : (format === 'webp' ? 'image/webp' : 'image/jpeg')) : req.file.mimetype);
     res.setHeader('Content-Disposition', `attachment; filename=compressed_stp.${format === 'png' ? 'png' : (format === 'webp' ? 'webp' : 'jpg')}`);
     res.send(buffer);
   } catch (err) {
     console.error('Compress Image Error:', err);
-    if (tempFilePath && fs.existsSync(tempFilePath)) fs.unlinkSync(tempFilePath);
     res.status(500).json({ error: 'Failed to compress image.', details: err.message });
   }
 };
@@ -78,7 +69,7 @@ exports.compressImage = async (req, res) => {
  */
 exports.resizeImage = async (req, res) => {
   try {
-    if (!req.file) {
+    if (!req.file || !req.file.buffer) {
       return res.status(400).json({ error: 'Please upload an image to resize.' });
     }
 
@@ -90,7 +81,7 @@ exports.resizeImage = async (req, res) => {
     }
 
     const format = req.file.mimetype.split('/')[1].toLowerCase();
-    const outputBuffer = await sharp(req.file.path)
+    const outputBuffer = await sharp(req.file.buffer)
       .resize(width || null, height || null, {
         fit: 'inside',
         withoutEnlargement: true
@@ -98,15 +89,11 @@ exports.resizeImage = async (req, res) => {
       .toFormat(format === 'png' ? 'png' : (format === 'webp' ? 'webp' : 'jpeg'))
       .toBuffer();
 
-    // Cleanup
-    if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
-
     res.setHeader('Content-Type', format === 'png' ? 'image/png' : (format === 'webp' ? 'image/webp' : 'image/jpeg'));
     res.setHeader('Content-Disposition', `attachment; filename=resized_stp.${format === 'png' ? 'png' : (format === 'webp' ? 'webp' : 'jpg')}`);
     res.send(outputBuffer);
   } catch (err) {
     console.error('Resize Image Error:', err);
-    if (req.file?.path && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
     res.status(500).json({ error: 'Failed to resize image.', details: err.message });
   }
 };
@@ -116,7 +103,7 @@ exports.resizeImage = async (req, res) => {
  */
 exports.convertImage = async (req, res) => {
   try {
-    if (!req.file) {
+    if (!req.file || !req.file.buffer) {
       return res.status(400).json({ error: 'Please upload an image to convert.' });
     }
 
@@ -125,19 +112,15 @@ exports.convertImage = async (req, res) => {
       return res.status(400).json({ error: 'Invalid target format.' });
     }
 
-    const outputBuffer = await sharp(req.file.path)
+    const outputBuffer = await sharp(req.file.buffer)
       .toFormat(targetFormat === 'jpg' ? 'jpeg' : targetFormat)
       .toBuffer();
-
-    // Cleanup
-    if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
 
     res.setHeader('Content-Type', `image/${targetFormat === 'jpg' ? 'jpeg' : targetFormat}`);
     res.setHeader('Content-Disposition', `attachment; filename=converted_stp.${targetFormat}`);
     res.send(outputBuffer);
   } catch (err) {
     console.error('Convert Image Error:', err);
-    if (req.file?.path && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
     res.status(500).json({ error: 'Failed to convert image.', details: err.message });
   }
 };
