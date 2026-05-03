@@ -8,7 +8,7 @@ const SettingSchema = new mongoose.Schema({
   },
   value: {
     type: String,
-    required: true
+    default: ''
   },
   description: String,
   updatedAt: {
