@@ -60,6 +60,15 @@ function App() {
         if (response.data.announcement) {
           setAnnouncement(response.data.announcement);
         }
+
+        // 3. Inject Google Verification
+        if (response.data.googleVerification) {
+          const vTag = document.getElementById('google-v-tag');
+          if (vTag) {
+            vTag.setAttribute('name', 'google-site-verification');
+            vTag.setAttribute('content', response.data.googleVerification);
+          }
+        }
       } catch (err) {
         console.error("Failed to load site settings:", err);
       }

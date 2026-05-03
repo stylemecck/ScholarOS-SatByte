@@ -49,7 +49,8 @@ const AdminDashboard = () => {
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/settings`);
       setSettings({
         adsCode: response.data.adsCode || '',
-        announcement: response.data.announcement || ''
+        announcement: response.data.announcement || '',
+        googleVerification: response.data.googleVerification || ''
       });
     } catch (err) {
       console.error("Failed to fetch settings:", err);
@@ -63,6 +64,9 @@ const AdminDashboard = () => {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       await axios.post(`${import.meta.env.VITE_API_URL}/api/settings`, { key: 'announcement', value: settings.announcement }, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/settings`, { key: 'googleVerification', value: settings.googleVerification }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       alert('✅ All settings saved successfully!');
@@ -273,6 +277,16 @@ const AdminDashboard = () => {
                     value={settings.announcement}
                     onChange={(e) => setSettings({ ...settings, announcement: e.target.value })}
                     placeholder="E.g. New PDF compression engine is now live!"
+                    className="w-full bg-muted/30 border border-border rounded-xl p-4 text-sm font-bold focus:ring-2 focus:ring-primary outline-none transition-all"
+                />
+            </div>
+            <div className="space-y-4">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Google Search Console Verification</label>
+                <input 
+                    type="text"
+                    value={settings.googleVerification}
+                    onChange={(e) => setSettings({ ...settings, googleVerification: e.target.value })}
+                    placeholder="Paste the 'content' value from your verification tag here..."
                     className="w-full bg-muted/30 border border-border rounded-xl p-4 text-sm font-bold focus:ring-2 focus:ring-primary outline-none transition-all"
                 />
             </div>
