@@ -20,7 +20,8 @@ const AdminDashboard = () => {
   const [saving, setSaving] = useState(false);
   const [settings, setSettings] = useState({
     adsCode: '',
-    announcement: ''
+    announcement: '',
+    googleVerification: ''
   });
 
   useEffect(() => {
