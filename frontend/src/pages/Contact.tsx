@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Send, MessageSquare, Sparkles, Globe, Twitter, Github } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, MessageSquare, Sparkles, Globe, Code2 } from 'lucide-react';
 import { useState } from 'react';
 
 const Contact = () => {
@@ -71,8 +71,8 @@ const Contact = () => {
 
               <div className="pt-6 border-t border-white/5 flex gap-4">
                 {[
-                  { icon: Twitter, href: "#" },
-                  { icon: Github, href: "#" },
+                  { icon: Send, href: "#" },
+                  { icon: Code2, href: "#" },
                   { icon: Globe, href: "https://satbyte.in" }
                 ].map((social, i) => (
                   <a key={i} href={social.href} className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all border border-white/5">

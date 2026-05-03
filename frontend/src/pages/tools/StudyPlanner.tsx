@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Calendar, Clock, CheckCircle2, Circle, Plus, 
+  Calendar, Clock, CheckCircle2, Plus, 
   Trash2, Timer as TimerIcon, LayoutDashboard, 
   ChevronLeft, ChevronRight, Play, Pause, RotateCcw, 
   Flame, BookOpen, Target, Sparkles, Loader2, X
