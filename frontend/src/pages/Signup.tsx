@@ -11,7 +11,6 @@ const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [referredByCode, setReferredByCode] = useState('');
-  const [role, setRole] = useState<'user' | 'admin'>('user');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
@@ -37,7 +36,7 @@ const Signup = () => {
     setError('');
     setLoading(true);
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, { name, email, password, role, referredByCode });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, { name, email, password, referredByCode });
       login(res.data.token, res.data.user);
       navigate('/');
     } catch (err: any) {
@@ -126,26 +125,6 @@ const Signup = () => {
             </div>
           </div>
           </div>
-          <div className="space-y-3 pt-2">
-            <label className="text-sm font-black uppercase tracking-widest text-muted-foreground">Account Role</label>
-            <div className="grid grid-cols-2 gap-2 p-1 bg-muted rounded-xl border border-border">
-              <button
-                type="button"
-                onClick={() => setRole('user')}
-                className={`py-2 px-4 rounded-lg text-xs font-black transition-all ${role === 'user' ? 'bg-background shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-              >
-                🎓 Student
-              </button>
-              <button
-                type="button"
-                onClick={() => setRole('admin')}
-                className={`py-2 px-4 rounded-lg text-xs font-black transition-all ${role === 'admin' ? 'bg-background shadow-sm text-amber-500' : 'text-muted-foreground hover:text-foreground'}`}
-              >
-                🛡️ Admin
-              </button>
-            </div>
-          </div>
-
           <button
             type="submit"
             disabled={loading}

@@ -37,7 +37,7 @@ function App() {
         <ScrollToTop />
         <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
           <Navbar />
-          <main className="flex-grow container mx-auto px-4 py-8 relative">
+          <main className="flex-grow container mx-auto px-4 pt-28 pb-12 relative">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />

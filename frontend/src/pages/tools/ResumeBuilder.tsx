@@ -54,7 +54,7 @@ const ResumeBuilderContent = () => {
   return (
     <div className="min-h-screen bg-muted/30 -mt-8 -mx-4 pb-20">
       {/* Top Controls Toolbar - More Responsive */}
-      <div className="sticky top-16 z-40 w-full bg-background border-b border-border shadow-sm px-4 md:px-6 py-3 no-print">
+      <div className="sticky top-20 z-40 w-full bg-background border-b border-border shadow-sm px-4 md:px-6 py-3 no-print">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
             {/* Template Selector */}
