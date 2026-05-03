@@ -37,13 +37,22 @@ import { SettingsProvider, useSettings } from './context/SettingsContext';
 import { useEffect } from 'react';
 import ChatAssistant from './components/ChatAssistant';
 
+import { useAuth } from './context/useAuth';
+
 function AppContent() {
   const { settings } = useSettings();
+  const { user } = useAuth();
 
   useEffect(() => {
     // Default to light mode
     document.documentElement.classList.remove('dark');
     
+    // IF ADMIN, SKIP ADS INJECTION
+    if (user?.role === 'admin') {
+      console.log("Admin detected: Skipping ad injection.");
+      return;
+    }
+
     // 1. Inject Ads Code (Google AdSense etc.)
     if (settings.adsCode) {
       const range = document.createRange();
@@ -63,7 +72,7 @@ function AppContent() {
       const fragment = range.createContextualFragment(settings.adsterraSocialBar);
       document.body.appendChild(fragment);
     }
-  }, [settings]);
+  }, [settings, user]);
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">

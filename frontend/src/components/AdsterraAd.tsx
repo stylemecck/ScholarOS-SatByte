@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useAuth } from '../context/useAuth';
 
 interface AdsterraAdProps {
   type: 'native' | 'social' | 'popunder' | 'smartlink';
@@ -7,9 +8,10 @@ interface AdsterraAdProps {
 
 const AdsterraAd: React.FC<AdsterraAdProps> = ({ type, code }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
 
   useEffect(() => {
-    if (!code || !containerRef.current) return;
+    if (!code || !containerRef.current || user?.role === 'admin') return;
 
     // Clear previous ad if any
     containerRef.current.innerHTML = '';
@@ -19,7 +21,9 @@ const AdsterraAd: React.FC<AdsterraAdProps> = ({ type, code }) => {
       const fragment = range.createContextualFragment(code);
       containerRef.current.appendChild(fragment);
     }
-  }, [code, type]);
+  }, [code, type, user]);
+
+  if (user?.role === 'admin') return null;
 
   if (type === 'smartlink') {
     // For smartlink, we just render a link or button if needed, 
