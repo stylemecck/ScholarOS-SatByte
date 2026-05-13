@@ -365,7 +365,6 @@ const Docs = () => {
                   </div>
                 )}
 
-                {/* Features Grid (Intro only) */}
                 {currentSectionData.content?.features && (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {currentSectionData.content.features.map((f: any, i: number) => (
@@ -389,7 +388,7 @@ const Docs = () => {
                           <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center text-[10px] font-black text-primary shrink-0 relative z-10">
                             {i + 1}
                           </div>
-                          {i !== currentSectionData.content.steps.length - 1 && <div className="w-px h-full bg-white/[0.06]" />}
+                          {i !== (currentSectionData.content?.steps?.length ?? 0) - 1 && <div className="w-px h-full bg-white/[0.06]" />}
                         </div>
                         <div className="space-y-2 pb-10">
                           <h4 className="text-lg font-black text-white">{s.title}</h4>
@@ -483,7 +482,7 @@ const Docs = () => {
                     <div className="relative group">
                       <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
                         <button 
-                          onClick={() => copyToClipboard(currentSectionData.content.code.snippet, 'main-code')}
+                          onClick={() => copyToClipboard(currentSectionData.content.code.snippet || '', 'main-code')}
                           className="p-2.5 bg-[#0D0D0D] border border-white/5 hover:border-primary/50 rounded-xl transition-all text-muted-foreground hover:text-white shadow-2xl"
                         >
                           {copiedId === 'main-code' ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
