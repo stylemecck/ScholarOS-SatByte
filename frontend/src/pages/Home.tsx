@@ -20,7 +20,7 @@ const Home = () => {
   });
 
   return (
-    <div className="space-y-32 pb-32">
+    <div className="space-y-20 md:space-y-32 pb-20 md:pb-32">
       <SEO 
         title="Toolkit by SatByte – All-in-One Student & Developer Platform"
         description="Access 20+ free tools for students and developers. AI Rank Predictor, Resume Builder, PDF Studio, Image Tools, and more in one premium marketplace."
@@ -57,9 +57,9 @@ const Home = () => {
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-6xl sm:text-8xl md:text-[8rem] font-black tracking-tighter leading-[0.9] text-white"
+              className="text-4xl sm:text-7xl md:text-8xl lg:text-[8rem] font-black tracking-tighter leading-[0.9] text-white"
             >
-              Study <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-indigo-400 to-purple-500 italic pr-4">Smarter.</span><br />
+              Study <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-indigo-400 to-purple-500 italic pr-4">Smarter.</span><br className="hidden sm:block" />
               Not Harder.
             </motion.h1>
             
@@ -92,7 +92,7 @@ const Home = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="pt-12 flex flex-wrap justify-center items-center gap-8 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-700"
+            className="pt-12 flex flex-wrap justify-center items-center gap-4 md:gap-8 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-700"
           >
             <div className="flex items-center gap-2 font-black uppercase tracking-widest text-[10px]">
               <Users className="w-4 h-4" /> 850K+ Students
@@ -131,7 +131,7 @@ const Home = () => {
                         <div className="flex items-center gap-2 bg-primary/20 text-primary border border-primary/20 w-fit px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
                             <Sparkles className="w-3 h-3" /> AI Analysis Enabled
                         </div>
-                        <h3 className="text-5xl md:text-7xl font-black leading-none tracking-tighter text-white">Rank Predictor</h3>
+                        <h3 className="text-4xl md:text-7xl font-black leading-none tracking-tighter text-white">Rank Predictor</h3>
                         <p className="max-w-md text-lg text-muted-foreground font-medium leading-relaxed">
                             Industrial-grade JEE, CUET & State entrance analytics. Trusted by lakhs of students for accurate admission insights.
                         </p>
@@ -168,13 +168,13 @@ const Home = () => {
             <div className="relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-primary to-purple-600 rounded-[2.5rem] blur opacity-10 group-hover:opacity-25 transition duration-1000" />
               <div className="relative">
-                <Search className="absolute left-8 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <Search className="absolute left-6 md:left-8 top-1/2 -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <input 
                   type="text" 
                   placeholder="What tool do you need today?"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-20 pr-8 py-7 rounded-[2.5rem] border border-white/5 bg-[#111] focus:bg-black focus:border-primary/50 outline-none transition-all text-xl font-bold text-white placeholder:text-muted-foreground/30 shadow-2xl"
+                  className="w-full pl-14 md:pl-20 pr-6 md:pr-8 py-5 md:py-7 rounded-2xl md:rounded-[2.5rem] border border-white/5 bg-[#111] focus:bg-black focus:border-primary/50 outline-none transition-all text-lg md:text-xl font-bold text-white placeholder:text-muted-foreground/30 shadow-2xl"
                 />
               </div>
             </div>
