@@ -78,7 +78,7 @@ const ExploreTools = () => {
               <Sparkles className="w-4 h-4" /> Discover the Ecosystem
             </motion.div>
             
-            <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-none italic">
+            <h1 className="text-4xl md:text-8xl font-black tracking-tighter leading-none italic">
               Explore All <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-indigo-400 to-purple-500 pr-4">Tools.</span>
             </h1>
@@ -93,13 +93,13 @@ const ExploreTools = () => {
             <div className="relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-primary to-purple-600 rounded-[2.5rem] blur opacity-10 group-focus-within:opacity-30 transition duration-1000" />
               <div className="relative">
-                <Search className="absolute left-8 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <Search className="absolute left-6 md:left-8 top-1/2 -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <input 
                   type="text" 
-                  placeholder="Search by tool name, category, or keyword..."
+                  placeholder="Search by tool..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-20 pr-8 py-7 rounded-[2.5rem] border border-white/5 bg-[#0D0D0D] focus:bg-black focus:border-primary/50 outline-none transition-all text-xl font-bold text-white placeholder:text-muted-foreground/20 shadow-2xl"
+                  className="w-full pl-14 md:pl-20 pr-6 md:pr-8 py-5 md:py-7 rounded-2xl md:rounded-[2.5rem] border border-white/5 bg-[#0D0D0D] focus:bg-black focus:border-primary/50 outline-none transition-all text-lg md:text-xl font-bold text-white placeholder:text-muted-foreground/20 shadow-2xl"
                 />
                 {searchQuery && (
                   <button 
@@ -112,14 +112,14 @@ const ExploreTools = () => {
               </div>
             </div>
 
-            {/* Category Pills */}
-            <div className="flex flex-wrap justify-center gap-3">
+            {/* Category Pills - Horizontal Scroll on Mobile */}
+            <div className="flex overflow-x-auto md:flex-wrap justify-start md:justify-center gap-3 pb-4 md:pb-0 scroll-hide px-4 md:px-0">
               {categories.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
                   className={`
-                    flex items-center gap-3 px-6 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border
+                    flex-shrink-0 flex items-center gap-3 px-6 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 border
                     ${activeCategory === cat.id 
                       ? 'bg-primary border-primary text-white shadow-xl shadow-primary/20 scale-105' 
                       : 'bg-white/5 border-white/5 text-muted-foreground hover:bg-white/10 hover:text-white'}
@@ -237,7 +237,7 @@ const ExploreTools = () => {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[140px] -z-10 group-hover:bg-purple-500/5 transition-colors duration-1000" />
           
           <div className="space-y-6 max-w-3xl mx-auto">
-            <h2 className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-none italic">
+            <h2 className="text-3xl md:text-7xl font-black text-white tracking-tighter leading-none italic">
               Scale your workflow <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500">with SatByte OS.</span>
             </h2>

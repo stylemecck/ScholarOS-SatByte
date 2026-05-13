@@ -98,10 +98,10 @@ const Navbar = () => {
               <div className="absolute -top-1 -right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-primary rounded-full border-2 border-background animate-pulse" />
             </div>
             <div className="flex flex-col">
-              <span className="text-base sm:text-lg font-black tracking-tighter leading-none">
+              <span className="text-sm sm:text-lg font-black tracking-tighter leading-none">
                 STP <span className="text-primary italic">PRO</span>
               </span>
-              <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-50">Student OS</span>
+              <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-50 hidden sm:block">Student OS</span>
             </div>
           </Link>
 
@@ -256,9 +256,9 @@ const Navbar = () => {
             ) : (
               <Link 
                 to="/login" 
-                className="saas-button-primary !px-5 sm:!px-6 !py-2 sm:!py-2.5 flex items-center gap-2 text-[10px] sm:text-xs"
+                className="saas-button-primary !px-4 sm:!px-6 !py-2 sm:!py-2.5 flex items-center gap-2 text-[10px] sm:text-xs"
               >
-                Join <Zap className="w-3 h-3 fill-current" />
+                <span className="hidden sm:inline">Join</span> <Zap className="w-3 h-3 fill-current" />
               </Link>
             )}
 

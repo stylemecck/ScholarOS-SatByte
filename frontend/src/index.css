@@ -82,6 +82,14 @@
   .saas-input {
     @apply w-full bg-muted border border-border/50 rounded-2xl px-6 py-4 text-sm font-medium focus:border-primary/50 outline-none transition-all placeholder:text-muted-foreground/50;
   }
+
+  .scroll-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scroll-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 @theme {
@@ -96,6 +104,8 @@
   --color-card: rgb(var(--card));
   --color-card-foreground: rgb(var(--card-foreground));
   --color-border: rgb(var(--border));
+
+  --breakpoint-xs: 380px;
 }
 
 /* Smooth Scrollbar for Chrome/Safari */
