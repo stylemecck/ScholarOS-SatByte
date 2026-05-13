@@ -474,22 +474,22 @@ const Docs = () => {
                 {currentSectionData.content?.code && (
                   <div className="space-y-4">
                     <div className="flex items-center justify-between px-2">
-                       <h3 className="text-xs font-black uppercase tracking-widest text-white/50">{currentSectionData.content.code.title}</h3>
+                       <h3 className="text-xs font-black uppercase tracking-widest text-white/50">{currentSectionData.content?.code?.title}</h3>
                        <div className="flex items-center gap-2">
-                          <span className="text-[9px] font-black uppercase tracking-widest text-primary bg-primary/10 px-2 py-1 rounded-md">{currentSectionData.content.code.lang}</span>
+                          <span className="text-[9px] font-black uppercase tracking-widest text-primary bg-primary/10 px-2 py-1 rounded-md">{currentSectionData.content?.code?.lang}</span>
                        </div>
                     </div>
                     <div className="relative group">
                       <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
                         <button 
-                          onClick={() => copyToClipboard(currentSectionData.content.code.snippet || '', 'main-code')}
+                          onClick={() => copyToClipboard(currentSectionData.content?.code?.snippet || '', 'main-code')}
                           className="p-2.5 bg-[#0D0D0D] border border-white/5 hover:border-primary/50 rounded-xl transition-all text-muted-foreground hover:text-white shadow-2xl"
                         >
                           {copiedId === 'main-code' ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                         </button>
                       </div>
                       <pre className="bg-[#0D0D0D] border border-white/[0.08] p-8 md:p-10 rounded-[2.5rem] font-mono text-xs md:text-sm leading-relaxed text-[#D4D4D8] overflow-x-auto custom-scrollbar shadow-2xl">
-                        {currentSectionData.content.code.snippet}
+                        {currentSectionData.content?.code?.snippet}
                       </pre>
                     </div>
                   </div>
