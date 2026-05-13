@@ -4,6 +4,7 @@ import ToolCard from '../components/ToolCard';
 import { Search, Zap, Sparkles, ShieldCheck, Star, Users, ArrowRight, BarChart3, Rocket } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,6 +21,22 @@ const Home = () => {
 
   return (
     <div className="space-y-32 pb-32">
+      <SEO 
+        title="Toolkit by SatByte – All-in-One Student & Developer Platform"
+        description="Access 20+ free tools for students and developers. AI Rank Predictor, Resume Builder, PDF Studio, Image Tools, and more in one premium marketplace."
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "name": "SatByte Toolkit",
+          "operatingSystem": "Web",
+          "applicationCategory": "EducationalApplication, MultimediaApplication",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        }}
+      />
       {/* Premium Hero Section */}
       <section className="relative pt-24 pb-16 px-4">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] -z-10 pointer-events-none">

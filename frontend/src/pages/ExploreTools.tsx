@@ -7,6 +7,7 @@ import {
   Settings, Layers, X
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 import { tools } from '../utils/toolsConfig';
 import ToolCard from '../components/ToolCard';
 
@@ -40,6 +41,25 @@ const ExploreTools = () => {
 
   return (
     <div className="min-h-screen bg-[#050505] text-white">
+      <SEO 
+        title="Explore All Tools – Student Productivity Marketplace"
+        description="Discover 20+ productivity, academic, AI-powered, career, and utility tools. Explore our collection of PDF editors, rank predictors, and developer utilities."
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [{
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://toolkit.satbyte.in"
+          },{
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Tools",
+            "item": "https://toolkit.satbyte.in/tools"
+          }]
+        }}
+      />
       {/* 1. Hero Discovery Section */}
       <section className="relative pt-20 pb-16 px-6 overflow-hidden">
         {/* Background Gradients */}

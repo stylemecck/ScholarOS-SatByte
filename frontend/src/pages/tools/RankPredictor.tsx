@@ -6,6 +6,7 @@ import axios from 'axios';
 import html2pdf from 'html2pdf.js';
 import ResultPDFTemplate from '../../components/ResultPDFTemplate';
 import { useAuth } from '../../context/useAuth';
+import SEO from '../../components/SEO';
 
 interface CollegeDetail {
   name: string;
@@ -321,6 +322,23 @@ const RankPredictor = () => {
 
   return (
     <div className="max-w-7xl mx-auto py-12 px-4 space-y-20">
+      <SEO 
+        title="AI Rank Predictor - JEE, NIMCET, CUET Rank Estimator"
+        description="Predict your entrance exam rank with AI. Get estimated ranks for JEE Mains, NIMCET, CUET, and more using historical trends and counselling data."
+        keywords="rank predictor, jee mains rank predictor, nimcet rank predictor, cuet rank predictor, college predictor, exam rank estimation"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [{
+            "@type": "Question",
+            "name": "How accurate is the AI Rank Predictor?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Our AI Rank Predictor uses a combination of historical trends, student data, and exam difficulty analysis to provide an estimation. While highly accurate, it is for reference only."
+            }
+          }]
+        }}
+      />
       {/* Premium Hero Section */}
       <section className="relative text-center space-y-8 py-16 md:py-24 overflow-hidden rounded-[3rem] border border-white/5 bg-[#0A0A0A]/50 backdrop-blur-xl">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10">

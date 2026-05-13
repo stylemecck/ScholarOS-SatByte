@@ -45,6 +45,7 @@ import Tutorials from './pages/Tutorials';
 import { AuthProvider } from './context/AuthContext';
 import { SettingsProvider, useSettings } from './context/SettingsContext';
 import { useEffect } from 'react';
+import { HelmetProvider } from 'react-helmet-async';
 import AIChatBubble from './components/AIChatBubble';
 
 import { useAuth } from './context/useAuth';
@@ -82,7 +83,8 @@ function AppContent() {
   }, [settings, user]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
+    <HelmetProvider>
+      <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
       {settings.announcement && (
         <div className="bg-primary text-primary-foreground py-2 text-center text-[10px] font-black uppercase tracking-[0.3em] relative z-[60] shadow-lg">
           {settings.announcement}
@@ -144,6 +146,7 @@ function AppContent() {
       </main>
       <Footer />
     </div>
+    </HelmetProvider>
   );
 }
 

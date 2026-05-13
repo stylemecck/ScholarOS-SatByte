@@ -1,4 +1,13 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /settings/
+Disallow: /api/
+Disallow: /callback/
+Disallow: /auth/
 
+# Host
+Host: https://toolkit.satbyte.in
+
+# Sitemaps
 Sitemap: https://toolkit.satbyte.in/sitemap.xml
