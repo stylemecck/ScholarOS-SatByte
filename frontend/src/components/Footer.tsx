@@ -5,23 +5,33 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
-    Ecosystem: [
-      { name: 'Rank Predictor', path: '/tools/rank-predictor' },
+    Tools: [
+      { name: 'JEE Percentile', path: '/tools/marks-vs-percentile' },
+      { name: 'Image Studio', path: '/tools/image/compress' },
       { name: 'Resume Pro', path: '/tools/resume-builder' },
-      { name: 'Study Planner', path: '/tools/study-planner' },
       { name: 'PDF Modules', path: '/tools/pdf/merge' },
+      { name: 'Rank Analytics', path: '/tools/rank-predictor' },
+      { name: 'Study Planner', path: '/tools/study-planner' },
     ],
-    Governance: [
+    Developer: [
+      { name: 'API Dashboard', path: '/developer' },
+      { name: 'Documentation', path: '/docs' },
+      { name: 'Tutorial Guides', path: '/tutorials' },
+      { name: 'Platform Status', path: '/status' },
+      { name: 'Open Source', path: 'https://github.com/satbyte' },
+    ],
+    Platform: [
+      { name: 'Pricing Tiers', path: '/pricing' },
       { name: 'About OS', path: '/about' },
-      { name: 'Pricing', path: '/pricing' },
+      { name: 'Support Terminal', path: '/support' },
+      { name: 'Contact Link', path: '/contact' },
+      { name: 'Site Feedback', path: '/feedback' },
+    ],
+    Legal: [
       { name: 'Privacy Protocol', path: '/privacy' },
       { name: 'Service Terms', path: '/terms' },
-    ],
-    Support: [
-      { name: 'Help Terminal', path: '/support' },
-      { name: 'Contact Command', path: '/contact' },
-      { name: 'API Status', path: '/status' },
-      { name: 'Feedback', path: '/feedback' },
+      { name: 'Security Policy', path: '/security' },
+      { name: 'Cookie Policy', path: '/cookies' },
     ]
   };
 
@@ -32,7 +42,7 @@ const Footer = () => {
       <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[160px] -z-10" />
       
       <div className="max-w-7xl mx-auto px-6 py-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-16 lg:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-16 lg:gap-12">
           
           {/* Brand Section */}
           <div className="lg:col-span-2 space-y-10">

@@ -1,8 +1,7 @@
-import { ShieldCheck, Target, TrendingUp, Award, School, MapPin, IndianRupee, Briefcase, Zap } from 'lucide-react';
+import { ShieldCheck, Award, School, MapPin, Zap } from 'lucide-react';
 
 interface PDFTemplateProps {
   user: { name: string; email: string };
-  toolName: string;
   data: {
     exam: string;
     marks: string;
@@ -18,7 +17,7 @@ interface PDFTemplateProps {
   date: string;
 }
 
-const ResultPDFTemplate = ({ user, toolName, data, date }: PDFTemplateProps) => {
+const ResultPDFTemplate = ({ user, data, date }: PDFTemplateProps) => {
   return (
     <div id="pdf-report-content" className="p-12 bg-white text-slate-900 font-sans max-w-[800px] mx-auto min-h-[1120px] flex flex-col">
       {/* Header with Branding */}

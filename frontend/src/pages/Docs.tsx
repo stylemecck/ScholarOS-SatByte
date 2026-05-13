@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, Book, Code2, Shield, Zap, 
-  Terminal, ChevronRight, Copy, CheckCircle2,
+  Terminal, Copy, CheckCircle2,
   Cpu, Globe, Lock, Layers,
   ArrowUpRight, AlertCircle, Bookmark,
   Menu, X

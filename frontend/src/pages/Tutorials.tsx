@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   BookOpen, Search, Clock, ChevronRight, 
-  Sparkles, Terminal, Code2, Globe, Cpu,
+  Sparkles, Terminal, Code2,
   ArrowRight, Filter, Calendar
 } from 'lucide-react';
 import { Link } from 'react-router-dom';

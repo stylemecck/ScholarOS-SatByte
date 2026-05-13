@@ -1,11 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  Check, Zap, Shield, Crown, 
-  Terminal, Code2, Globe, Cpu,
-  ChevronRight, ArrowRight, Info, HelpCircle
+  Check, Zap, ArrowRight, HelpCircle
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 const Pricing = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');

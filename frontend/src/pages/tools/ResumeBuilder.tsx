@@ -4,6 +4,7 @@ import ResumePreview from '../../components/ResumeBuilder/ResumePreview';
 import { Download, Layout, Palette, Eye, Edit3, Sparkles, ShieldCheck, Zap, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import axios from 'axios';
 
 const ResumeBuilderContent = () => {
   const { resumeData, setResumeData } = useResume();

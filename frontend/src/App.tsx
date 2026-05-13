@@ -28,11 +28,13 @@ import CompressImage from './pages/tools/image/CompressImage';
 import ResizeImage from './pages/tools/image/ResizeImage';
 import ConvertImage from './pages/tools/image/ConvertImage';
 import About from './pages/About';
+import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
+import CookiePolicy from './pages/CookiePolicy';
+import Security from './pages/Security';
+import Status from './pages/Status';
 import Contact from './pages/Contact';
 import Support from './pages/Support';
-import Terms from './pages/Terms';
-import Status from './pages/Status';
 import Feedback from './pages/Feedback';
 import AccountSettings from './pages/AccountSettings';
 import AdminDashboard from './pages/AdminDashboard';
@@ -133,6 +135,8 @@ function AppContent() {
           <Route path="/developer" element={<DeveloperDashboard />} />
           <Route path="/docs" element={<Docs />} />
           <Route path="/tutorials" element={<Tutorials />} />
+          <Route path="/cookies" element={<CookiePolicy />} />
+          <Route path="/security" element={<Security />} />
         </Routes>
         <AIChatBubble />
       </main>

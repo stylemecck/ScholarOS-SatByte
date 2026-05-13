@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Target, TrendingUp, School, ShieldCheck, Loader2, Sparkles, Download, MapPin, IndianRupee, Users, Briefcase, BarChart3, Zap } from 'lucide-react';
+import { Target, TrendingUp, ShieldCheck, School, MapPin, Zap, Loader2, Sparkles, Download, IndianRupee, Users, Briefcase, BarChart3 } from 'lucide-react';
 import axios from 'axios';
 // @ts-ignore
 import html2pdf from 'html2pdf.js';
@@ -107,7 +107,7 @@ const RankPredictor = () => {
       const opt = {
         margin: 0,
         filename: `Counseling_Report_${user?.name || 'Student'}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
+        image: { type: 'jpeg' as 'jpeg', quality: 0.98 },
         html2canvas: { 
           scale: 2, 
           useCORS: true,
@@ -115,7 +115,7 @@ const RankPredictor = () => {
           scrollX: 0,
           scrollY: 0
         },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' as 'portrait' },
         pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
       };
 
@@ -821,7 +821,6 @@ const RankPredictor = () => {
         {prediction && user && (
           <ResultPDFTemplate 
             user={{ name: user.name, email: user.email }}
-            toolName="Rank Predictor"
             data={{
                 exam: formData.exam,
                 marks: formData.marks,
