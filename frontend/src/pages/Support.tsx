@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Coffee, Heart, Star, Sparkles, Zap, Loader2, 
+  Coffee, Heart, Sparkles, Zap, Loader2, 
   Search, HelpCircle, MessageSquare, Book, 
-  Settings, ShieldCheck, CreditCard, Terminal,
+  ShieldCheck, CreditCard, Terminal,
   Cpu, FileText, Image as ImageIcon, Layout,
   ChevronDown, ArrowRight, ExternalLink, Mail,
   CheckCircle2, Globe, Clock, Shield

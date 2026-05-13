@@ -138,7 +138,8 @@ const RankPredictor = () => {
             window.location.href = '/pricing';
         }
       } else {
-        alert("Failed to generate PDF. We are using client-side fallback. If it still fails, please check your browser permissions.");
+        const errorMsg = err.response?.data?.details || err.message || 'Unknown error occurred.';
+        alert(`PDF Generation Error: ${errorMsg}\n\nPlease ensure you have a stable connection and browser permissions are granted.`);
       }
     }
   };

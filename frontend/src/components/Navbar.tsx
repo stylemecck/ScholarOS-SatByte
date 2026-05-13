@@ -1,9 +1,9 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import { 
-  Menu, X, Zap, ShieldCheck, Sparkles, 
+  Menu, X, Zap, Sparkles, 
   BarChart3, ChevronDown, LayoutDashboard, Settings,
-  FileText, Image as ImageIcon, GraduationCap, ArrowRight, User
+  FileText, Image as ImageIcon, GraduationCap, ArrowRight
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';

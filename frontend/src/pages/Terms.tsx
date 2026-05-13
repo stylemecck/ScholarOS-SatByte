@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  FileText, Shield, Gavel, Scale, 
-  Terminal, Cpu, Globe, Lock, 
+  Shield, Gavel, Scale, 
+  Terminal, Cpu, Lock, 
   CreditCard, UserCheck, AlertTriangle, 
   MessageSquare, ChevronRight, Menu, X,
   Clock, Bookmark
