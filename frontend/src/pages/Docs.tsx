@@ -513,10 +513,10 @@ const Docs = () => {
         </div>
 
         {/* Floating Search Trigger for Mobile */}
-        <div className="lg:hidden fixed bottom-8 right-8 z-[60]">
+        <div className="lg:hidden fixed bottom-6 left-6 z-[60]">
            <button 
               onClick={() => setIsMobileMenuOpen(true)}
-              className="w-14 h-14 bg-primary text-white rounded-full shadow-2xl shadow-primary/40 flex items-center justify-center border-4 border-[#050505] active:scale-90 transition-transform"
+              className="w-14 h-14 bg-white/5 backdrop-blur-xl text-primary rounded-full shadow-2xl flex items-center justify-center border border-white/10 active:scale-90 transition-transform"
            >
               <Layers className="w-6 h-6" />
            </button>
