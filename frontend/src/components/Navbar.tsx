@@ -158,8 +158,8 @@ const Navbar = () => {
                     </div>
                     
                     <div className="mt-6 pt-6 border-t border-white/5">
-                      <Link to="/" className="flex items-center justify-between p-4 bg-primary/10 rounded-2xl group hover:bg-primary transition-all">
-                        <span className="text-[10px] font-black uppercase tracking-widest group-hover:text-white">Explore All AI Ecosystem Tools</span>
+                      <Link to="/tools" className="flex items-center justify-between p-4 bg-primary/10 rounded-2xl group hover:bg-primary transition-all">
+                        <span className="text-[10px] font-black uppercase tracking-widest group-hover:text-white">Explore All Marketplace Tools</span>
                         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </Link>
                     </div>
@@ -356,7 +356,7 @@ const Navbar = () => {
                           </div>
                         </Link>
                       ))}
-                      <Link to="/" className="p-4 text-center text-[10px] font-black uppercase tracking-[0.2em] text-primary hover:underline">View All Tools</Link>
+                      <Link to="/tools" className="p-4 text-center text-[10px] font-black uppercase tracking-[0.2em] text-primary hover:underline">Explore Marketplace</Link>
                     </div>
                   </div>
                 </div>
