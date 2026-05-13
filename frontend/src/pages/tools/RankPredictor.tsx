@@ -193,6 +193,17 @@ const RankPredictor = () => {
   };
 
   useEffect(() => {
+    // 1. Restore pending data from session if user just logged in
+    const pendingData = localStorage.getItem('pending_rank_predictor_data');
+    if (pendingData) {
+      try {
+        setFormData(JSON.parse(pendingData));
+        localStorage.removeItem('pending_rank_predictor_data');
+      } catch (e) {
+        console.error("Failed to restore pending data:", e);
+      }
+    }
+
     const fetchExams = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/tools/exams-config`);
@@ -256,7 +267,9 @@ const RankPredictor = () => {
     }
 
     if (!token && usageCount >= 2) {
-      setShowLimitModal(true);
+      // Save state before redirecting to login
+      localStorage.setItem('pending_rank_predictor_data', JSON.stringify(formData));
+      window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
       return;
     }
 
@@ -292,6 +305,10 @@ const RankPredictor = () => {
         if (confirm("Insufficient credits for AI analysis (Requires 2 Credits). Would you like to buy more?")) {
           window.location.href = '/pricing';
         }
+      } else if (err.response?.status === 401) {
+        // Save state and redirect
+        localStorage.setItem('pending_rank_predictor_data', JSON.stringify(formData));
+        window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
       } else {
         const errorMsg = err.response?.data?.details || err.message || 'Failed to predict rank. Please try again.';
         alert(`Error: ${errorMsg}`);

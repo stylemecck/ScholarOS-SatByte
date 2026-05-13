@@ -59,6 +59,11 @@ const ToolBase: React.FC<ToolBaseProps> = ({
   const handleProcess = async () => {
     if (files.length === 0) return;
 
+    if (!localStorage.getItem('token')) {
+      window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+      return;
+    }
+
     setIsProcessing(true);
     setProgress(0);
     setResult(null);
@@ -93,6 +98,11 @@ const ToolBase: React.FC<ToolBaseProps> = ({
       console.error('Processing error:', err);
       let errorMessage = 'Failed to process files. Please try again.';
       
+      if (err.response?.status === 401) {
+        window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+        return;
+      }
+
       if (err.response?.data instanceof Blob) {
         const reader = new FileReader();
         reader.onload = () => {

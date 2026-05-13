@@ -31,6 +31,19 @@ const MarksVsPercentile = () => {
   const [result, setResult] = useState<PercentileResult | null>(null);
   const [loading, setLoading] = useState(false);
 
+  useState(() => {
+    // Restore pending data
+    const pendingData = localStorage.getItem('pending_marks_percentile_data');
+    if (pendingData) {
+      try {
+        setFormData(JSON.parse(pendingData));
+        localStorage.removeItem('pending_marks_percentile_data');
+      } catch (e) {
+        console.error("Failed to restore pending data:", e);
+      }
+    }
+  });
+
   const exams = [
     'JEE Mains', 'JEE Advanced', 'NEET UG', 'CUET PG (MCA)', 'CUET UG', 
     'NIMCET', 'MAH MCA CET', 'WBJECA', 'TANCET', 'GATE', 'CAT'
@@ -52,9 +65,14 @@ const MarksVsPercentile = () => {
               document.getElementById('result-dashboard')?.scrollIntoView({ behavior: 'smooth' });
           }, 100);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      navigate('/login');
+      if (err.response?.status === 401 || !localStorage.getItem('token')) {
+        localStorage.setItem('pending_marks_percentile_data', JSON.stringify(formData));
+        window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+      } else {
+        alert("Failed to analyze performance. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
