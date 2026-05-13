@@ -3,7 +3,8 @@ import { useAuth } from '../context/useAuth';
 import { 
   Menu, X, Zap, Sparkles, 
   BarChart3, ChevronDown, LayoutDashboard, Settings,
-  FileText, Image as ImageIcon, GraduationCap, ArrowRight
+  FileText, Image as ImageIcon, GraduationCap, ArrowRight,
+  LogOut, User as UserIcon, CreditCard
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -39,8 +40,14 @@ const Navbar = () => {
     };
   }, []);
 
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
+
   const navLinks = [
     { name: 'Pricing', path: '/pricing' },
+    { name: 'Docs', path: '/docs' },
     { name: 'About', path: '/about' },
   ];
 
@@ -73,7 +80,7 @@ const Navbar = () => {
     <div className="fixed top-0 left-0 right-0 z-[100] px-4 py-6 pointer-events-none">
       <div className="max-w-7xl mx-auto flex items-center justify-center pointer-events-auto">
         <nav className={`
-          flex items-center justify-between px-6 h-16 w-full
+          flex items-center justify-between px-4 sm:px-6 h-16 w-full
           transition-all duration-500 rounded-full border
           ${scrolled 
             ? 'bg-background/80 backdrop-blur-3xl border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)]' 
@@ -82,30 +89,29 @@ const Navbar = () => {
           {/* Logo Section */}
           <Link 
             to="/" 
-            className="flex items-center gap-3 group shrink-0" 
-            onClick={() => setIsMenuOpen(false)}
+            className="flex items-center gap-2 sm:gap-3 group shrink-0" 
           >
             <div className="relative">
-              <div className="w-10 h-10 bg-primary/20 rounded-2xl flex items-center justify-center overflow-hidden border border-primary/30 group-hover:rotate-[360deg] transition-transform duration-700">
-                <img src="/logo.svg" alt="STP PRO" className="w-7 h-7 object-contain" />
+              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-primary/20 rounded-2xl flex items-center justify-center overflow-hidden border border-primary/30 group-hover:rotate-[360deg] transition-transform duration-700">
+                <img src="/logo.svg" alt="STP PRO" className="w-6 h-6 sm:w-7 sm:h-7 object-contain" />
               </div>
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full border-2 border-background animate-pulse" />
+              <div className="absolute -top-1 -right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-primary rounded-full border-2 border-background animate-pulse" />
             </div>
-            <div className="hidden sm:flex flex-col">
-              <span className="text-lg font-black tracking-tighter leading-none">
+            <div className="flex flex-col">
+              <span className="text-base sm:text-lg font-black tracking-tighter leading-none">
                 STP <span className="text-primary italic">PRO</span>
               </span>
-              <span className="text-[8px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-50">Student OS</span>
+              <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-50">Student OS</span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-1 lg:gap-2">
             <div className="relative" ref={toolsRef}>
               <button 
                 onMouseEnter={() => setIsToolsOpen(true)}
                 className={`
-                  px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-2
+                  px-4 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-2
                   ${isToolsOpen ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'}
                 `}
               >
@@ -167,7 +173,7 @@ const Navbar = () => {
                 key={link.path}
                 to={link.path}
                 className={`
-                  relative px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all
+                  relative px-4 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all
                   ${location.pathname === link.path ? 'text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'}
                 `}
               >
@@ -183,12 +189,12 @@ const Navbar = () => {
           </div>
 
           {/* Right Section */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {user ? (
               <div className="relative" ref={userRef}>
                 <button 
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center gap-2.5 p-1 pr-4 bg-white/5 hover:bg-white/10 rounded-full border border-white/5 transition-all group"
+                  className="flex items-center gap-2 p-1 lg:pr-4 bg-white/5 hover:bg-white/10 rounded-full border border-white/5 transition-all group"
                 >
                   <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-purple-600 text-white flex items-center justify-center text-xs font-black shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform overflow-hidden border border-white/20">
                     {user.avatar ? (
@@ -210,7 +216,10 @@ const Navbar = () => {
                       className="absolute top-full right-0 mt-4 w-64 bg-background/95 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-4 shadow-2xl"
                     >
                       <div className="p-4 bg-white/5 rounded-2xl mb-2">
-                        <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-1">Account Balance</p>
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Balance</p>
+                          <CreditCard className="w-3 h-3 text-muted-foreground" />
+                        </div>
                         <p className="text-xl font-black">{user.credits} <span className="text-[10px] font-medium text-muted-foreground uppercase">Credits</span></p>
                       </div>
                       
@@ -218,24 +227,25 @@ const Navbar = () => {
                         <Link 
                           to="/dashboard" 
                           onClick={() => setIsUserMenuOpen(false)}
-                          className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all"
+                          className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all group"
                         >
-                          <LayoutDashboard className="w-4 h-4 text-muted-foreground" />
+                          <LayoutDashboard className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
                           <span className="text-[10px] font-black uppercase tracking-widest">Dashboard</span>
                         </Link>
                         <Link 
                           to="/settings" 
                           onClick={() => setIsUserMenuOpen(false)}
-                          className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all"
+                          className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all group"
                         >
-                          <Settings className="w-4 h-4 text-muted-foreground" />
+                          <Settings className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
                           <span className="text-[10px] font-black uppercase tracking-widest">Settings</span>
                         </Link>
+                        <div className="h-px bg-white/5 my-1 mx-2" />
                         <button 
                           onClick={() => { logout(); setIsUserMenuOpen(false); }}
                           className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-rose-500/10 text-rose-500 transition-all"
                         >
-                          <X className="w-4 h-4" />
+                          <LogOut className="w-4 h-4" />
                           <span className="text-[10px] font-black uppercase tracking-widest">Sign Out</span>
                         </button>
                       </div>
@@ -246,7 +256,7 @@ const Navbar = () => {
             ) : (
               <Link 
                 to="/login" 
-                className="saas-button-primary !px-6 !py-2.5 flex items-center gap-2"
+                className="saas-button-primary !px-5 sm:!px-6 !py-2 sm:!py-2.5 flex items-center gap-2 text-[10px] sm:text-xs"
               >
                 Join <Zap className="w-3 h-3 fill-current" />
               </Link>
@@ -255,9 +265,19 @@ const Navbar = () => {
             {/* Mobile Toggle */}
             <button 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/20"
+              className="md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/20 transform active:scale-90 transition-all"
             >
-              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              <AnimatePresence mode="wait">
+                {isMenuOpen ? (
+                  <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}>
+                    <X className="w-5 h-5" />
+                  </motion.div>
+                ) : (
+                  <motion.div key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }}>
+                    <Menu className="w-5 h-5" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </button>
           </div>
         </nav>
@@ -266,51 +286,101 @@ const Navbar = () => {
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            className="fixed inset-0 z-[90] md:hidden bg-background pointer-events-auto"
-          >
-            <div className="flex flex-col h-full overflow-y-auto p-6 pt-24 space-y-8">
-              <div className="space-y-4">
-                <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground opacity-50 px-2">Ecosystem</h3>
-                <div className="grid grid-cols-1 gap-2">
-                  <Link to="/" onClick={() => setIsMenuOpen(false)} className="p-5 bg-white/5 rounded-3xl text-2xl font-black tracking-tighter">Home</Link>
-                  <Link to="/pricing" onClick={() => setIsMenuOpen(false)} className="p-5 bg-white/5 rounded-3xl text-2xl font-black tracking-tighter">Pricing</Link>
-                  <Link to="/about" onClick={() => setIsMenuOpen(false)} className="p-5 bg-white/5 rounded-3xl text-2xl font-black tracking-tighter">About</Link>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground opacity-50 px-2">Featured Tools</h3>
-                <div className="grid grid-cols-1 gap-3">
-                  {toolCategories.flatMap(c => c.tools).map(tool => (
-                    <Link 
-                      key={tool.path}
-                      to={tool.path}
-                      onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center gap-4 p-4 bg-white/5 rounded-3xl border border-white/5"
-                    >
-                      <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
-                        <tool.icon className="w-6 h-6" />
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMenuOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[80] md:hidden"
+            />
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-0 right-0 bottom-0 w-[85%] sm:w-[400px] z-[90] md:hidden bg-background border-l border-white/5 flex flex-col pointer-events-auto"
+            >
+              <div className="flex flex-col h-full overflow-y-auto p-8 pt-24">
+                {/* User Info on Mobile */}
+                {user && (
+                  <div className="mb-10 p-6 bg-white/5 rounded-[2.5rem] border border-white/5">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary to-purple-600 p-0.5 shadow-xl shadow-primary/20">
+                         <div className="w-full h-full rounded-[0.9rem] overflow-hidden bg-background flex items-center justify-center text-xl font-black">
+                            {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : user.name.charAt(0).toUpperCase()}
+                         </div>
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-sm font-black uppercase tracking-tight">{tool.name}</span>
-                        <span className="text-[10px] text-muted-foreground font-medium">{tool.desc}</span>
+                        <span className="text-lg font-black tracking-tight">{user.name}</span>
+                        <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{user.credits} Credits</span>
                       </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                       <Link to="/dashboard" className="flex items-center justify-center gap-2 p-3 bg-white/5 rounded-xl text-[10px] font-black uppercase tracking-widest">
+                          <LayoutDashboard className="w-3.5 h-3.5" /> Dash
+                       </Link>
+                       <Link to="/settings" className="flex items-center justify-center gap-2 p-3 bg-white/5 rounded-xl text-[10px] font-black uppercase tracking-widest">
+                          <Settings className="w-3.5 h-3.5" /> Settings
+                       </Link>
+                    </div>
+                  </div>
+                )}
+
+                <div className="space-y-10">
+                  <div className="space-y-4">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground opacity-50 px-2">Navigation</h3>
+                    <div className="grid grid-cols-1 gap-2">
+                      <Link to="/" className="p-5 bg-white/5 rounded-3xl text-2xl font-black tracking-tighter hover:bg-primary/10 hover:text-primary transition-all">Home</Link>
+                      {navLinks.map(link => (
+                        <Link key={link.path} to={link.path} className="p-5 bg-white/5 rounded-3xl text-2xl font-black tracking-tighter hover:bg-primary/10 hover:text-primary transition-all">{link.name}</Link>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground opacity-50 px-2">Ecosystem Tools</h3>
+                    <div className="grid grid-cols-1 gap-3">
+                      {toolCategories.flatMap(c => c.tools).slice(0, 4).map(tool => (
+                        <Link 
+                          key={tool.path}
+                          to={tool.path}
+                          className="flex items-center gap-4 p-4 bg-white/5 rounded-3xl border border-white/5 hover:border-primary/30 transition-all group"
+                        >
+                          <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <tool.icon className="w-6 h-6" />
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-sm font-black uppercase tracking-tight group-hover:text-primary transition-colors">{tool.name}</span>
+                            <span className="text-[10px] text-muted-foreground font-medium">{tool.desc}</span>
+                          </div>
+                        </Link>
+                      ))}
+                      <Link to="/" className="p-4 text-center text-[10px] font-black uppercase tracking-[0.2em] text-primary hover:underline">View All Tools</Link>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-auto pt-10 border-t border-white/5 space-y-6">
+                  {user ? (
+                    <button 
+                      onClick={() => logout()}
+                      className="w-full py-5 bg-rose-500/10 text-rose-500 rounded-3xl font-black uppercase tracking-widest flex items-center justify-center gap-3"
+                    >
+                      <LogOut className="w-5 h-5" /> Sign Out
+                    </button>
+                  ) : (
+                    <Link to="/login" className="w-full py-5 bg-primary text-white rounded-3xl font-black uppercase tracking-widest flex items-center justify-center gap-3">
+                      <Zap className="w-5 h-5" /> Get Started Now
                     </Link>
-                  ))}
+                  )}
+                  <p className="text-[9px] text-center text-muted-foreground font-black uppercase tracking-[0.5em] opacity-30">
+                    SatByte Technology © 2026
+                  </p>
                 </div>
               </div>
-
-              <div className="pt-8 mt-auto border-t border-white/5 text-center">
-                <p className="text-[9px] font-black uppercase tracking-[0.5em] text-muted-foreground opacity-30">
-                  Student Toolkit Pro
-                </p>
-              </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>
