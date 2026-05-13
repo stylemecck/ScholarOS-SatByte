@@ -28,7 +28,10 @@ const PDFToText = () => {
 
     try {
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/tools/pdf-to-text`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+        headers: { 
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
       });
       setText(res.data.text);
     } catch (err: any) {

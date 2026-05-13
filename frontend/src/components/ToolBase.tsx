@@ -78,6 +78,9 @@ const ToolBase: React.FC<ToolBaseProps> = ({
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}${endpoint}`, formData, {
         responseType: 'blob',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        },
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
           setProgress(percentCompleted);

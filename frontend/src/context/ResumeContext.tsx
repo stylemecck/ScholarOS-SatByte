@@ -8,6 +8,7 @@ export interface ResumeData {
     location: string;
     linkedin: string;
     portfolio: string;
+    github?: string;
     title: string;
   };
   summary: string;
@@ -33,6 +34,16 @@ export interface ResumeData {
     link: string;
     description: string;
   }>;
+  certifications: Array<{
+    id: string;
+    name: string;
+    issuer: string;
+    date: string;
+  }>;
+  achievements: Array<{
+    id: string;
+    description: string;
+  }>;
   skills: string[];
   template: 'Modern' | 'Classic' | 'Creative';
   themeColor: string;
@@ -46,12 +57,15 @@ const initialData: ResumeData = {
     location: '',
     linkedin: '',
     portfolio: '',
+    github: '',
     title: ''
   },
   summary: '',
   education: [],
   experience: [],
   projects: [],
+  certifications: [],
+  achievements: [],
   skills: [],
   template: 'Modern',
   themeColor: '#8b5cf6'
@@ -65,6 +79,7 @@ const sampleData: ResumeData = {
     location: 'Delhi, India',
     linkedin: 'linkedin.com/in/satyam',
     portfolio: 'satyam.dev',
+    github: 'github.com/satyam',
     title: 'Software Engineer & MCA Aspirant'
   },
   summary: 'A highly motivated and detail-oriented student pursuing MCA with a strong foundation in MERN stack development. Passionate about building scalable web applications and solving complex architectural problems.',
@@ -94,6 +109,20 @@ const sampleData: ResumeData = {
       name: 'Student Toolkit Pro',
       link: 'github.com/satyam/toolkit',
       description: 'A full-stack utility platform for students featuring AI rank predictors and resume builders.'
+    }
+  ],
+  certifications: [
+    {
+      id: '1',
+      name: 'AWS Certified Cloud Practitioner',
+      issuer: 'Amazon Web Services',
+      date: '2023'
+    }
+  ],
+  achievements: [
+    {
+      id: '1',
+      description: 'Winner of Smart India Hackathon 2023 out of 50,000+ participants.'
     }
   ],
   skills: ['React', 'Node.js', 'MongoDB', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],

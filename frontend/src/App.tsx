@@ -36,6 +36,9 @@ import Status from './pages/Status';
 import Feedback from './pages/Feedback';
 import AccountSettings from './pages/AccountSettings';
 import AdminDashboard from './pages/AdminDashboard';
+import DeveloperDashboard from './pages/DeveloperDashboard';
+import Docs from './pages/Docs';
+import Tutorials from './pages/Tutorials';
 import { AuthProvider } from './context/AuthContext';
 import { SettingsProvider, useSettings } from './context/SettingsContext';
 import { useEffect } from 'react';
@@ -48,9 +51,6 @@ function AppContent() {
   const { user } = useAuth();
 
   useEffect(() => {
-    // Default to light mode
-    document.documentElement.classList.remove('dark');
-    
     // IF ADMIN, SKIP ADS INJECTION
     if (user?.role === 'admin') {
       console.log("Admin detected: Skipping ad injection.");
@@ -130,6 +130,9 @@ function AppContent() {
           <Route path="/support" element={<Support />} />
           <Route path="/settings" element={<AccountSettings />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/developer" element={<DeveloperDashboard />} />
+          <Route path="/docs" element={<Docs />} />
+          <Route path="/tutorials" element={<Tutorials />} />
         </Routes>
         <AIChatBubble />
       </main>

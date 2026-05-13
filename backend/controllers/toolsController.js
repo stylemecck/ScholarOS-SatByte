@@ -523,3 +523,66 @@ exports.exportCounselingPdf = async (req, res) => {
   }
 };
 
+exports.exportResumePdf = async (req, res) => {
+  try {
+    const { resumeData } = req.body;
+    const timestamp = Date.now();
+    const tempFileName = `resume_${timestamp}.pdf`;
+    
+    const tempDir = os.tmpdir();
+    const outputPath = path.join(tempDir, tempFileName);
+    const inputDataPath = path.join(tempDir, `resume_input_${timestamp}.json`);
+
+    const pythonData = {
+      ...resumeData,
+      outputPath: outputPath
+    };
+
+    fs.writeFileSync(inputDataPath, JSON.stringify(pythonData));
+
+    const startPythonProcess = (cmd) => {
+      return spawn(cmd, [
+        path.join(__dirname, '../utils/resume_generator.py'),
+        inputDataPath
+      ]);
+    };
+
+    let pythonProcess = startPythonProcess('python');
+
+    pythonProcess.on('error', (err) => {
+      pythonProcess = startPythonProcess('py');
+      setupProcessListeners(pythonProcess);
+    });
+
+    const setupProcessListeners = (proc) => {
+      let errorData = '';
+      let stdoutData = '';
+      proc.stderr.on('data', (data) => errorData += data.toString());
+      proc.stdout.on('data', (data) => stdoutData += data.toString());
+      
+      proc.on('close', (code) => {
+        if (fs.existsSync(inputDataPath)) fs.unlinkSync(inputDataPath);
+
+        if (code !== 0 || stdoutData.startsWith('ERROR:')) {
+          console.error('Python Resume Error:', errorData || stdoutData);
+          if (!res.headersSent) res.status(500).json({ error: 'Failed to generate resume PDF' });
+          return;
+        }
+
+        if (fs.existsSync(outputPath)) {
+          res.download(outputPath, `Resume.pdf`, (err) => {
+            if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
+          });
+        } else {
+          if (!res.headersSent) res.status(500).json({ error: 'PDF file was not created' });
+        }
+      });
+    };
+
+    if (pythonProcess) setupProcessListeners(pythonProcess);
+
+  } catch (err) {
+    console.error('Resume Export Error:', err);
+    if (!res.headersSent) res.status(500).json({ error: 'Server error during resume export' });
+  }
+};

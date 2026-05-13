@@ -14,7 +14,7 @@ const SimplePage = ({ title, content }: SimplePageProps) => {
         className="space-y-4"
       >
         <h1 className="text-4xl font-bold text-primary">{title}</h1>
-        <div className="prose dark:prose-invert max-w-none">
+        <div className="prose max-w-none">
           <p className="text-lg leading-relaxed text-muted-foreground">
             {content}
           </p>

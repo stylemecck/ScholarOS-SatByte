@@ -1,14 +1,11 @@
 import { useState } from 'react';
 import { tools } from '../utils/toolsConfig';
 import ToolCard from '../components/ToolCard';
-import { Search, Zap, Sparkles, ShieldCheck } from 'lucide-react';
+import { Search, Zap, Sparkles, ShieldCheck, Star, Users, ArrowRight, BarChart3, Rocket } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { useSettings } from '../context/SettingsContext';
-import AdsterraAd from '../components/AdsterraAd';
 
 const Home = () => {
-  const { settings } = useSettings();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('All');
 
@@ -22,147 +19,124 @@ const Home = () => {
   });
 
   return (
-    <div className="space-y-20 pb-20">
+    <div className="space-y-32 pb-32">
       {/* Premium Hero Section */}
-      <section className="relative text-center space-y-6 md:space-y-8 py-12 md:py-20 overflow-hidden rounded-[2rem] md:rounded-[3rem]">
-        {/* Background Gradients */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10">
-          <div className="absolute top-0 left-1/4 w-64 h-64 md:w-96 md:h-96 bg-primary/20 rounded-full blur-[80px] md:blur-[120px] animate-pulse" />
-          <div className="absolute bottom-0 right-1/4 w-64 h-64 md:w-96 md:h-96 bg-amber-500/10 rounded-full blur-[80px] md:blur-[120px] animate-pulse delay-700" />
+      <section className="relative pt-24 pb-16 px-4">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] -z-10 pointer-events-none">
+          <div className="absolute top-0 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
+          <div className="absolute top-20 right-1/4 w-[350px] h-[350px] bg-purple-500/10 rounded-full blur-[100px] animate-pulse delay-700" />
         </div>
 
-        <div className="space-y-4 px-4 relative">
+        <div className="max-w-6xl mx-auto text-center space-y-10 relative">
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 bg-primary/10 text-primary rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest border border-primary/20"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 text-primary rounded-full text-[10px] font-black uppercase tracking-[0.3em] border border-primary/20 shadow-lg shadow-primary/5"
           >
-            <Sparkles className="w-3 h-3" /> The Ultimate Academic Multi-Tool
+            <Sparkles className="w-4 h-4" /> The Student Operating System
           </motion.div>
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl sm:text-6xl md:text-[9rem] font-black tracking-tighter leading-[0.9] md:leading-[0.8] uppercase"
-          >
-            Tool <span className="text-primary italic">Pro</span><br />
-            <span className="relative inline-block mt-2 md:mt-4">
-              Legacy.
-              <div className="absolute -bottom-2 md:-bottom-4 left-0 w-full h-2 md:h-4 bg-primary/20 -rotate-1 -z-10" />
-            </span>
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-base md:text-2xl text-muted-foreground max-w-2xl mx-auto font-medium pt-4 md:pt-8 px-2"
-          >
-            The world's most powerful collection of PDF, Image, and AI tools built exclusively for high-performing students.
-          </motion.p>
-        </div>
-        
-        {/* Search & Filter */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="max-w-3xl mx-auto space-y-6 md:space-y-8 px-4"
-        >
-          <div className="relative group mt-6 md:mt-8">
-            <div className="absolute -inset-1 bg-gradient-to-r from-primary to-amber-500 rounded-[1.5rem] md:rounded-[2.5rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative">
-              <Search className="absolute left-6 md:left-8 top-1/2 -translate-y-1/2 w-5 h-5 md:w-6 md:h-6 text-muted-foreground group-focus-within:text-primary transition-colors" />
-              <input 
-                type="text" 
-                placeholder="Search 20+ professional tools..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-14 md:pl-20 pr-6 md:pr-8 py-5 md:py-8 rounded-[1.5rem] md:rounded-[2.5rem] border border-white/10 bg-card/50 backdrop-blur-xl shadow-2xl focus:ring-2 focus:ring-primary outline-none transition-all text-base md:text-xl font-medium"
-              />
-            </div>
-          </div>
           
-          <div className="flex flex-wrap justify-center gap-2 md:gap-3">
-            {categories.map((cat, i) => (
-              <motion.button
-                key={cat}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 + (i * 0.05) }}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-4 md:px-8 py-2 md:py-3 rounded-xl md:rounded-2xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${
-                  activeCategory === cat 
-                    ? 'bg-primary text-primary-foreground shadow-xl shadow-primary/20 scale-105' 
-                    : 'bg-white/5 text-muted-foreground hover:bg-white/10 border border-white/5'
-                }`}
-              >
-                {cat}
-              </motion.button>
-            ))}
+          <div className="space-y-6">
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-6xl sm:text-8xl md:text-[8rem] font-black tracking-tighter leading-[0.9] text-white"
+            >
+              Study <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-indigo-400 to-purple-500 italic pr-4">Smarter.</span><br />
+              Not Harder.
+            </motion.h1>
+            
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-lg md:text-2xl text-muted-foreground max-w-3xl mx-auto font-medium leading-relaxed"
+            >
+              One unified platform for Rank Prediction, Professional Resumes, and 20+ Academic AI tools. Built for the next generation of achievers.
+            </motion.p>
           </div>
-        </motion.div>
-      </section>
 
-      {/* Trust Stats Board */}
-      <section className="px-4">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-            {[
-                { label: 'Files Processed', value: '1.2M+', color: 'text-rose-500' },
-                { label: 'Happy Students', value: '850K+', color: 'text-indigo-500' },
-                { label: 'Tools Available', value: '25+', color: 'text-amber-500' },
-                { label: 'Accuracy Rate', value: '99.9%', color: 'text-primary' },
-            ].map((stat, i) => (
-                <div key={i} className="p-5 md:p-8 bg-card/30 backdrop-blur-md border border-white/5 rounded-[1.5rem] md:rounded-[2.5rem] text-center space-y-1 md:space-y-2 group hover:border-primary/20 transition-all">
-                    <p className={`text-2xl md:text-5xl font-black ${stat.color} group-hover:scale-110 transition-transform`}>{stat.value}</p>
-                    <p className="text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-60">{stat.label}</p>
-                </div>
-            ))}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
+          >
+            <Link to="/tools/rank-predictor" className="saas-button-primary !px-10 !py-5 flex items-center gap-3 text-sm">
+              Launch AI Predictor <ArrowRight className="w-5 h-5" />
+            </Link>
+            <a href="#tools" className="saas-button-secondary !px-10 !py-5 flex items-center gap-2 text-sm">
+              Browse Tools <Zap className="w-4 h-4" />
+            </a>
+          </motion.div>
+          
+          {/* Hero Trust Badge */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="pt-12 flex flex-wrap justify-center items-center gap-8 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-700"
+          >
+            <div className="flex items-center gap-2 font-black uppercase tracking-widest text-[10px]">
+              <Users className="w-4 h-4" /> 850K+ Students
+            </div>
+            <div className="flex items-center gap-2 font-black uppercase tracking-widest text-[10px]">
+              <ShieldCheck className="w-4 h-4" /> Secure & Private
+            </div>
+            <div className="flex items-center gap-2 font-black uppercase tracking-widest text-[10px]">
+              <Star className="w-4 h-4" /> 4.9/5 Rating
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* Ad Section */}
-      {settings.adsterraNativeBanner && (
-        <section className="px-4">
-          <div className="max-w-7xl mx-auto">
-            <AdsterraAd type="native" code={settings.adsterraNativeBanner} />
-          </div>
-        </section>
-      )}
-
-      {/* Featured Bento Section */}
+      {/* Featured Tools Bento Grid */}
       <section className="px-4">
-        <div className="max-w-7xl mx-auto space-y-8 md:space-y-12">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-l-4 border-primary pl-4 md:pl-6">
-                <div>
-                    <h2 className="text-2xl md:text-4xl font-black tracking-tight uppercase">Top Picked <span className="text-primary italic">Utilities</span></h2>
-                    <p className="text-sm md:text-base text-muted-foreground font-medium">Most used by NIT & IIT students this week.</p>
+        <div className="max-w-7xl mx-auto space-y-12">
+            <div className="flex items-end justify-between border-l-4 border-primary pl-6">
+                <div className="space-y-2">
+                    <h2 className="text-3xl md:text-4xl font-black tracking-tight text-white uppercase italic">Trending Ecosystem</h2>
+                    <p className="text-muted-foreground font-medium">Most active modules in the toolkit.</p>
                 </div>
-                <Link to="/pricing" className="text-[10px] md:text-xs font-black uppercase tracking-widest text-primary hover:underline">View Pro Perks →</Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6">
-                <Link to="/tools/rank-predictor" className="md:col-span-8 group relative overflow-hidden rounded-[2rem] md:rounded-[3rem] bg-gradient-to-br from-indigo-600 to-purple-800 p-8 md:p-12 text-white shadow-2xl h-[300px] md:h-[400px] flex flex-col justify-end">
-                    <div className="absolute top-0 right-0 p-6 md:p-12 opacity-20 group-hover:scale-125 transition-transform duration-700">
-                        <Sparkles className="w-32 h-32 md:w-64 md:h-64" />
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                {/* Main Bento Card */}
+                <Link to="/tools/rank-predictor" className="md:col-span-8 group relative overflow-hidden saas-card !p-0 h-[450px] md:h-[550px] flex flex-col justify-end">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
+                    <div className="absolute inset-0 bg-primary/5 group-hover:bg-primary/10 transition-colors duration-700" />
+                    
+                    <div className="absolute top-0 right-0 p-12 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all duration-1000">
+                        <BarChart3 className="w-96 h-96 text-primary" />
                     </div>
-                    <div className="relative z-10 space-y-2 md:space-y-4">
-                        <div className="bg-white/20 w-fit px-3 py-1 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest">AI Powered</div>
-                        <h3 className="text-3xl md:text-5xl font-black uppercase leading-none">Rank Predictor</h3>
-                        <p className="max-w-md text-sm md:text-base text-white/80 font-medium">Get deep insights into your exam performance with our upgraded Gemini AI engine.</p>
+
+                    <div className="relative z-20 p-10 md:p-14 space-y-4">
+                        <div className="flex items-center gap-2 bg-primary/20 text-primary border border-primary/20 w-fit px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
+                            <Sparkles className="w-3 h-3" /> AI Analysis Enabled
+                        </div>
+                        <h3 className="text-5xl md:text-7xl font-black leading-none tracking-tighter text-white">Rank Predictor</h3>
+                        <p className="max-w-md text-lg text-muted-foreground font-medium leading-relaxed">
+                            Industrial-grade JEE, CUET & State entrance analytics. Trusted by lakhs of students for accurate admission insights.
+                        </p>
                     </div>
                 </Link>
-                <div className="md:col-span-4 grid grid-cols-2 md:grid-cols-1 md:grid-rows-2 gap-4 md:gap-6">
-                    <Link to="/tools/pdf/merge" className="group bg-rose-500 p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] text-white flex flex-col justify-between hover:scale-[1.02] transition-all shadow-xl">
-                        <Zap className="w-8 h-8 md:w-12 md:h-12 self-end opacity-50" />
-                        <div>
-                            <h3 className="text-lg md:text-2xl font-black uppercase">Merge PDF</h3>
-                            <p className="text-[10px] md:text-sm text-white/80 font-medium">Instant combine.</p>
+
+                {/* Side Bento Cards */}
+                <div className="md:col-span-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-6">
+                    <Link to="/tools/resume-builder" className="group saas-card flex flex-col justify-between overflow-hidden relative">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-bl-full -mr-10 -mt-10 blur-xl group-hover:bg-indigo-500/10 transition-all" />
+                        <Rocket className="w-10 h-10 text-indigo-500 mb-8" />
+                        <div className="space-y-2">
+                            <h3 className="text-2xl font-black text-white">Resume Pro</h3>
+                            <p className="text-sm text-muted-foreground font-medium">ATS-optimized career builder.</p>
                         </div>
                     </Link>
-                    <Link to="/tools/resume-builder" className="group bg-amber-500 p-6 md:p-8 rounded-[2rem] md:rounded-[3rem] text-white flex flex-col justify-between hover:scale-[1.02] transition-all shadow-xl">
-                        <ShieldCheck className="w-8 h-8 md:w-12 md:h-12 self-end opacity-50" />
-                        <div>
-                            <h3 className="text-lg md:text-2xl font-black uppercase">Resume Pro</h3>
-                            <p className="text-[10px] md:text-sm text-white/80 font-medium">High conversion.</p>
+                    <Link to="/tools/pdf/merge" className="group saas-card flex flex-col justify-between overflow-hidden relative">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/5 rounded-bl-full -mr-10 -mt-10 blur-xl group-hover:bg-purple-500/10 transition-all" />
+                        <Zap className="w-10 h-10 text-purple-500 mb-8" />
+                        <div className="space-y-2">
+                            <h3 className="text-2xl font-black text-white">Cloud PDF</h3>
+                            <p className="text-sm text-muted-foreground font-medium">Instant merge, split & compress.</p>
                         </div>
                     </Link>
                 </div>
@@ -170,81 +144,104 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Ad Section */}
-      {settings.adsterraNativeBanner && (
-        <section className="px-4">
-          <div className="max-w-7xl mx-auto">
-            <AdsterraAd type="native" code={settings.adsterraNativeBanner} />
+      {/* Modern Tool Directory */}
+      <section id="tools" className="px-4 scroll-mt-32">
+        <div className="max-w-7xl mx-auto space-y-16">
+          <div className="max-w-3xl mx-auto space-y-10">
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-primary to-purple-600 rounded-[2.5rem] blur opacity-10 group-hover:opacity-25 transition duration-1000" />
+              <div className="relative">
+                <Search className="absolute left-8 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <input 
+                  type="text" 
+                  placeholder="What tool do you need today?"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-20 pr-8 py-7 rounded-[2.5rem] border border-white/5 bg-[#111] focus:bg-black focus:border-primary/50 outline-none transition-all text-xl font-bold text-white placeholder:text-muted-foreground/30 shadow-2xl"
+                />
+              </div>
+            </div>
+            
+            <div className="flex flex-wrap justify-center gap-3">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
+                    activeCategory === cat 
+                      ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-105' 
+                      : 'bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-white border border-white/5'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </div>
-        </section>
-      )}
 
-      {/* Modern Categorized Tools Section */}
-      <section className="px-4 space-y-16 md:space-y-32">
-        {categories.map((category) => {
-          const categoryTools = filteredTools.filter(t => t.category === category);
-          if (categoryTools.length === 0) return null;
+          <div className="space-y-24">
+            {categories.map((category) => {
+              const categoryTools = filteredTools.filter(t => t.category === category);
+              if (categoryTools.length === 0) return null;
 
-          return (
-            <div key={category} id={category.toLowerCase()} className="space-y-8 md:space-y-12 max-w-7xl mx-auto scroll-mt-24 md:scroll-mt-32">
-              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6">
-                <div className="space-y-2">
-                  <h2 className="text-3xl md:text-5xl font-black tracking-tighter uppercase flex items-center gap-3 md:gap-4">
-                    <span className="w-8 md:w-12 h-1.5 md:h-2 bg-primary rounded-full" />
-                    {category} <span className="text-primary italic">Tools</span>
-                  </h2>
-                  <p className="text-sm md:text-lg text-muted-foreground font-medium max-w-2xl">Professional-grade {category.toLowerCase()} processing with military-grade encryption and speed.</p>
+              return (
+                <div key={category} className="space-y-10">
+                  <div className="flex items-center gap-6">
+                    <h2 className="text-2xl md:text-4xl font-black tracking-tighter text-white uppercase italic">
+                      {category} Modules
+                    </h2>
+                    <div className="h-px flex-grow bg-gradient-to-r from-white/10 to-transparent" />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {categoryTools.map((tool, idx) => (
+                      <motion.div
+                        key={tool.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.05 * idx }}
+                      >
+                        <ToolCard tool={tool} />
+                      </motion.div>
+                    ))}
+                  </div>
                 </div>
-                <div className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 hidden md:block">Categorized Section {category.toUpperCase()}</div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {categoryTools.map((tool, idx) => (
-                  <motion.div
-                    key={tool.id}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.05 * idx }}
-                  >
-                    <ToolCard tool={tool} />
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          );
-        })}
-        
-        {filteredTools.length === 0 && (
-          <div className="text-center py-20 md:py-32 bg-white/5 rounded-[2rem] md:rounded-[3rem] border border-dashed border-white/10 max-w-7xl mx-auto px-4">
-            <Search className="w-12 h-12 md:w-16 md:h-16 text-muted-foreground mx-auto mb-4 opacity-20" />
-            <p className="text-lg md:text-xl font-bold text-muted-foreground">No tools found matching your search.</p>
+              );
+            })}
           </div>
-        )}
+          
+          {filteredTools.length === 0 && (
+            <div className="text-center py-32 bg-white/5 rounded-[4rem] border border-dashed border-white/10">
+              <Search className="w-16 h-16 text-muted-foreground mx-auto mb-6 opacity-20" />
+              <p className="text-xl font-bold text-muted-foreground">No tools matched your search query.</p>
+            </div>
+          )}
+        </div>
       </section>
-      
-      {/* Featured Pro Section */}
+
+      {/* Global CTA Section */}
       <section className="px-4">
-        <div className="max-w-7xl mx-auto bg-gradient-to-br from-indigo-600 via-purple-700 to-primary p-8 md:p-16 rounded-[2.5rem] md:rounded-[4rem] shadow-2xl relative overflow-hidden group">
-          <div className="absolute right-0 top-0 w-1/2 h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
-          <div className="relative z-10 max-w-2xl space-y-6 md:space-y-8">
-            <div className="bg-white/20 backdrop-blur-md w-fit px-4 md:px-6 py-1.5 md:py-2 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest text-white border border-white/20">
-              Limited Time: ₹49/Month
-            </div>
-            <h2 className="text-3xl md:text-7xl font-black text-white leading-[1] md:leading-[0.9] uppercase tracking-tighter">
-              Unleash the <br /><span className="italic text-amber-400">Pro Power.</span>
+        <div className="max-w-7xl mx-auto saas-card !p-12 md:!p-24 text-center space-y-10 relative overflow-hidden group">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[140px] -z-10 group-hover:bg-purple-500/10 transition-colors duration-1000" />
+          
+          <div className="space-y-6 max-w-3xl mx-auto">
+            <h2 className="text-4xl md:text-7xl font-black text-white tracking-tighter leading-none">
+              Ready to experience the <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 italic">Student OS?</span>
             </h2>
-            <p className="text-white/80 text-base md:text-xl font-medium leading-relaxed">
-              Get unlimited access to AI Rank Predictor, Premium Resume Templates, and Batch PDF processing with no ads.
+            <p className="text-muted-foreground text-lg md:text-xl font-medium">
+              Join thousands of students who have already upgraded their workflow. No credit card required to start.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-4">
-              <Link to="/pricing" className="bg-white text-indigo-600 px-8 md:px-10 py-4 md:py-5 rounded-[1.5rem] md:rounded-[2rem] font-black hover:scale-105 transition-all shadow-2xl text-center uppercase tracking-widest text-xs md:text-sm">
-                Go Pro Now
-              </Link>
-              <Link to="/about" className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-8 md:px-10 py-4 md:py-5 rounded-[1.5rem] md:rounded-[2rem] font-black hover:bg-white/20 transition-all text-center uppercase tracking-widest text-xs md:text-sm">
-                Compare Plans
-              </Link>
-            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+            <Link to="/pricing" className="saas-button-primary !px-12 !py-6 text-base">
+              Get Started for Free
+            </Link>
+            <Link to="/about" className="saas-button-secondary !px-12 !py-6 text-base">
+              Our Vision
+            </Link>
           </div>
         </div>
       </section>
