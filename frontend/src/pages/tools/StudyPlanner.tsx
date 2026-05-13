@@ -52,14 +52,8 @@ const StudyPlanner = () => {
     // Restore pending AI data
     const pendingAIData = localStorage.getItem('pending_study_ai_data');
     if (pendingAIData) {
-      try {
-        const { goal, hours } = JSON.parse(pendingAIData);
-        localStorage.removeItem('pending_study_ai_data');
-        setShowAIModal(true);
-        // We'll pass these as initial values to the form via a ref or by adding state to the modal
-      } catch (e) {
-        console.error("Failed to restore pending AI data:", e);
-      }
+      localStorage.removeItem('pending_study_ai_data');
+      setShowAIModal(true);
     }
   }, []);
 

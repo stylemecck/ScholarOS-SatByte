@@ -4,7 +4,7 @@ import {
   Menu, X, Zap, Sparkles, 
   BarChart3, ChevronDown, LayoutDashboard, Settings,
   FileText, Image as ImageIcon, GraduationCap, ArrowRight,
-  LogOut, User as UserIcon, CreditCard
+  LogOut, CreditCard
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';

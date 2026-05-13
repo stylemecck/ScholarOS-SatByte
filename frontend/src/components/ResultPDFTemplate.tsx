@@ -39,7 +39,7 @@ const ResultPDFTemplate = ({ user, data, date }: PDFTemplateProps) => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: `4px solid ${COLORS.blue}`, paddingBottom: '32px', marginBottom: '40px' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-            <div style={{ width: '32px', height: '32px', backgroundColor: COLORS.blue, borderRadius: '8px', display: 'flex', alignItems: 'center', justifyCenter: 'center', color: COLORS.white, fontWeight: 900, justifyContent: 'center' }}>S</div>
+            <div style={{ width: '32px', height: '32px', backgroundColor: COLORS.blue, borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: COLORS.white, fontWeight: 900 }}>S</div>
             <h1 style={{ fontSize: '24px', fontWeight: 900, color: COLORS.slate900, letterSpacing: '-0.05em', margin: 0 }}>SATBYTE <span style={{ color: COLORS.blue, fontWeight: 500 }}>TOOLKIT</span></h1>
           </div>
           <p style={{ fontSize: '10px', fontWeight: 900, color: COLORS.slate400, textTransform: 'uppercase', letterSpacing: '0.3em', marginLeft: '40px', margin: 0 }}>Official Career Insight Report</p>
