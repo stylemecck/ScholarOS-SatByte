@@ -77,15 +77,14 @@ const Navbar = () => {
   ];
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[100] px-4 py-6 pointer-events-none">
-      <div className="max-w-7xl mx-auto flex items-center justify-center pointer-events-auto">
-        <nav className={`
-          flex items-center justify-between px-4 sm:px-6 h-16 w-full
-          transition-all duration-500 rounded-full border
-          ${scrolled 
-            ? 'bg-background/80 backdrop-blur-3xl border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)]' 
-            : 'bg-background/40 backdrop-blur-xl border-white/5 shadow-xl'}
-        `}>
+    <div className="fixed top-0 inset-x-0 z-[100] px-2 sm:px-4 py-4 sm:py-6 flex justify-center pointer-events-none">
+      <nav className={`
+        flex items-center justify-between px-3 sm:px-6 h-14 sm:h-16 w-full max-w-7xl
+        transition-all duration-500 rounded-full border pointer-events-auto
+        ${scrolled 
+          ? 'bg-background/80 backdrop-blur-3xl border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)]' 
+          : 'bg-background/40 backdrop-blur-xl border-white/5 shadow-xl'}
+      `}>
           {/* Logo Section */}
           <Link 
             to="/" 
@@ -281,7 +280,6 @@ const Navbar = () => {
             </button>
           </div>
         </nav>
-      </div>
 
       {/* Mobile Menu Overlay */}
       <AnimatePresence>

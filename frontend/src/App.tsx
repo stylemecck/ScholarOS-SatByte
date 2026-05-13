@@ -84,10 +84,15 @@ function AppContent() {
 
   return (
     <HelmetProvider>
-      <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300">
+      <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors duration-300 overflow-x-hidden">
       {settings.announcement && (
-        <div className="bg-primary text-primary-foreground py-2 text-center text-[10px] font-black uppercase tracking-[0.3em] relative z-[60] shadow-lg">
-          {settings.announcement}
+        <div className="bg-primary text-primary-foreground py-2 px-4 relative z-[60] shadow-lg overflow-hidden whitespace-nowrap">
+          <div className="max-w-7xl mx-auto flex items-center justify-center">
+            <div className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] animate-marquee sm:animate-none">
+              {settings.announcement}
+              <span className="sm:hidden inline-block ml-10">{settings.announcement}</span>
+            </div>
+          </div>
         </div>
       )}
       <Navbar />
