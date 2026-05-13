@@ -39,7 +39,7 @@ import Feedback from './pages/Feedback';
 import AccountSettings from './pages/AccountSettings';
 import AdminDashboard from './pages/AdminDashboard';
 import DeveloperDashboard from './pages/DeveloperDashboard';
-import Docs from './pages/Docs';
+// import Docs from './pages/Docs';
 import ExploreTools from './pages/ExploreTools';
 import Tutorials from './pages/Tutorials';
 import { AuthProvider } from './context/AuthContext';
@@ -136,7 +136,7 @@ function AppContent() {
           <Route path="/settings" element={<AccountSettings />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/developer" element={<DeveloperDashboard />} />
-          <Route path="/docs" element={<Docs />} />
+          {/* <Route path="/docs" element={<Docs />} /> */}
           <Route path="/tools" element={<ExploreTools />} />
           <Route path="/tutorials" element={<Tutorials />} />
           <Route path="/cookies" element={<CookiePolicy />} />

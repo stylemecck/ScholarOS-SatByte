@@ -339,7 +339,7 @@ const Navbar = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground opacity-50 px-2">Ecosystem Tools</h3>
+                    <Link to="/tools" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-white transition-colors">Explore</Link>
                     <div className="grid grid-cols-1 gap-3">
                       {toolCategories.flatMap(c => c.tools).slice(0, 4).map(tool => (
                         <Link 

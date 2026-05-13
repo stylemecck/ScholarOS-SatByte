@@ -4,7 +4,7 @@ import {
   Terminal, Key, Activity, Shield, 
   Copy, Plus, Trash2, CheckCircle2, Zap, 
   Code2, Globe, Cpu, Server, ExternalLink,
-  History, Database, CreditCard, Layout, Loader2
+  History, Database, CreditCard, Layout, Loader2, Layers
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -139,8 +139,8 @@ const DeveloperDashboard = () => {
         </nav>
 
         <div className="space-y-4">
-           <Link to="/docs" className="flex items-center gap-4 px-4 py-3 text-xs font-black uppercase tracking-widest text-muted-foreground hover:text-white transition-colors">
-              <Code2 className="w-4 h-4" /> Documentation
+           <Link to="/tools" className="flex items-center gap-4 px-4 py-3 text-xs font-black uppercase tracking-widest text-muted-foreground hover:text-white transition-colors">
+              <Layers className="w-4 h-4" /> Explore Tools
            </Link>
            <button className="w-full saas-button-primary !py-4 text-[10px] flex items-center justify-center gap-2">
               <Zap className="w-4 h-4" /> Go Pro
@@ -295,8 +295,8 @@ const DeveloperDashboard = () => {
                              <p className="text-[10px] font-black uppercase tracking-widest text-white">Python SDK</p>
                           </div>
                        </div>
-                       <Link to="/docs" className="w-full saas-button-secondary !py-4 text-[10px] flex items-center justify-center gap-2">
-                          <ExternalLink className="w-4 h-4" /> API Reference
+                       <Link to="/tools" className="w-full saas-button-secondary !py-4 text-[10px] flex items-center justify-center gap-2">
+                          <ExternalLink className="w-4 h-4" /> Explore Marketplace
                        </Link>
                     </div>
                  </div>
