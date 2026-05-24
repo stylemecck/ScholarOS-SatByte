@@ -220,7 +220,21 @@ exports.generateInvoicePDF = async (user, order, paymentDetails) => {
     const paymentId = paymentDetails.razorpay_payment_id || 'MOCKPAYID';
     const mockHash = `SHA256:${crypto.createHash('sha256').update(paymentId).digest('hex').slice(0, 16).toUpperCase()}`;
 
-    page.drawText("✔ DIGITALLY SIGNED", { x: 385, y: yPos - 12, size: 8, font: helveticaBold, color: sigGreen });
+    // Draw a vector green checkmark to avoid WinAnsi font encoding limitations
+    page.drawLine({
+      start: { x: 385, y: yPos - 9 },
+      end: { x: 388, y: yPos - 12 },
+      thickness: 1.5,
+      color: sigGreen
+    });
+    page.drawLine({
+      start: { x: 388, y: yPos - 12 },
+      end: { x: 393, y: yPos - 5 },
+      thickness: 1.5,
+      color: sigGreen
+    });
+
+    page.drawText("DIGITALLY SIGNED", { x: 398, y: yPos - 12, size: 8, font: helveticaBold, color: sigGreen });
     page.drawText("Signer: SatByte Technologies Pvt Ltd", { x: 385, y: yPos - 22, size: 6.5, font: helveticaBold, color: textDark });
     page.drawText("Authority: Verified SaaS Billing Node", { x: 385, y: yPos - 30, size: 6, font: helvetica, color: textMuted });
     page.drawText(`Date: ${invoiceDate}`, { x: 385, y: yPos - 38, size: 6, font: helvetica, color: textMuted });
