@@ -284,3 +284,60 @@ exports.sendGiftDebitEmail = async (senderEmail, senderName, recipientName, reci
     console.error("Failed to send Resend debit email:", err.message);
   }
 };
+
+/**
+ * Send professional OTP email to user using Resend
+ */
+exports.sendOTPEmail = async (userEmail, userName, otpCode) => {
+  if (!process.env.RESEND_API_KEY) {
+    console.warn("⚠️ [Resend Email Service] RESEND_API_KEY is not configured in .env. Skipping OTP email delivery.");
+    console.log(`[OTP Simulation] To: ${userEmail} (${userName}) | OTP Code: ${otpCode} (Valid for 10 minutes)`);
+    return;
+  }
+
+  try {
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'Student Toolkit Pro <onboarding@resend.dev>';
+    
+    const htmlContent = `
+      <div style="font-family: 'Outfit', -apple-system, sans-serif; max-width: 600px; margin: auto; padding: 30px; border: 1px solid #e2e8f0; border-radius: 24px; background: #fafafa; color: #1e293b;">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h2 style="color: #3b82f6; margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.04em;">STUDENT TOOLKIT PRO</h2>
+          <p style="margin: 5px 0 0; color: #64748b; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em;">Secure Verification Request</p>
+        </div>
+        
+        <p style="font-size: 15px; line-height: 1.6; color: #334155;">Hello <strong>${userName}</strong>,</p>
+        <p style="font-size: 14px; line-height: 1.6; color: #475569;">We received a request to reset the password for your Student Toolkit Pro account. Use the secure One-Time Password (OTP) below to complete your reset request:</p>
+        
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 16px; padding: 25px; margin: 25px 0; text-align: center; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.05);">
+          <h1 style="margin: 0; color: #1d4ed8; font-size: 42px; font-weight: 900; letter-spacing: 0.25em; padding-left: 0.25em;">${otpCode}</h1>
+          <p style="margin: 8px 0 0; font-weight: bold; color: #2563eb; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Valid for 10 minutes only</p>
+        </div>
+        
+        <p style="font-size: 13px; line-height: 1.6; color: #64748b;">If you did not request this password reset, please ignore this email or contact support. Your password will remain secure and unchanged.</p>
+        
+        <div style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px; font-size: 11px; color: #94a3b8; text-align: center;">
+          © 2026 Student Toolkit Pro | SatByte Technologies Private Limited<br>
+          Ward No. 07, Sarmastpur Jhitkahi (Shamil), Vaishali, Bihar - 844122
+        </div>
+      </div>
+    `;
+
+    console.log(`[Resend API] Delivering OTP email notification to ${userEmail} via Resend...`);
+    
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`
+      },
+      body: JSON.stringify({
+        from: fromEmail,
+        to: userEmail,
+        subject: `🔑 ${otpCode} is your Password Reset Code - Student Toolkit Pro`,
+        html: htmlContent
+      })
+    });
+  } catch (err) {
+    console.error("Failed to send Resend OTP email:", err.message);
+  }
+};

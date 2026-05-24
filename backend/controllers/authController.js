@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
+const Otp = require('../models/Otp');
 const StudyPlan = require('../models/StudyPlan');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -299,5 +300,95 @@ exports.changePassword = async (req, res) => {
   } catch (err) {
     console.error("CHANGE PASSWORD ERROR:", err);
     res.status(500).json({ error: 'Failed to change password' });
+  }
+};
+
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: 'Email address is required' });
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      // Gracefully respond success to prevent email enumeration,
+      // but do NOT send any email.
+      return res.json({ message: 'If that email is registered, we have sent a 6-digit OTP code to reset your password.' });
+    }
+
+    // Delete any previous OTPs for this email to avoid duplicates
+    await Otp.deleteMany({ email });
+
+    // Generate a secure 6-digit numeric OTP code
+    const crypto = require('crypto');
+    const generatedOtp = crypto.randomInt(100000, 999999).toString();
+
+    // Save in database with 10-minute validity
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+    const otpRecord = new Otp({
+      email,
+      otp: generatedOtp,
+      expiresAt: otpExpiry
+    });
+    await otpRecord.save();
+    console.log(`Generated OTP ${generatedOtp} for ${email}. Expiry: ${otpExpiry}`);
+
+    // Asynchronously dispatch OTP Email via Resend
+    const { sendOTPEmail } = require('../utils/emailService');
+    (async () => {
+      try {
+        await sendOTPEmail(email, user.name, generatedOtp);
+      } catch (emailErr) {
+        console.error("Failed to deliver OTP email:", emailErr);
+      }
+    })();
+
+    res.json({ message: 'If that email is registered, we have sent a 6-digit OTP code to reset your password.' });
+  } catch (err) {
+    console.error("FORGOT PASSWORD ERROR:", err);
+    res.status(500).json({ error: 'Failed to request password reset' });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({ error: 'Email, OTP, and New Password are required' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters long' });
+    }
+
+    // Verify OTP
+    const otpRecord = await Otp.findOne({ email, otp });
+    if (!otpRecord) {
+      return res.status(400).json({ error: 'Invalid OTP code' });
+    }
+
+    // Double check expiration manually in case TTL cleanup hasn't run yet
+    if (new Date() > otpRecord.expiresAt) {
+      await Otp.deleteOne({ _id: otpRecord._id });
+      return res.status(400).json({ error: 'Expired OTP code' });
+    }
+
+    // Find user
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: 'User account not found' });
+    }
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    await user.save();
+
+    // Clean up the verified OTP
+    await Otp.deleteMany({ email });
+
+    res.json({ message: 'Password reset successful! You can now log in with your new password.' });
+  } catch (err) {
+    console.error("RESET PASSWORD ERROR:", err);
+    res.status(500).json({ error: 'Failed to reset password' });
   }
 };
