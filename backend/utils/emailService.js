@@ -88,7 +88,7 @@ exports.sendInvoiceEmail = async (userEmail, userName, pdfBuffer, billingDetails
         
         <div style="margin-top: 40px; border-top: 1px solid #e5e7eb; padding-top: 20px; font-size: 11px; color: #9ca3af; text-align: center; line-height: 1.5;">
           © 2026 Student Toolkit Pro | SatByte Technologies Private Limited<br>
-          Sector 45, Gurgaon, Haryana, 122003
+          Ward No. 07, Sarmastpur Jhitkahi (Shamil), Vaishali, Bihar - 844122
         </div>
       </div>
     `;
@@ -179,7 +179,7 @@ exports.sendGiftCreditEmail = async (recipientEmail, recipientName, senderName, 
         
         <div style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px; font-size: 11px; color: #94a3b8; text-align: center;">
           © 2026 Student Toolkit Pro | SatByte Technologies Private Limited<br>
-          Sector 45, Gurgaon, Haryana, 122003
+          Ward No. 07, Sarmastpur Jhitkahi (Shamil), Vaishali, Bihar - 844122
         </div>
       </div>
     `;
@@ -260,7 +260,7 @@ exports.sendGiftDebitEmail = async (senderEmail, senderName, recipientName, reci
         
         <div style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px; font-size: 11px; color: #94a3b8; text-align: center;">
           © 2026 Student Toolkit Pro | SatByte Technologies Private Limited<br>
-          Sector 45, Gurgaon, Haryana, 122003
+          Ward No. 07, Sarmastpur Jhitkahi (Shamil), Vaishali, Bihar - 844122
         </div>
       </div>
     `;
