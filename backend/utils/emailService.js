@@ -126,3 +126,161 @@ exports.sendInvoiceEmail = async (userEmail, userName, pdfBuffer, billingDetails
     console.error("Failed to send Resend email:", err.message);
   }
 };
+
+/**
+ * Send email notification to credit recipient
+ */
+exports.sendGiftCreditEmail = async (recipientEmail, recipientName, senderName, senderEmail, giftDetails) => {
+  const { giftAmount, systemFee, netTransferred } = giftDetails;
+
+  if (!process.env.RESEND_API_KEY) {
+    console.warn("⚠️ [Resend Email Service] RESEND_API_KEY is not configured in .env. Skipping recipient credit email.");
+    console.log(`[Credit Simulation] To: ${recipientEmail} (${recipientName}) | Sender: ${senderName} (${senderEmail}) | Gifted: ${giftAmount} | Net: ${netTransferred}`);
+    return;
+  }
+
+  try {
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'Student Toolkit Pro <onboarding@resend.dev>';
+    
+    const htmlContent = `
+      <div style="font-family: 'Outfit', -apple-system, sans-serif; max-width: 600px; margin: auto; padding: 30px; border: 1px solid #e2e8f0; border-radius: 24px; background: #fafafa; color: #1e293b;">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h2 style="color: #8b5cf6; margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.04em;">STUDENT TOOLKIT PRO</h2>
+          <p style="margin: 5px 0 0; color: #64748b; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em;">Credits Received Notification</p>
+        </div>
+        
+        <p style="font-size: 15px; line-height: 1.6; color: #334155;">Great news, <strong>${recipientName}</strong>!</p>
+        <p style="font-size: 14px; line-height: 1.6; color: #475569;">You have just received AI credits gifted to your account by <strong>${senderName}</strong> (${senderEmail}).</p>
+        
+        <div style="background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 16px; padding: 25px; margin: 25px 0; text-align: center; box-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.05);">
+          <h1 style="margin: 0; color: #7c3aed; font-size: 36px; font-weight: 900; letter-spacing: -0.04em;">+${netTransferred} Credits</h1>
+          <p style="margin: 5px 0 0; font-weight: bold; color: #6d28d9; font-size: 13px;">Added to your Balance</p>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #f1f5f9; border-radius: 16px; padding: 20px; margin: 25px 0; font-size: 13px;">
+          <h4 style="margin: 0 0 12px; color: #1e293b; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px;">Transfer Details</h4>
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px; color: #475569;">
+            <tr>
+              <td style="padding: 5px 0;">Total Gifted by Sender:</td>
+              <td style="padding: 5px 0; text-align: right; font-weight: 600; color: #1e293b;">${giftAmount} Credits</td>
+            </tr>
+            <tr>
+              <td style="padding: 5px 0;">System Gifting Fee (1.5%):</td>
+              <td style="padding: 5px 0; text-align: right; color: #b91c1c;">-${systemFee} Credits</td>
+            </tr>
+            <tr style="border-top: 1px solid #f1f5f9; font-weight: 700;">
+              <td style="padding: 8px 0; color: #1e293b;">Net Credits Credited:</td>
+              <td style="padding: 8px 0; text-align: right; color: #7c3aed; font-size: 14px;">+${netTransferred} Credits</td>
+            </tr>
+          </table>
+        </div>
+        
+        <p style="font-size: 13px; line-height: 1.6; color: #64748b; font-style: italic; margin-bottom: 25px;">These credits are ready to use for Resume Parsing, AI CGPA Predictions, study planners, and all AI features inside your toolkit dashboard.</p>
+        
+        <div style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px; font-size: 11px; color: #94a3b8; text-align: center;">
+          © 2026 Student Toolkit Pro | SatByte Technologies Private Limited<br>
+          Sector 45, Gurgaon, Haryana, 122003
+        </div>
+      </div>
+    `;
+
+    console.log(`[Resend API] Sending recipient credit notification to ${recipientEmail}...`);
+    
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`
+      },
+      body: JSON.stringify({
+        from: fromEmail,
+        to: recipientEmail,
+        subject: `🎉 You've received +${netTransferred} Credits! - Student Toolkit Pro`,
+        html: htmlContent
+      })
+    });
+  } catch (err) {
+    console.error("Failed to send Resend credit email:", err.message);
+  }
+};
+
+/**
+ * Send email notification to credit sender
+ */
+exports.sendGiftDebitEmail = async (senderEmail, senderName, recipientName, recipientEmail, giftDetails) => {
+  const { giftAmount, systemFee, netTransferred } = giftDetails;
+
+  if (!process.env.RESEND_API_KEY) {
+    console.warn("⚠️ [Resend Email Service] RESEND_API_KEY is not configured in .env. Skipping sender debit email.");
+    console.log(`[Debit Simulation] To: ${senderEmail} (${senderName}) | Recipient: ${recipientName} (${recipientEmail}) | Total Debited: ${giftAmount}`);
+    return;
+  }
+
+  try {
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'Student Toolkit Pro <onboarding@resend.dev>';
+    
+    const htmlContent = `
+      <div style="font-family: 'Outfit', -apple-system, sans-serif; max-width: 600px; margin: auto; padding: 30px; border: 1px solid #e2e8f0; border-radius: 24px; background: #fafafa; color: #1e293b;">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h2 style="color: #64748b; margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.04em;">STUDENT TOOLKIT PRO</h2>
+          <p style="margin: 5px 0 0; color: #64748b; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em;">Credits Transferred Notification</p>
+        </div>
+        
+        <p style="font-size: 15px; line-height: 1.6; color: #334155;">Hello <strong>${senderName}</strong>,</p>
+        <p style="font-size: 14px; line-height: 1.6; color: #475569;">Your transfer request was successfully processed! We have debited the requested credits from your account balance and credited them to the recipient.</p>
+        
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 16px; padding: 25px; margin: 25px 0; text-align: center;">
+          <h1 style="margin: 0; color: #475569; font-size: 36px; font-weight: 900; letter-spacing: -0.04em;">-${giftAmount} Credits</h1>
+          <p style="margin: 5px 0 0; font-weight: bold; color: #64748b; font-size: 13px;">Debited from your Balance</p>
+        </div>
+
+        <div style="background: #ffffff; border: 1px solid #f1f5f9; border-radius: 16px; padding: 20px; margin: 25px 0; font-size: 13px;">
+          <h4 style="margin: 0 0 12px; color: #1e293b; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px;">Transfer Receipt</h4>
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px; color: #475569;">
+            <tr>
+              <td style="padding: 5px 0;">Recipient Student:</td>
+              <td style="padding: 5px 0; text-align: right; font-weight: 600; color: #1e293b;">${recipientName} (${recipientEmail})</td>
+            </tr>
+            <tr>
+              <td style="padding: 5px 0;">Transfer Amount:</td>
+              <td style="padding: 5px 0; text-align: right; font-weight: 600; color: #1e293b;">${giftAmount} Credits</td>
+            </tr>
+            <tr>
+              <td style="padding: 5px 0;">System Gifting Fee (1.5%):</td>
+              <td style="padding: 5px 0; text-align: right; color: #b91c1c;">${systemFee} Credits</td>
+            </tr>
+            <tr style="border-top: 1px solid #f1f5f9; font-weight: 700;">
+              <td style="padding: 8px 0; color: #1e293b;">Recipient Received:</td>
+              <td style="padding: 8px 0; text-align: right; color: #0284c7;">${netTransferred} Credits</td>
+            </tr>
+          </table>
+        </div>
+        
+        <p style="font-size: 13px; line-height: 1.6; color: #64748b; font-style: italic; margin-bottom: 25px;">Thank you for sharing your credits and supporting fellow students within the Student Toolkit Pro community!</p>
+        
+        <div style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px; font-size: 11px; color: #94a3b8; text-align: center;">
+          © 2026 Student Toolkit Pro | SatByte Technologies Private Limited<br>
+          Sector 45, Gurgaon, Haryana, 122003
+        </div>
+      </div>
+    `;
+
+    console.log(`[Resend API] Sending sender debit notification to ${senderEmail}...`);
+    
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`
+      },
+      body: JSON.stringify({
+        from: fromEmail,
+        to: senderEmail,
+        subject: `💸 Credit Gifting Receipt - Student Toolkit Pro`,
+        html: htmlContent
+      })
+    });
+  } catch (err) {
+    console.error("Failed to send Resend debit email:", err.message);
+  }
+};

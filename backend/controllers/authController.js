@@ -153,7 +153,12 @@ exports.giftCredits = async (req, res) => {
     const { recipientEmail, amount } = req.body;
     const sender = await User.findById(req.user.userId);
     
-    if (sender.credits < amount) {
+    const giftAmount = parseFloat(amount);
+    if (isNaN(giftAmount) || giftAmount <= 0) {
+      return res.status(400).json({ error: 'Invalid credit amount' });
+    }
+
+    if (sender.credits < giftAmount) {
       return res.status(403).json({ error: 'Insufficient credits' });
     }
 
@@ -166,27 +171,57 @@ exports.giftCredits = async (req, res) => {
       return res.status(400).json({ error: 'You cannot gift credits to yourself' });
     }
 
+    // Math calculations for 1.5% fee
+    const systemFee = parseFloat((giftAmount * 0.015).toFixed(2));
+    const netTransferred = parseFloat((giftAmount - systemFee).toFixed(2));
+
     // Process Transaction
-    sender.credits -= amount;
+    sender.credits = parseFloat((sender.credits - giftAmount).toFixed(2));
     sender.creditHistory.push({
       type: 'spent',
-      amount,
-      description: `Gifted credits to ${recipient.name}`,
+      amount: giftAmount,
+      description: `Gifted ${giftAmount} Credits to ${recipient.name} (includes 1.5% transfer fee of ${systemFee} credits)`,
       date: new Date()
     });
 
-    recipient.credits += amount;
+    recipient.credits = parseFloat((recipient.credits + netTransferred).toFixed(2));
     recipient.creditHistory.push({
       type: 'added',
-      amount,
-      description: `Received gift credits from ${sender.name}`,
+      amount: netTransferred,
+      description: `Received ${netTransferred} Credits from ${sender.name} (after 1.5% transfer fee)`,
       date: new Date()
     });
 
     await sender.save();
     await recipient.save();
 
-    res.json({ message: 'Credits gifted successfully', remainingCredits: sender.credits });
+    // Trigger Resend Gifting Email Notifications Asynchronously
+    const { sendGiftCreditEmail, sendGiftDebitEmail } = require('../utils/emailService');
+    
+    (async () => {
+      try {
+        console.log(`Sending debit notification email to sender ${sender.email}...`);
+        await sendGiftDebitEmail(sender.email, sender.name, recipient.name, recipient.email, {
+          giftAmount,
+          systemFee,
+          netTransferred
+        });
+
+        console.log(`Sending credit notification email to recipient ${recipient.email}...`);
+        await sendGiftCreditEmail(recipient.email, recipient.name, sender.name, sender.email, {
+          giftAmount,
+          systemFee,
+          netTransferred
+        });
+      } catch (emailErr) {
+        console.error("Failed to dispatch credit gifting notification emails:", emailErr);
+      }
+    })();
+
+    res.json({ 
+      message: `Successfully gifted ${netTransferred} credits (1.5% fee of ${systemFee} credits applied)`, 
+      remainingCredits: sender.credits 
+    });
   } catch (err) {
     console.error("GIFT ERROR:", err);
     res.status(500).json({ error: 'Failed to gift credits' });
