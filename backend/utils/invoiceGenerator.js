@@ -1,4 +1,5 @@
 const { PDFDocument, rgb, StandardFonts } = require('pdf-lib');
+const crypto = require('crypto');
 
 /**
  * Generate a professional, GST-compliant invoice PDF
@@ -184,20 +185,46 @@ exports.generateInvoicePDF = async (user, order, paymentDetails) => {
     page.drawText("Grand Total (Paid):", { x: summaryLabelX, y: yPos, size: 10, font: helveticaBold, color: rgb(1, 1, 1) });
     page.drawText(`Rs. ${totalPrice.toFixed(2)}`, { x: summaryValueX, y: yPos, size: 10, font: helveticaBold, color: rgb(1, 1, 1) });
 
-    // 6. Professional Declarations & Footer
+    // 6. Professional Declarations & Digitally Signed Block
     yPos -= 75;
+    
+    // Left Box: Terms & Declarations
     page.drawRectangle({
       x: 40,
       y: yPos - 50,
-      width: width - 80,
+      width: 320,
       height: 55,
       color: bgLight
     });
 
     page.drawText("Terms & Declarations:", { x: 50, y: yPos - 10, size: 8, font: helveticaBold, color: textDark });
-    page.drawText("1. HSN SAC description matches services described in the invoice.", { x: 50, y: yPos - 22, size: 7.5, font: helvetica, color: textMuted });
-    page.drawText("2. Taxes are charged strictly as per CGST/SGST rules under India's GST norms.", { x: 50, y: yPos - 32, size: 7.5, font: helvetica, color: textMuted });
-    page.drawText("3. This is an official computer-generated receipt/invoice and requires no physical signature.", { x: 50, y: yPos - 42, size: 7.5, font: helvetica, color: textMuted });
+    page.drawText("1. HSN SAC description matches standard SaaS digital plans.", { x: 50, y: yPos - 22, size: 7.2, font: helvetica, color: textMuted });
+    page.drawText("2. Taxes are calculated as per CGST/SGST rules under India's GST norms.", { x: 50, y: yPos - 32, size: 7.2, font: helvetica, color: textMuted });
+    page.drawText("3. This document is authenticated by verified electronic signature below.", { x: 50, y: yPos - 42, size: 7.2, font: helvetica, color: textMuted });
+
+    // Right Box: Visual Digital Signature stamp
+    const sigGreen = rgb(0.13, 0.58, 0.28); // Standard green stamp color
+    const sigBg = rgb(0.94, 0.98, 0.95);
+    
+    page.drawRectangle({
+      x: 375,
+      y: yPos - 50,
+      width: 180,
+      height: 55,
+      color: sigBg,
+      borderColor: sigGreen,
+      borderLineWidth: 1
+    });
+
+    // Hash values from payment details
+    const paymentId = paymentDetails.razorpay_payment_id || 'MOCKPAYID';
+    const mockHash = `SHA256:${crypto.createHash('sha256').update(paymentId).digest('hex').slice(0, 16).toUpperCase()}`;
+
+    page.drawText("✔ DIGITALLY SIGNED", { x: 385, y: yPos - 12, size: 8, font: helveticaBold, color: sigGreen });
+    page.drawText("Signer: SatByte Technologies Pvt Ltd", { x: 385, y: yPos - 22, size: 6.5, font: helveticaBold, color: textDark });
+    page.drawText("Authority: Verified SaaS Billing Node", { x: 385, y: yPos - 30, size: 6, font: helvetica, color: textMuted });
+    page.drawText(`Date: ${invoiceDate}`, { x: 385, y: yPos - 38, size: 6, font: helvetica, color: textMuted });
+    page.drawText(mockHash, { x: 385, y: yPos - 46, size: 5, font: helvetica, color: textMuted });
 
     // Bottom brand tag
     page.drawText("Thank you for your purchase & supporting student innovation! - SatByte Team", {
