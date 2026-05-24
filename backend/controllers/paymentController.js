@@ -41,6 +41,12 @@ exports.verifyPayment = async (req, res) => {
 
     console.log("Verifying Payment for Order:", razorpay_order_id);
 
+    // Initialize Razorpay to fetch order details securely
+    const razorpay = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSign = crypto
       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
@@ -48,19 +54,44 @@ exports.verifyPayment = async (req, res) => {
       .digest("hex");
 
     if (razorpay_signature === expectedSign) {
-      // Handle user credits if logged in
-      if (req.user?.userId) {
-        const user = await User.findById(req.user.userId);
-        if (user && credits && parseInt(credits) > 0) {
-          const addedAmount = parseInt(credits);
-          user.credits = (user.credits || 0) + addedAmount;
-          user.creditHistory.push({
-            type: 'added',
-            amount: addedAmount,
-            description: `Purchased ${addedAmount} Credits via Razorpay`
-          });
-          await user.save();
-          return res.json({ message: "Payment verified and credits added", credits: user.credits });
+      let orderCredits = 0;
+      let orderUserId = null;
+
+      try {
+        console.log("Fetching order details from Razorpay for order:", razorpay_order_id);
+        const order = await razorpay.orders.fetch(razorpay_order_id);
+        if (order && order.notes) {
+          orderCredits = parseInt(order.notes.credits) || 0;
+          orderUserId = order.notes.userId;
+          console.log(`Successfully fetched order details. Credits from order notes: ${orderCredits}, User ID from notes: ${orderUserId}`);
+        }
+      } catch (fetchErr) {
+        console.warn("Failed to fetch Razorpay order details directly, falling back to body parameters.", fetchErr);
+        orderCredits = parseInt(credits) || 0;
+        orderUserId = req.user?.userId || 'guest';
+      }
+
+      // Handle user credits if logged in (authenticated user ID takes priority, fallback to order notes' user ID)
+      const targetUserId = req.user?.userId || (orderUserId && orderUserId !== 'guest' ? orderUserId : null);
+
+      if (targetUserId) {
+        const user = await User.findById(targetUserId);
+        if (user) {
+          if (orderCredits > 0) {
+            user.credits = (user.credits || 0) + orderCredits;
+            user.creditHistory.push({
+              type: 'added',
+              amount: orderCredits,
+              description: `Purchased ${orderCredits} Credits via Razorpay`
+            });
+            await user.save();
+            console.log(`Successfully credited ${orderCredits} credits to user ${targetUserId}. New balance: ${user.credits}`);
+            return res.json({ message: "Payment verified and credits added", credits: user.credits });
+          } else {
+            console.warn(`Payment verified but 0 or invalid credits found for user ${targetUserId}`);
+          }
+        } else {
+          console.error(`Payment verified but user ${targetUserId} not found in database!`);
         }
       }
       

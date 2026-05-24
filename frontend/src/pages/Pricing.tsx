@@ -1,11 +1,37 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  Check, Zap, ArrowRight, HelpCircle
+  Check, Zap, ArrowRight, HelpCircle, Loader2
 } from 'lucide-react';
+import { useAuth } from '../context/useAuth';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import confetti from 'canvas-confetti';
+
+const loadRazorpaySDK = (): Promise<boolean> => {
+  return new Promise((resolve) => {
+    if ((window as any).Razorpay) {
+      resolve(true);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
 
 const Pricing = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const { user, refreshUser } = useAuth();
+  const navigate = useNavigate();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [alertMessage, setAlertMessage] = useState<{
+    type: 'success' | 'error' | 'info';
+    title: string;
+    text: string;
+  } | null>(null);
 
   const plans = [
     {
@@ -50,13 +76,192 @@ const Pricing = () => {
         'Whitelabel Export support',
         'Multi-user Dashboard'
       ],
-      button: 'Contact Sales',
+      button: 'Upgrade to Business',
       pro: true
     }
   ];
 
+  const handlePayment = async (planName: string, price: number) => {
+    if (planName === 'Free') {
+      if (user) {
+        setAlertMessage({
+          type: 'info',
+          title: 'Already on Free Tier',
+          text: 'You are currently on the Free tier. You can explore all basic AI tools from your dashboard!'
+        });
+      } else {
+        navigate('/signup');
+      }
+      return;
+    }
+
+    if (!user) {
+      // Guest user trying to buy Pro/Business: redirect them to login with a redirect query
+      navigate('/login?redirect=/pricing');
+      return;
+    }
+
+    const creditsMap: Record<string, Record<'monthly' | 'yearly', number>> = {
+      Pro: {
+        monthly: 100,
+        yearly: 1200
+      },
+      Business: {
+        monthly: 1000,
+        yearly: 12000
+      }
+    };
+
+    const credits = creditsMap[planName]?.[billingCycle] || 0;
+
+    try {
+      setLoadingPlan(planName);
+      const token = localStorage.getItem('token');
+      
+      console.log(`Creating order on backend for ${planName} (${billingCycle}): Amount ${price}, Credits ${credits}`);
+      const orderRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/payments/create-order`, {
+        amount: price,
+        credits: credits
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      console.log("Backend Order Response:", orderRes.data);
+
+      const sdkLoaded = await loadRazorpaySDK();
+      if (!sdkLoaded) {
+        setAlertMessage({
+          type: 'error',
+          title: 'SDK Loading Error',
+          text: 'Failed to load Razorpay Checkout. Please check your network connection and try again.'
+        });
+        setLoadingPlan(null);
+        return;
+      }
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: orderRes.data.amount,
+        currency: orderRes.data.currency,
+        name: "Student Toolkit Pro",
+        description: `${planName} ${billingCycle === 'monthly' ? 'Monthly' : 'Yearly'} Plan (${credits} Credits)`,
+        order_id: orderRes.data.id,
+        handler: async function (response: any) {
+          try {
+            setLoadingPlan(planName);
+            console.log("Razorpay Checkout payment success, sending for backend verification:", response);
+            
+            const verifyRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/payments/verify-payment`, {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              credits: credits // client-side fallback
+            }, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+
+            console.log("Verification Response:", verifyRes.data);
+
+            // High premium design: Confetti explosion!
+            confetti({
+              particleCount: 150,
+              spread: 80,
+              origin: { y: 0.6 }
+            });
+
+            setAlertMessage({
+              type: 'success',
+              title: 'Purchase Successful!',
+              text: `Fantastic! Your account has been credited with ${credits} credits. Redirecting you to your dashboard to get started...`
+            });
+
+            await refreshUser();
+
+            setTimeout(() => {
+              navigate('/dashboard');
+            }, 3500);
+
+          } catch (err: any) {
+            console.error("Payment Verification Error:", err);
+            setAlertMessage({
+              type: 'error',
+              title: 'Verification Failed',
+              text: err.response?.data?.error || 'Unable to verify your payment. Please contact our support if money was debited from your account.'
+            });
+          } finally {
+            setLoadingPlan(null);
+          }
+        },
+        prefill: {
+          name: user.name,
+          email: user.email
+        },
+        theme: {
+          color: "#3B82F6"
+        },
+        modal: {
+          ondismiss: function() {
+            setLoadingPlan(null);
+          }
+        }
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
+
+    } catch (err: any) {
+      console.error("Order Creation Error:", err);
+      setAlertMessage({
+        type: 'error',
+        title: 'Checkout Initialization Error',
+        text: err.response?.data?.error || 'Failed to start payment process. Please try again.'
+      });
+      setLoadingPlan(null);
+    }
+  };
+
   return (
     <div className="space-y-32 pb-32">
+      {/* Sleek Custom Notification Overlay */}
+      {alertMessage && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className={`max-w-md w-full saas-card text-center space-y-6 ${
+              alertMessage.type === 'success' 
+                ? 'border-emerald-500/30' 
+                : alertMessage.type === 'error' 
+                  ? 'border-red-500/30' 
+                  : 'border-primary/30'
+            }`}
+          >
+            <div className="space-y-2">
+              <h3 className={`text-2xl font-black italic ${
+                alertMessage.type === 'success' 
+                  ? 'text-emerald-400' 
+                  : alertMessage.type === 'error' 
+                    ? 'text-red-400' 
+                    : 'text-primary'
+              }`}>
+                {alertMessage.title}
+              </h3>
+              <p className="text-sm text-muted-foreground font-medium italic leading-relaxed">
+                {alertMessage.text}
+              </p>
+            </div>
+            {alertMessage.type !== 'success' && (
+              <button 
+                onClick={() => setAlertMessage(null)}
+                className="saas-button-primary w-full"
+              >
+                Okay
+              </button>
+            )}
+          </motion.div>
+        </div>
+      )}
+
       {/* Premium Hero */}
       <section className="relative pt-24 px-4 text-center space-y-8">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-primary/5 rounded-full blur-[140px] -z-10" />
@@ -115,7 +320,14 @@ const Pricing = () => {
             )}
 
             <div className="space-y-4">
-              <h3 className="text-2xl font-black text-white italic">{plan.name}</h3>
+              <div className="flex justify-between items-center">
+                <h3 className="text-2xl font-black text-white italic">{plan.name}</h3>
+                {plan.name !== 'Free' && (
+                  <span className="text-[10px] font-black uppercase bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-full">
+                    +{plan.name === 'Pro' ? (billingCycle === 'monthly' ? '100' : '1,200') : (billingCycle === 'monthly' ? '1,000' : '12,000')} Credits
+                  </span>
+                )}
+              </div>
               <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">{plan.tagline}</p>
             </div>
 
@@ -136,10 +348,22 @@ const Pricing = () => {
               </div>
             </div>
 
-            <button className={`w-full !py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 ${
-              plan.popular ? 'saas-button-primary' : 'saas-button-secondary'
-            }`}>
-              {plan.button} <ArrowRight className="w-4 h-4" />
+            <button 
+              onClick={() => handlePayment(plan.name, plan.price[billingCycle])}
+              disabled={loadingPlan !== null}
+              className={`w-full !py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 ${
+                plan.popular ? 'saas-button-primary' : 'saas-button-secondary'
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
+            >
+              {loadingPlan === plan.name ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" /> Processing...
+                </>
+              ) : (
+                <>
+                  {plan.button} <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
           </motion.div>
         ))}
