@@ -1,6 +1,8 @@
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
 const User = require('../models/User');
+const { generateInvoicePDF } = require('../utils/invoiceGenerator');
+const { sendInvoiceEmail } = require('../utils/emailService');
 
 exports.createOrder = async (req, res) => {
   try {
@@ -56,10 +58,11 @@ exports.verifyPayment = async (req, res) => {
     if (razorpay_signature === expectedSign) {
       let orderCredits = 0;
       let orderUserId = null;
+      let order = null;
 
       try {
         console.log("Fetching order details from Razorpay for order:", razorpay_order_id);
-        const order = await razorpay.orders.fetch(razorpay_order_id);
+        order = await razorpay.orders.fetch(razorpay_order_id);
         if (order && order.notes) {
           orderCredits = parseInt(order.notes.credits) || 0;
           orderUserId = order.notes.userId;
@@ -86,6 +89,39 @@ exports.verifyPayment = async (req, res) => {
             });
             await user.save();
             console.log(`Successfully credited ${orderCredits} credits to user ${targetUserId}. New balance: ${user.credits}`);
+            
+            // Generate Tax Invoice PDF & send via Resend asynchronously to not block Razorpay response
+            (async () => {
+              try {
+                console.log(`Generating tax invoice PDF for order: ${razorpay_order_id}`);
+                const finalOrder = order || {
+                  id: razorpay_order_id,
+                  amount: orderCredits === 12000 ? 499000 : orderCredits === 1200 ? 99000 : orderCredits === 1000 ? 49900 : 9900,
+                  notes: { credits: orderCredits.toString() }
+                };
+
+                const pdfBuffer = await generateInvoicePDF(user, finalOrder, {
+                  razorpay_order_id,
+                  razorpay_payment_id,
+                  razorpay_signature
+                });
+                
+                const planName = orderCredits === 12000 || orderCredits === 1000 ? 'Business' : 'Pro';
+                const duration = orderCredits === 12000 || orderCredits === 1200 ? 'Yearly' : 'Monthly';
+                const invoiceNo = `INV-${new Date().getFullYear()}${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${(razorpay_payment_id || 'TXT').slice(-6).toUpperCase()}`;
+
+                console.log(`Sending tax invoice email via Resend...`);
+                await sendInvoiceEmail(user.email, user.name, pdfBuffer, {
+                  invoiceNo,
+                  planDetails: `${planName} ${duration} SaaS Plan`,
+                  amount: finalOrder.amount ? finalOrder.amount / 100 : 99,
+                  phoneNumber: user.phoneNumber || 'N/A'
+                });
+              } catch (pdfErr) {
+                console.error("Failed to generate and email tax invoice PDF:", pdfErr);
+              }
+            })();
+
             return res.json({ message: "Payment verified and credits added", credits: user.credits });
           } else {
             console.warn(`Payment verified but 0 or invalid credits found for user ${targetUserId}`);

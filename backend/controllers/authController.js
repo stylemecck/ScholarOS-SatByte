@@ -209,15 +209,33 @@ exports.getLeaderboard = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   try {
-    const { name, avatar } = req.body;
+    const { name, avatar, phoneNumber, address } = req.body;
     const user = await User.findById(req.user.userId);
     if (!user) return res.status(404).json({ error: 'User not found' });
 
     if (name) user.name = name;
     if (avatar) user.avatar = avatar;
+    if (phoneNumber) user.phoneNumber = phoneNumber;
+    if (address) {
+      user.address = {
+        line1: address.line1 !== undefined ? address.line1 : user.address?.line1,
+        city: address.city !== undefined ? address.city : user.address?.city,
+        state: address.state !== undefined ? address.state : user.address?.state,
+        postalCode: address.postalCode !== undefined ? address.postalCode : user.address?.postalCode,
+        country: address.country !== undefined ? address.country : (user.address?.country || 'India')
+      };
+    }
 
     await user.save();
-    res.json({ message: 'Profile updated successfully', user: { name: user.name, avatar: user.avatar } });
+    res.json({ 
+      message: 'Profile updated successfully', 
+      user: { 
+        name: user.name, 
+        avatar: user.avatar,
+        phoneNumber: user.phoneNumber,
+        address: user.address
+      } 
+    });
   } catch (err) {
     console.error("UPDATE PROFILE ERROR:", err);
     res.status(500).json({ error: 'Failed to update profile' });

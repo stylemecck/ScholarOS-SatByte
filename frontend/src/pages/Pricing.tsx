@@ -81,6 +81,16 @@ const Pricing = () => {
     }
   ];
 
+  const [showBillingModal, setShowBillingModal] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<{ name: string; price: number } | null>(null);
+  const [phone, setPhone] = useState('');
+  const [addressLine1, setAddressLine1] = useState('');
+  const [city, setCity] = useState('');
+  const [stateName, setStateName] = useState('');
+  const [zipCode, setZipCode] = useState('');
+  const [country, setCountry] = useState('India');
+  const [savingBilling, setSavingBilling] = useState(false);
+
   const handlePayment = async (planName: string, price: number) => {
     if (planName === 'Free') {
       if (user) {
@@ -96,10 +106,28 @@ const Pricing = () => {
     }
 
     if (!user) {
-      // Guest user trying to buy Pro/Business: redirect them to login with a redirect query
       navigate('/login?redirect=/pricing');
       return;
     }
+
+    // Prefill billing info from user context if available
+    setPhone(user.phoneNumber || '');
+    setAddressLine1(user.address?.line1 || '');
+    setCity(user.address?.city || '');
+    setStateName(user.address?.state || '');
+    setZipCode(user.address?.postalCode || '');
+    setCountry(user.address?.country || 'India');
+    
+    setSelectedPlan({ name: planName, price });
+    setShowBillingModal(true);
+  };
+
+  const proceedToCheckout = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedPlan) return;
+    
+    const planName = selectedPlan.name;
+    const price = selectedPlan.price;
 
     const creditsMap: Record<string, Record<'monthly' | 'yearly', number>> = {
       Pro: {
@@ -115,9 +143,32 @@ const Pricing = () => {
     const credits = creditsMap[planName]?.[billingCycle] || 0;
 
     try {
+      setSavingBilling(true);
       setLoadingPlan(planName);
       const token = localStorage.getItem('token');
+
+      // 1. Save Billing Info to Profile First
+      console.log("Saving customer billing details to user profile...");
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/auth/update-profile`, {
+        phoneNumber: phone,
+        address: {
+          line1: addressLine1,
+          city: city,
+          state: stateName,
+          postalCode: zipCode,
+          country: country
+        }
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      // Refresh context so invoice has latest details
+      await refreshUser();
       
+      // Close Billing modal
+      setShowBillingModal(false);
+
+      // 2. Create Razorpay order
       console.log(`Creating order on backend for ${planName} (${billingCycle}): Amount ${price}, Credits ${credits}`);
       const orderRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/payments/create-order`, {
         amount: price,
@@ -136,6 +187,7 @@ const Pricing = () => {
           text: 'Failed to load Razorpay Checkout. Please check your network connection and try again.'
         });
         setLoadingPlan(null);
+        setSavingBilling(false);
         return;
       }
 
@@ -155,7 +207,7 @@ const Pricing = () => {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
-              credits: credits // client-side fallback
+              credits: credits
             }, {
               headers: { Authorization: `Bearer ${token}` }
             });
@@ -172,7 +224,7 @@ const Pricing = () => {
             setAlertMessage({
               type: 'success',
               title: 'Purchase Successful!',
-              text: `Fantastic! Your account has been credited with ${credits} credits. Redirecting you to your dashboard to get started...`
+              text: `Fantastic! Your account has been credited with ${credits} credits. A professional tax invoice has been generated and sent to your email. Redirecting to dashboard...`
             });
 
             await refreshUser();
@@ -193,8 +245,9 @@ const Pricing = () => {
           }
         },
         prefill: {
-          name: user.name,
-          email: user.email
+          name: user?.name,
+          email: user?.email,
+          contact: phone
         },
         theme: {
           color: "#3B82F6"
@@ -210,18 +263,150 @@ const Pricing = () => {
       rzp.open();
 
     } catch (err: any) {
-      console.error("Order Creation Error:", err);
+      console.error("Checkout Initialization Error:", err);
       setAlertMessage({
         type: 'error',
         title: 'Checkout Initialization Error',
         text: err.response?.data?.error || 'Failed to start payment process. Please try again.'
       });
       setLoadingPlan(null);
+    } finally {
+      setSavingBilling(false);
     }
   };
 
   return (
     <div className="space-y-32 pb-32">
+      {/* Premium Billing Modal Overlay */}
+      {showBillingModal && selectedPlan && (
+        <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <motion.div 
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="max-w-lg w-full saas-card space-y-6 my-8 border-primary/20 shadow-2xl relative"
+          >
+            <div className="space-y-1">
+              <h3 className="text-2xl font-black text-white italic">Confirm Billing Information</h3>
+              <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">
+                Required for Indian Tax & Compliant Invoice Generation
+              </p>
+            </div>
+            
+            <div className="bg-primary/5 border border-primary/20 p-4 rounded-xl flex justify-between items-center text-xs">
+              <div>
+                <span className="font-bold text-white uppercase tracking-wider block">Selected Plan</span>
+                <span className="text-muted-foreground italic font-medium">
+                  {selectedPlan.name} ({billingCycle === 'monthly' ? 'Monthly' : 'Yearly'})
+                </span>
+              </div>
+              <span className="text-xl font-black text-primary italic">₹{selectedPlan.price}</span>
+            </div>
+
+            <form onSubmit={proceedToCheckout} className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Mobile Number</label>
+                <input 
+                  type="tel" 
+                  required
+                  pattern="[0-9]{10}"
+                  placeholder="10-digit mobile number (e.g. 9876543210)"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  className="saas-input text-white focus:ring-1 focus:ring-primary/50"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Billing Address (Line 1)</label>
+                <input 
+                  type="text" 
+                  required
+                  placeholder="House/Flat No, Apartment, Street name"
+                  value={addressLine1}
+                  onChange={(e) => setAddressLine1(e.target.value)}
+                  className="saas-input text-white focus:ring-1 focus:ring-primary/50"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">City</label>
+                  <input 
+                    type="text" 
+                    required
+                    placeholder="e.g. Gurgaon"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    className="saas-input text-white focus:ring-1 focus:ring-primary/50"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">State</label>
+                  <input 
+                    type="text" 
+                    required
+                    placeholder="e.g. Haryana"
+                    value={stateName}
+                    onChange={(e) => setStateName(e.target.value)}
+                    className="saas-input text-white focus:ring-1 focus:ring-primary/50"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Postal Code / PIN</label>
+                  <input 
+                    type="text" 
+                    required
+                    pattern="[0-9]{6}"
+                    placeholder="6-digit PIN code"
+                    value={zipCode}
+                    onChange={(e) => setZipCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    className="saas-input text-white focus:ring-1 focus:ring-primary/50"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Country</label>
+                  <input 
+                    type="text" 
+                    required
+                    disabled
+                    value={country}
+                    className="saas-input text-muted-foreground bg-muted/40"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                <button 
+                  type="button"
+                  onClick={() => setShowBillingModal(false)}
+                  className="saas-button-secondary flex-1 py-4"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  disabled={savingBilling}
+                  className="saas-button-primary flex-1 py-4 flex items-center justify-center gap-2"
+                >
+                  {savingBilling ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" /> Saving...
+                    </>
+                  ) : (
+                    <>
+                      Pay Now <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
+
       {/* Sleek Custom Notification Overlay */}
       {alertMessage && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4">

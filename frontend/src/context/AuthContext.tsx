@@ -1,6 +1,14 @@
 import { createContext, useState, useEffect, type ReactNode } from 'react';
 import axios from 'axios';
 
+interface Address {
+  line1?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
+}
+
 interface User {
   id: string;
   name: string;
@@ -11,6 +19,8 @@ interface User {
   referralsCount?: number;
   avatar?: string;
   isGoogleUser?: boolean;
+  phoneNumber?: string;
+  address?: Address;
 }
 
 interface AuthContextType {
@@ -49,7 +59,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           referralCode: res.data.referralCode,
           referralsCount: res.data.referralsCount,
           avatar: res.data.avatar,
-          isGoogleUser: res.data.isGoogleUser
+          isGoogleUser: res.data.isGoogleUser,
+          phoneNumber: res.data.phoneNumber,
+          address: res.data.address
         });
       } catch (err) {
         console.error('Token validation failed');

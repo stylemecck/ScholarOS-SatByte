@@ -21,7 +21,15 @@ const userSchema = new mongoose.Schema({
   referralCode: { type: String, unique: true },
   referredBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   referralsCount: { type: Number, default: 0 },
-  avatar: { type: String }
+  avatar: { type: String },
+  phoneNumber: { type: String },
+  address: {
+    line1: { type: String },
+    city: { type: String },
+    state: { type: String },
+    postalCode: { type: String },
+    country: { type: String, default: 'India' }
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
