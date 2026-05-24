@@ -23,6 +23,12 @@ const Dashboard = () => {
   const [isGiftModalOpen, setIsGiftModalOpen] = useState(false);
   const [giftData, setGiftData] = useState({ email: '', amount: 5 });
   const [giftLoading, setGiftLoading] = useState(false);
+  const [isCustomAmount, setIsCustomAmount] = useState(false);
+  const [customAmountVal, setCustomAmountVal] = useState('');
+
+  const amountToGift = isCustomAmount ? (parseFloat(customAmountVal) || 0) : giftData.amount;
+  const systemFee = parseFloat((amountToGift * 0.015).toFixed(2));
+  const netTransferred = parseFloat((amountToGift - systemFee).toFixed(2));
 
   useEffect(() => {
     if (!isLoading && user) {
@@ -48,23 +54,44 @@ const Dashboard = () => {
 
   const handleGiftCredits = async (e: React.FormEvent) => {
     e.preventDefault();
+    const amountToGiftVal = isCustomAmount ? parseFloat(customAmountVal) : giftData.amount;
+    
+    if (isNaN(amountToGiftVal) || amountToGiftVal <= 0) {
+      alert("Please enter a valid credit amount greater than 0.");
+      return;
+    }
+    
+    if (credits < amountToGiftVal) {
+      alert("You do not have enough credits to complete this transfer.");
+      return;
+    }
+
     setGiftLoading(true);
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/gift-credits`, {
         recipientEmail: giftData.email,
-        amount: giftData.amount
+        amount: amountToGiftVal
       }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       alert("Credits gifted successfully!");
       setIsGiftModalOpen(false);
       setGiftData({ email: '', amount: 5 });
+      setIsCustomAmount(false);
+      setCustomAmountVal('');
       fetchUserData();
     } catch (err: any) {
       alert(err.response?.data?.error || "Failed to gift credits");
     } finally {
       setGiftLoading(false);
     }
+  };
+
+  const closeGiftModal = () => {
+    setIsGiftModalOpen(false);
+    setGiftData({ email: '', amount: 5 });
+    setIsCustomAmount(false);
+    setCustomAmountVal('');
   };
 
   const deleteResult = async (_id: string) => {
@@ -401,7 +428,7 @@ const Dashboard = () => {
               animate={{ opacity: 1 }} 
               exit={{ opacity: 0 }}
               className="absolute inset-0 bg-background/90 backdrop-blur-md" 
-              onClick={() => setIsGiftModalOpen(false)} 
+              onClick={closeGiftModal} 
             />
             <motion.div 
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -439,34 +466,85 @@ const Dashboard = () => {
 
                   <div className="space-y-3">
                     <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-2">Amount to Gift</label>
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-4 gap-2">
                        {[5, 10, 20].map(amt => (
                          <button 
                            key={amt} type="button"
-                           onClick={() => setGiftData({ ...giftData, amount: amt })}
-                           className={`py-3 rounded-xl text-sm font-black border transition-all ${giftData.amount === amt ? 'bg-amber-500 text-amber-950 border-amber-500' : 'bg-white/5 border-white/5 hover:bg-white/10'}`}
+                           onClick={() => {
+                             setIsCustomAmount(false);
+                             setGiftData({ ...giftData, amount: amt });
+                           }}
+                           className={`py-3 rounded-xl text-sm font-black border transition-all ${(!isCustomAmount && giftData.amount === amt) ? 'bg-amber-500 text-amber-950 border-amber-500 shadow-lg shadow-amber-500/20' : 'bg-white/5 border-white/5 hover:bg-white/10 text-foreground'}`}
                          >
                            {amt}
                          </button>
                        ))}
+                       <button 
+                         type="button"
+                         onClick={() => {
+                           setIsCustomAmount(true);
+                         }}
+                         className={`py-3 rounded-xl text-sm font-black border transition-all ${isCustomAmount ? 'bg-amber-500 text-amber-950 border-amber-500 shadow-lg shadow-amber-500/20' : 'bg-white/5 border-white/5 hover:bg-white/10 text-foreground'}`}
+                       >
+                         Custom
+                       </button>
                     </div>
                   </div>
 
-                  <div className="bg-amber-500/5 p-4 rounded-2xl border border-amber-500/10">
-                     <p className="text-[10px] font-bold text-amber-500/80 leading-relaxed text-center">
-                        This will deduct <span className="font-black underline">{giftData.amount} credits</span> from your balance of {credits}.
-                     </p>
+                  <AnimatePresence>
+                    {isCustomAmount && (
+                      <motion.div 
+                        initial={{ opacity: 0, height: 0, y: -10 }}
+                        animate={{ opacity: 1, height: 'auto', y: 0 }}
+                        exit={{ opacity: 0, height: 0, y: -10 }}
+                        transition={{ duration: 0.2 }}
+                        className="space-y-3 overflow-hidden"
+                      >
+                        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-2">Custom Amount</label>
+                        <div className="relative">
+                          <Coins className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                          <input 
+                            type="number" 
+                            step="any" 
+                            required
+                            min="0.01"
+                            placeholder="Enter amount (e.g. 15.5)"
+                            value={customAmountVal}
+                            onChange={(e) => setCustomAmountVal(e.target.value)}
+                            className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 pl-14 pr-6 focus:ring-4 focus:ring-amber-500/20 outline-none transition-all font-bold"
+                          />
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <div className="bg-amber-500/5 p-5 rounded-2xl border border-amber-500/10 space-y-3">
+                    <div className="flex justify-between items-center text-xs font-medium text-muted-foreground">
+                      <span>Amount to Gift:</span>
+                      <span className="font-bold text-foreground">{amountToGift.toFixed(2)} credits</span>
+                    </div>
+                    <div className="flex justify-between items-center text-xs font-medium text-amber-500/80">
+                      <span>System Fee (1.5%):</span>
+                      <span className="font-bold">-{systemFee.toFixed(2)} credits</span>
+                    </div>
+                    <div className="border-t border-amber-500/10 pt-2 flex justify-between items-center text-sm font-bold text-foreground">
+                      <span>Recipient Receives:</span>
+                      <span className="text-amber-500 font-black">{netTransferred > 0 ? netTransferred.toFixed(2) : '0.00'} credits</span>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground/60 leading-relaxed text-center pt-1">
+                      Total deducted from your balance: <span className="font-black text-amber-500/80">{amountToGift.toFixed(2)} credits</span> (Current balance: {credits})
+                    </p>
                   </div>
 
                   <div className="flex gap-4">
                     <button 
-                      type="button" onClick={() => setIsGiftModalOpen(false)}
+                      type="button" onClick={closeGiftModal}
                       className="flex-grow py-4 bg-muted text-muted-foreground rounded-2xl font-black uppercase tracking-widest text-xs"
                     >
                       Cancel
                     </button>
                     <button 
-                      type="submit" disabled={giftLoading || credits < giftData.amount}
+                      type="submit" disabled={giftLoading || credits < amountToGift || amountToGift <= 0}
                       className="flex-[2] py-4 bg-amber-500 text-amber-950 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-amber-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
                     >
                       {giftLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Send className="w-4 h-4" /> Send Gift</>}
