@@ -266,24 +266,24 @@ const Dashboard = () => {
 
       {/* Main Tabs Area */}
       <div className="space-y-8">
-        <div className="flex items-center gap-6 border-b border-white/10">
+        <div className="flex overflow-x-auto whitespace-nowrap gap-6 border-b border-white/10 pb-px -mb-px scroll-hide">
           <button 
             onClick={() => setActiveTab('results')}
-            className={`pb-4 px-2 text-sm font-black transition-all relative ${activeTab === 'results' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+            className={`pb-4 px-2 text-sm font-black transition-all relative shrink-0 ${activeTab === 'results' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
           >
             Saved Analyses
             {activeTab === 'results' && <motion.div layoutId="tab" className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-full" />}
           </button>
           <button 
             onClick={() => setActiveTab('credits')}
-            className={`pb-4 px-2 text-sm font-black transition-all relative ${activeTab === 'credits' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+            className={`pb-4 px-2 text-sm font-black transition-all relative shrink-0 ${activeTab === 'credits' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
           >
             Credit History
             {activeTab === 'credits' && <motion.div layoutId="tab" className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-full" />}
           </button>
           <button 
             onClick={() => setActiveTab('network')}
-            className={`pb-4 px-2 text-sm font-black transition-all relative ${activeTab === 'network' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+            className={`pb-4 px-2 text-sm font-black transition-all relative shrink-0 ${activeTab === 'network' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
           >
             My Network
             {activeTab === 'network' && <motion.div layoutId="tab" className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-full" />}
@@ -312,7 +312,7 @@ const Dashboard = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.05 }}
-                    className="backdrop-blur-md bg-card/40 border border-white/10 p-6 rounded-[2rem] hover:bg-card/60 transition-all group cursor-pointer"
+                    className="backdrop-blur-md bg-card/40 border border-white/10 p-5 md:p-6 rounded-[1.8rem] md:rounded-[2rem] hover:bg-card/60 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 group cursor-pointer"
                     onClick={() => setSelectedResult(res)}
                   >
                     <div className="space-y-4">
@@ -379,39 +379,66 @@ const Dashboard = () => {
               <p className="text-sm font-bold text-muted-foreground">No credit transactions yet.</p>
             </div>
           ) : (
-            <div className="bg-card/40 backdrop-blur-md border border-white/10 rounded-[2.5rem] overflow-hidden">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="bg-white/5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                    <th className="px-8 py-5">Transaction</th>
-                    <th className="px-8 py-5">Type</th>
-                    <th className="px-8 py-5 text-center">Amount</th>
-                    <th className="px-8 py-5 text-right">Date</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5">
-                  {creditHistory.map((item, i) => (
-                    <tr key={i} className="hover:bg-white/5 transition-all">
-                      <td className="px-8 py-5 font-bold text-sm">{item.description}</td>
-                      <td className="px-8 py-5">
-                        <span className={`text-[9px] font-black uppercase px-2.5 py-1 rounded-lg ${
-                          item.type === 'added' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'
-                        }`}>
-                          {item.type}
-                        </span>
-                      </td>
-                      <td className="px-8 py-5 text-center font-black text-sm">
-                        <span className={item.type === 'added' ? 'text-emerald-500' : 'text-rose-500'}>
-                          {item.type === 'added' ? '+' : '-'}{item.amount}
-                        </span>
-                      </td>
-                      <td className="px-8 py-5 text-right text-xs text-muted-foreground font-medium">
-                        {new Date(item.date).toLocaleDateString()}
-                      </td>
+            <div className="space-y-4">
+              {/* Desktop Table View */}
+              <div className="hidden md:block bg-card/40 backdrop-blur-md border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="bg-white/5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      <th className="px-8 py-5">Transaction</th>
+                      <th className="px-8 py-5">Type</th>
+                      <th className="px-8 py-5 text-center">Amount</th>
+                      <th className="px-8 py-5 text-right">Date</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-white/5">
+                    {creditHistory.map((item, i) => (
+                      <tr key={i} className="hover:bg-white/5 transition-all">
+                        <td className="px-8 py-5 font-bold text-sm">{item.description}</td>
+                        <td className="px-8 py-5">
+                          <span className={`text-[9px] font-black uppercase px-2.5 py-1 rounded-lg ${
+                            item.type === 'added' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'
+                          }`}>
+                            {item.type}
+                          </span>
+                        </td>
+                        <td className="px-8 py-5 text-center font-black text-sm">
+                          <span className={item.type === 'added' ? 'text-emerald-500' : 'text-rose-500'}>
+                            {item.type === 'added' ? '+' : '-'}{item.amount}
+                          </span>
+                        </td>
+                        <td className="px-8 py-5 text-right text-xs text-muted-foreground font-medium">
+                          {new Date(item.date).toLocaleDateString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile List View */}
+              <div className="block md:hidden space-y-3">
+                {creditHistory.map((item, i) => (
+                  <div key={i} className="bg-card/40 backdrop-blur-md border border-white/10 p-5 rounded-2xl flex flex-col gap-3 hover:bg-white/60 transition-all duration-300">
+                    <div className="flex justify-between items-start gap-3">
+                      <span className="font-bold text-sm leading-snug">{item.description}</span>
+                      <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-md shrink-0 ${
+                        item.type === 'added' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'
+                      }`}>
+                        {item.type}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center pt-2 border-t border-white/5">
+                      <span className="text-[10px] text-muted-foreground font-medium">
+                        {new Date(item.date).toLocaleDateString()}
+                      </span>
+                      <span className={`font-black text-sm ${item.type === 'added' ? 'text-emerald-500' : 'text-rose-500'}`}>
+                        {item.type === 'added' ? '+' : '-'}{item.amount}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )
         ) : (

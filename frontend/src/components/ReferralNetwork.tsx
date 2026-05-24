@@ -82,7 +82,7 @@ const ReferralNetwork = () => {
       </div>
 
       {/* Interactive Network Visualization */}
-      <div className="relative p-20 bg-white/5 rounded-[4rem] border border-white/5 overflow-hidden min-h-[600px] flex items-center justify-center shadow-2xl">
+      <div className="relative p-6 md:p-20 bg-white/5 rounded-[2rem] md:rounded-[4rem] border border-white/5 overflow-hidden min-h-[450px] md:min-h-[600px] flex items-center justify-center shadow-2xl">
         {/* Connection Lines Layer */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20">
           {data.referrals.map((ref, i) => {
@@ -134,12 +134,12 @@ const ReferralNetwork = () => {
         {/* Central Node (User) */}
         <motion.div 
             whileHover={{ scale: 1.1 }}
-            className="relative z-20 w-28 h-28 bg-primary rounded-[2rem] flex flex-col items-center justify-center shadow-2xl shadow-primary/40 border-4 border-background"
+            className="relative z-20 w-20 h-20 md:w-28 h-28 bg-primary rounded-[1.5rem] md:rounded-[2rem] flex flex-col items-center justify-center shadow-2xl shadow-primary/40 border-4 border-background"
         >
-            <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mb-1">
-                <Star className="text-white fill-white w-7 h-7" />
+            <div className="w-10 h-10 md:w-14 h-14 bg-white/20 rounded-lg md:rounded-xl flex items-center justify-center mb-1">
+                <Star className="text-white fill-white w-5 h-5 md:w-7 h-7" />
             </div>
-            <span className="text-[10px] font-black uppercase text-white tracking-widest">YOU</span>
+            <span className="text-[8px] md:text-[10px] font-black uppercase text-white tracking-widest">YOU</span>
         </motion.div>
 
         {/* Level 1 Nodes */}
@@ -163,9 +163,9 @@ const ReferralNetwork = () => {
                         onMouseEnter={() => setSelectedNode(ref._id)}
                         onMouseLeave={() => setSelectedNode(null)}
                     >
-                        <div className="relative">
-                            <div className="w-16 h-16 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-2xl flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:scale-110 transition-all shadow-xl">
-                                <span className="text-xl font-black text-white group-hover:text-primary-foreground">{ref.name.charAt(0)}</span>
+                        <div className="relative" onClick={() => setSelectedNode(selectedNode === ref._id ? null : ref._id)}>
+                            <div className="w-12 h-12 md:w-16 h-16 bg-white/10 backdrop-blur-2xl border border-white/20 rounded-xl md:rounded-2xl flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:scale-110 transition-all shadow-xl">
+                                <span className="text-sm md:text-xl font-black text-white group-hover:text-primary-foreground">{ref.name.charAt(0)}</span>
                             </div>
                             
                             {/* Hover Details Card */}
@@ -207,9 +207,9 @@ const ReferralNetwork = () => {
                                     top: `${sy}%`,
                                     transform: 'translate(-50%, -50%)'
                                 }}
-                                className="w-8 h-8 bg-white/5 backdrop-blur-lg border border-white/10 rounded-lg flex items-center justify-center shadow-lg group hover:bg-white/20 transition-all"
+                                className="w-6 h-6 md:w-8 h-8 bg-white/5 backdrop-blur-lg border border-white/10 rounded-lg flex items-center justify-center shadow-lg group hover:bg-white/20 transition-all"
                             >
-                                <span className="text-[10px] font-black text-white/60 group-hover:text-white">{sub.name.charAt(0)}</span>
+                                <span className="text-[8px] md:text-[10px] font-black text-white/60 group-hover:text-white">{sub.name.charAt(0)}</span>
                             </motion.div>
                         );
                     })}
@@ -265,15 +265,15 @@ const ReferralNetwork = () => {
             </div>
         </div>
 
-        <div className="bg-card/40 backdrop-blur-md border border-white/10 rounded-[3rem] overflow-hidden shadow-2xl">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 divide-x divide-white/5">
+        <div className="bg-card/40 backdrop-blur-md border border-white/10 rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 divide-y md:divide-y-0 md:divide-x divide-white/5">
                 {leaderboard.map((user, i) => (
                     <motion.div 
                         key={user._id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.1 }}
-                        className="p-8 flex items-center gap-6 hover:bg-white/5 transition-all relative group"
+                        className="p-6 md:p-8 flex items-center gap-4 md:gap-6 hover:bg-white/5 transition-all relative group"
                     >
                         <div className="relative">
                             <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-white/10 group-hover:border-primary/50 transition-all">
