@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Heart, Mail, ExternalLink, Globe } from 'lucide-react';
+import { LogoIcon } from './LogoIcon';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -23,6 +24,7 @@ const Footer = () => {
     Platform: [
       { name: 'Pricing Tiers', path: '/pricing' },
       { name: 'About OS', path: '/about' },
+      { name: 'Design Identity', path: '/design' },
       { name: 'Support Terminal', path: '/support' },
       { name: 'Contact Link', path: '/contact' },
       { name: 'Site Feedback', path: '/feedback' },
@@ -48,11 +50,8 @@ const Footer = () => {
           <div className="lg:col-span-2 space-y-10">
             <Link to="/" className="flex items-center gap-4 group w-fit">
               <div className="w-14 h-14 bg-foreground/[0.04] rounded-2xl flex items-center justify-center border border-border/30 group-hover:border-primary/50 transition-all duration-500 relative overflow-hidden">
-                <svg className="w-7 h-7 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M12 2L2 7l10 5 10-5-10-5z" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M2 17l10 5 10-5M2 12l10 5 10-5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                <div className="absolute inset-0 bg-primary/10 blur-md -z-10" />
+                <LogoIcon className="w-7 h-7" />
+                <div className="absolute inset-0 bg-primary/10 blur-sm -z-10" />
               </div>
               <div className="flex flex-col">
                 <span className="text-3xl font-black tracking-tighter text-foreground uppercase leading-none">Scholar<span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 italic">OS</span></span>

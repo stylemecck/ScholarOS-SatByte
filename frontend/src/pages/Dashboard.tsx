@@ -11,6 +11,7 @@ import axios from 'axios';
 import { useAuth } from '../context/useAuth';
 import { Link, Navigate } from 'react-router-dom';
 import ReferralNetwork from '../components/ReferralNetwork';
+import { LogoIcon } from '../components/LogoIcon';
 
 const Dashboard = () => {
   const { user, isLoading } = useAuth();
@@ -165,10 +166,7 @@ const Dashboard = () => {
       <div className="lg:hidden w-full flex justify-between items-center bg-foreground/[0.03] border border-border/40 px-6 py-4 rounded-2xl mb-2 shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/30">
-            <svg className="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
-            </svg>
+            <LogoIcon className="w-4 h-4" />
           </div>
           <span className="text-xs font-black uppercase tracking-widest text-foreground">ScholarOS</span>
         </div>

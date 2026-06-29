@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { LogoIcon } from './LogoIcon';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -100,10 +101,7 @@ const Navbar = () => {
         <Link to="/" className="flex items-center gap-2 group shrink-0">
           <div className="relative">
             <div className="w-8 h-8 sm:w-9 sm:h-9 bg-primary/20 rounded-xl flex items-center justify-center border border-primary/30 group-hover:rotate-[360deg] transition-transform duration-700 relative overflow-hidden">
-              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M12 2L2 7l10 5 10-5-10-5z" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M2 17l10 5 10-5M2 12l10 5 10-5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              <LogoIcon className="w-4 h-4 sm:w-5 sm:h-5" />
               <div className="absolute inset-0 bg-primary/10 blur-sm -z-10" />
             </div>
             <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-primary rounded-full border-2 border-background animate-pulse" />
@@ -319,10 +317,7 @@ const Navbar = () => {
               <div className="flex items-center justify-between px-5 py-4 border-b border-border/20 shrink-0">
                 <div className="flex items-center gap-2.5">
                   <div className="w-7 h-7 bg-primary/20 rounded-lg flex items-center justify-center border border-primary/30">
-                    <svg className="w-3.5 h-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <path d="M12 2L2 7l10 5 10-5-10-5z" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M2 17l10 5 10-5M2 12l10 5 10-5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
+                    <LogoIcon className="w-3.5 h-3.5" />
                   </div>
                   <span className="text-sm font-black tracking-tight">Scholar<span className="text-primary italic">OS</span></span>
                 </div>

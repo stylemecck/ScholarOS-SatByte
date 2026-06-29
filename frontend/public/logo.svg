@@ -1,29 +1,35 @@
-<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background Circle with Gradient -->
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="logo_grad" x1="0" y1="0" x2="200" y2="200" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#3b82f6"/>
-      <stop offset="1" stop-color="#2563eb"/>
+    <linearGradient id="logo-grad-yellow" x1="216" y1="140" x2="380" y2="300" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FACC15" />
+      <stop offset="100%" stop-color="#EAB308" />
     </linearGradient>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="5" />
-      <feOffset dx="0" dy="4" />
-      <feComponentTransfer>
-        <feFuncA type="linear" slope="0.3" />
-      </feComponentTransfer>
-      <feMerge>
-        <feMergeNode />
-        <feMergeNode in="SourceGraphic" />
-      </feMerge>
-    </filter>
+    <linearGradient id="logo-grad-amber" x1="296" y1="372" x2="132" y2="212" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#EAB308" />
+      <stop offset="100%" stop-color="#FACC15" />
+    </linearGradient>
   </defs>
 
-  <rect width="200" height="200" rx="48" fill="url(#logo_grad)" />
-  
-  <!-- Abstract Graduation Cap / Bolt Hybrid -->
-  <path d="M50 85L100 60L150 85L100 110L50 85Z" fill="white" filter="url(#shadow)" />
-  <path d="M100 110V140L125 125L100 155V125L75 140V110" fill="#fbbf24" stroke="white" stroke-width="4" stroke-linejoin="round" />
-  
-  <!-- Text Elements (Optional for standalone logo, but good to have) -->
-  <text x="100" y="185" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-weight="900" font-size="18" style="text-transform: uppercase; letter-spacing: 0.1em;">STP PRO</text>
+  <!-- Premium Dark App Icon Squircle Background -->
+  <rect x="24" y="24" width="464" height="464" rx="104" fill="#111827" stroke="#1f2937" stroke-width="8" />
+
+  <!-- Top hook element -->
+  <path
+    d="M 216 140 L 320 140 C 353.13 140 380 166.87 380 200 L 380 240 C 380 273.13 353.13 300 320 300 L 256 300"
+    stroke="url(#logo-grad-yellow)"
+    stroke-width="48"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+
+  <!-- Bottom hook element -->
+  <path
+    d="M 296 372 L 192 372 C 158.87 372 132 345.13 132 312 L 132 272 C 132 238.87 158.87 212 192 212 L 256 212"
+    stroke="url(#logo-grad-amber)"
+    stroke-width="48"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
 </svg>

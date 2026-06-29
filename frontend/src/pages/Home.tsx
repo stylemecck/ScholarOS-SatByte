@@ -9,6 +9,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
+import { LogoIcon } from '../components/LogoIcon';
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -162,10 +163,7 @@ const Home = () => {
             <div className="w-full md:w-64 border-b md:border-b-0 md:border-r border-border/40 p-6 flex flex-row md:flex-col gap-2 overflow-x-auto shrink-0 bg-muted/40">
               <div className="hidden md:flex items-center gap-3 mb-6 px-2">
                 <div className="w-7 h-7 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/30">
-                  <svg className="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                    <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
-                  </svg>
+                  <LogoIcon className="w-4 h-4" />
                 </div>
                 <span className="text-xs font-black uppercase tracking-wider text-foreground">ScholarOS Console</span>
               </div>

@@ -35,6 +35,7 @@ const Tutorials          = lazy(() => import('./pages/Tutorials'));
 const CookiePolicy       = lazy(() => import('./pages/CookiePolicy'));
 const Security           = lazy(() => import('./pages/Security'));
 const NotFound           = lazy(() => import('./pages/NotFound'));
+const BrandIdentity      = lazy(() => import('./pages/BrandIdentity'));
 
 // Academic tools
 const CGPACalculator        = lazy(() => import('./pages/tools/CGPACalculator'));
@@ -187,6 +188,7 @@ function AppContent() {
               <Route path="/tutorials"  element={<Tutorials />} />
               <Route path="/cookies"    element={<CookiePolicy />} />
               <Route path="/security"   element={<Security />} />
+              <Route path="/design"     element={<BrandIdentity />} />
 
               {/* 404 catch-all — must be last */}
               <Route path="*"           element={<NotFound />} />
