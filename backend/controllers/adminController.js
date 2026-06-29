@@ -84,3 +84,34 @@ exports.getStats = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch admin stats', details: err.message });
   }
 };
+
+exports.getUsers = async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Access denied. Admins only.' });
+    }
+    const users = await User.find({}, 'name email role plan credits createdAt').sort({ createdAt: -1 });
+    res.json(users);
+  } catch (err) {
+    console.error("ADMIN GET USERS ERROR:", err);
+    res.status(500).json({ error: 'Failed to fetch users list', details: err.message });
+  }
+};
+
+exports.getUserDetails = async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Access denied. Admins only.' });
+    }
+    const { userId } = req.params;
+    const user = await User.findById(userId, 'name email role plan credits createdAt creditHistory savedResults');
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json(user);
+  } catch (err) {
+    console.error("ADMIN GET USER DETAILS ERROR:", err);
+    res.status(500).json({ error: 'Failed to fetch user details', details: err.message });
+  }
+};
+

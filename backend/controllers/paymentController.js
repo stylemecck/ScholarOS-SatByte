@@ -87,8 +87,10 @@ exports.verifyPayment = async (req, res) => {
               amount: orderCredits,
               description: `Purchased ${orderCredits} Credits via Razorpay`
             });
+            const planName = orderCredits === 12000 || orderCredits === 1000 ? 'Enterprise' : 'Pro';
+            user.plan = planName;
             await user.save();
-            console.log(`Successfully credited ${orderCredits} credits to user ${targetUserId}. New balance: ${user.credits}`);
+            console.log(`Successfully credited ${orderCredits} credits and upgraded plan to ${planName} for user ${targetUserId}. New balance: ${user.credits}`);
             
             // Generate Tax Invoice PDF & send via Resend asynchronously to not block Razorpay response
             (async () => {

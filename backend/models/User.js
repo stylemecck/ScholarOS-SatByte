@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
     date: { type: Date, default: Date.now }
   }],
   credits: { type: Number, default: 5 }, // New users get 5 free credits
+  plan: { type: String, enum: ['Free', 'Pro', 'Enterprise'], default: 'Free' },
   creditHistory: [{
     type: { type: String, enum: ['spent', 'added', 'bonus'], required: true },
     amount: { type: Number, required: true },
