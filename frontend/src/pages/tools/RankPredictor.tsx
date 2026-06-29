@@ -340,60 +340,61 @@ const RankPredictor = () => {
         }}
       />
       {/* Premium Hero Section */}
-      <section className="relative text-center space-y-8 py-16 md:py-24 overflow-hidden rounded-[3rem] border border-white/5 bg-[#0A0A0A]/50 backdrop-blur-xl">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[120px] animate-pulse" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary/15 rounded-full blur-[120px] animate-pulse delay-700" />
+      <section className="relative text-center space-y-8 py-16 md:py-24 overflow-hidden rounded-[3rem] border border-border/30 bg-card/60 backdrop-blur-xl">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 pointer-events-none">
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/15 rounded-full blur-[120px] animate-pulse" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px] animate-pulse delay-700" />
         </div>
 
         <div className="space-y-6 px-4 relative max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-foreground/[0.04] text-foreground/80 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest border border-border/40 shadow-sm"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest border border-primary/20"
           >
-            <Sparkles className="w-4 h-4 text-primary" /> AI-Powered Accuracy
+            <Sparkles className="w-4 h-4" /> AI-Powered Accuracy
           </motion.div>
-          
-          <motion.h1 
+
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-black tracking-tighter leading-none"
+            className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-[-0.03em] leading-[1.05] text-foreground"
           >
-            Predict Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary italic">Rank Smarter.</span>
+            Predict Your{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-indigo-500 to-purple-500 italic">Rank Smarter.</span>
           </motion.h1>
-          
-          <motion.p 
+
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-medium"
+            className="text-base md:text-xl text-muted-foreground max-w-2xl mx-auto font-medium leading-relaxed"
           >
             Get estimated ranks using historical trends, AI-assisted analysis, and previous year counselling data.
           </motion.p>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="flex flex-wrap justify-center gap-6 pt-4"
+            className="flex flex-wrap justify-center gap-3 pt-4"
           >
             {[
               { label: 'Supported Exams', value: '25+', icon: Target },
               { label: 'Data Points', value: '850K+', icon: BarChart3 },
               { label: 'Trust Score', value: '98%', icon: ShieldCheck },
             ].map((stat, i) => (
-              <div key={i} className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-2xl border border-white/10">
+              <div key={i} className="flex items-center gap-2 px-4 py-2 bg-foreground/[0.05] rounded-2xl border border-border/40">
                 <stat.icon className="w-4 h-4 text-primary" />
-                <span className="text-xs font-black text-white">{stat.value}</span>
+                <span className="text-sm font-black text-foreground">{stat.value}</span>
                 <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">{stat.label}</span>
               </div>
             ))}
           </motion.div>
 
-          <div className="pt-4 flex flex-col items-center gap-2">
-            <p className="text-[10px] font-black text-rose-500/80 uppercase tracking-[0.2em] bg-rose-500/5 px-4 py-1.5 rounded-full border border-rose-500/10">
-              Disclaimer: Predictions are estimates, not official ranks.
+          <div className="pt-2 flex flex-col items-center">
+            <p className="text-[10px] font-bold text-rose-500 uppercase tracking-[0.18em] bg-rose-500/8 px-4 py-1.5 rounded-full border border-rose-500/20">
+              ⚠ Disclaimer: Predictions are estimates, not official ranks.
             </p>
           </div>
         </div>
@@ -794,15 +795,89 @@ const RankPredictor = () => {
                   </div>
                 )}
 
-                {/* Final AI Verdict */}
-                <div className="p-6 bg-gradient-to-r from-primary/10 to-transparent border border-primary/20 rounded-[2rem] flex gap-4">
-                  <div className="w-12 h-12 bg-primary text-white rounded-2xl flex items-center justify-center shrink-0">
-                    <Sparkles className="w-6 h-6" />
+                {/* Official AI Verdict — Structured */}
+                <div className="border border-primary/25 rounded-[2rem] overflow-hidden">
+                  {/* Verdict header bar */}
+                  <div className="flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-primary/15 to-primary/5 border-b border-primary/20">
+                    <div className="w-9 h-9 bg-primary text-primary-foreground rounded-xl flex items-center justify-center shrink-0">
+                      <Sparkles className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black text-primary uppercase tracking-[0.25em]">ScholarOS Intelligence</p>
+                      <p className="text-sm font-extrabold text-foreground leading-none">Official AI Verdict</p>
+                    </div>
+                    <div className="ml-auto flex items-center gap-1.5 px-3 py-1 bg-emerald-500/15 rounded-full border border-emerald-500/25">
+                      <ShieldCheck className="w-3 h-3 text-emerald-500" />
+                      <span className="text-[9px] font-black text-emerald-500 uppercase tracking-wider">Verified</span>
+                    </div>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-xs font-black text-primary uppercase tracking-[0.2em]">Official AI Verdict</p>
-                    <p className="text-sm leading-relaxed text-muted-foreground font-medium">
-                      {prediction?.analysis}
+
+                  {/* Verdict body */}
+                  <div className="p-6 bg-card/50 space-y-5">
+                    {/* Key metrics row */}
+                    <div className="grid grid-cols-3 gap-3">
+                      {[
+                        { label: 'Predicted Rank', value: prediction?.predictedRank, color: 'text-foreground' },
+                        { label: 'Percentile', value: `${prediction?.predictedPercentile}%`, color: 'text-primary' },
+                        { label: 'Confidence', value: prediction?.confidence, color: 'text-emerald-500' },
+                      ].map((m, i) => (
+                        <div key={i} className="text-center p-3 bg-foreground/[0.03] rounded-2xl border border-border/30">
+                          <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">{m.label}</p>
+                          <p className={`text-base font-extrabold ${m.color}`}>{m.value}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Performance verdict badge */}
+                    {prediction?.performanceLevel && (
+                      <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl border bg-foreground/[0.02] border-border/30">
+                        <TrendingUp className="w-4 h-4 text-primary shrink-0" />
+                        <div className="min-w-0">
+                          <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Performance Level</p>
+                          <p className="text-sm font-bold text-foreground">{prediction.performanceLevel}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Full analysis text — parsed into paragraphs */}
+                    <div className="space-y-3 border-t border-border/20 pt-4">
+                      <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.25em]">Detailed Analysis</p>
+                      <div className="space-y-2">
+                        {(prediction?.analysis || '').split(/(?<=\.\s)|(?<=\!\s)|(?<=\?\s)/).filter(s => s.trim().length > 10).map((sentence, i) => (
+                          <p key={i} className="text-sm text-muted-foreground font-medium leading-[1.75] flex gap-2">
+                            <span className="text-primary mt-1 shrink-0">›</span>
+                            <span>{sentence.trim()}</span>
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Admission chances bar */}
+                    <div className="pt-2 border-t border-border/20 space-y-2">
+                      <div className="flex justify-between items-center">
+                        <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Admission Chances</p>
+                        <span className={`text-xs font-bold ${
+                          prediction?.admissionChances?.includes('High') ? 'text-emerald-500' :
+                          prediction?.admissionChances?.includes('Moderate') ? 'text-amber-500' : 'text-rose-500'
+                        }`}>{prediction?.admissionChances}</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-foreground/[0.06] rounded-full overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: prediction?.admissionChances?.includes('High') ? '85%' : prediction?.admissionChances?.includes('Moderate') ? '55%' : '25%' }}
+                          transition={{ duration: 0.8, ease: 'easeOut' }}
+                          className={`h-full rounded-full ${
+                            prediction?.admissionChances?.includes('High') ? 'bg-gradient-to-r from-emerald-500 to-teal-400' :
+                            prediction?.admissionChances?.includes('Moderate') ? 'bg-gradient-to-r from-amber-500 to-orange-400' :
+                            'bg-gradient-to-r from-rose-500 to-pink-400'
+                          }`}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Disclaimer footer */}
+                    <p className="text-[9px] text-muted-foreground/60 text-center font-medium pt-1">
+                      ⚠ This is an AI-generated estimate. Verify with official sources before making decisions.
                     </p>
                   </div>
                 </div>
