@@ -137,6 +137,98 @@ def generate_resume(data):
         pdf.set_font('helvetica', '', 10)
         pdf.set_text_color(50, 50, 50)
         pdf.multi_cell(0, 6, ", ".join([safe_text(s) for s in skills]))
+        pdf.ln(5)
+
+    # 6. Projects
+    projects = data.get('projects', [])
+    if projects:
+        pdf.set_font('helvetica', 'B', 14)
+        pdf.set_text_color(*pdf.theme_rgb)
+        pdf.cell(0, 10, 'PROJECTS', new_x="LMARGIN", new_y="NEXT")
+        pdf.line(pdf.get_x(), pdf.get_y(), 200, pdf.get_y())
+        pdf.ln(4)
+        
+        for proj in projects:
+            pdf.set_font('helvetica', 'B', 11)
+            pdf.set_text_color(0, 0, 0)
+            pdf.cell(100, 7, safe_text(proj.get('name')), align='L')
+            if proj.get('link'):
+                pdf.set_font('helvetica', 'I', 9)
+                pdf.set_text_color(*pdf.theme_rgb)
+                pdf.cell(0, 7, safe_text(proj.get('link')), align='R', new_x="LMARGIN", new_y="NEXT")
+            else:
+                pdf.ln(7)
+            
+            pdf.set_font('helvetica', '', 10)
+            pdf.set_text_color(50, 50, 50)
+            pdf.multi_cell(0, 5, safe_text(proj.get('description')))
+            pdf.ln(4)
+
+    # 7. Certifications
+    certs = data.get('certifications', [])
+    if certs:
+        pdf.set_font('helvetica', 'B', 14)
+        pdf.set_text_color(*pdf.theme_rgb)
+        pdf.cell(0, 10, 'CERTIFICATIONS', new_x="LMARGIN", new_y="NEXT")
+        pdf.line(pdf.get_x(), pdf.get_y(), 200, pdf.get_y())
+        pdf.ln(4)
+        
+        for cert in certs:
+            pdf.set_font('helvetica', 'B', 11)
+            pdf.set_text_color(0, 0, 0)
+            pdf.cell(100, 7, safe_text(cert.get('name')), align='L')
+            pdf.set_font('helvetica', 'I', 10)
+            pdf.set_text_color(100, 100, 100)
+            pdf.cell(0, 7, safe_text(cert.get('date')), align='R', new_x="LMARGIN", new_y="NEXT")
+            
+            pdf.set_font('helvetica', '', 10)
+            pdf.set_text_color(50, 50, 50)
+            pdf.cell(0, 6, safe_text(cert.get('issuer')), new_x="LMARGIN", new_y="NEXT")
+            pdf.ln(4)
+
+    # 8. Achievements
+    achievements = data.get('achievements', [])
+    if achievements:
+        pdf.set_font('helvetica', 'B', 14)
+        pdf.set_text_color(*pdf.theme_rgb)
+        pdf.cell(0, 10, 'ACHIEVEMENTS', new_x="LMARGIN", new_y="NEXT")
+        pdf.line(pdf.get_x(), pdf.get_y(), 200, pdf.get_y())
+        pdf.ln(4)
+        
+        for ach in achievements:
+            pdf.set_font('helvetica', '', 10)
+            pdf.set_text_color(50, 50, 50)
+            pdf.multi_cell(0, 6, "- " + safe_text(ach.get('description')))
+            pdf.ln(2)
+        pdf.ln(4)
+
+    # 9. Languages
+    languages = data.get('languages', [])
+    if languages:
+        pdf.set_font('helvetica', 'B', 14)
+        pdf.set_text_color(*pdf.theme_rgb)
+        pdf.cell(0, 10, 'LANGUAGES', new_x="LMARGIN", new_y="NEXT")
+        pdf.line(pdf.get_x(), pdf.get_y(), 200, pdf.get_y())
+        pdf.ln(4)
+        
+        pdf.set_font('helvetica', '', 10)
+        pdf.set_text_color(50, 50, 50)
+        pdf.multi_cell(0, 6, ", ".join([safe_text(l) for l in languages]))
+        pdf.ln(5)
+
+    # 10. Interests
+    interests = data.get('interests', [])
+    if interests:
+        pdf.set_font('helvetica', 'B', 14)
+        pdf.set_text_color(*pdf.theme_rgb)
+        pdf.cell(0, 10, 'INTERESTS', new_x="LMARGIN", new_y="NEXT")
+        pdf.line(pdf.get_x(), pdf.get_y(), 200, pdf.get_y())
+        pdf.ln(4)
+        
+        pdf.set_font('helvetica', '', 10)
+        pdf.set_text_color(50, 50, 50)
+        pdf.multi_cell(0, 6, ", ".join([safe_text(i) for i in interests]))
+        pdf.ln(5)
 
     # Save
     output_path = data.get('outputPath', 'resume.pdf')
