@@ -4,6 +4,69 @@ import { MessageSquare, X, Send, Sparkles, Loader2, Bot, User as UserIcon } from
 import axios from 'axios';
 import { useAuth } from '../context/useAuth';
 
+const formatMessage = (content: string) => {
+  if (!content) return '';
+  const paragraphs = content.split('\n');
+  
+  return paragraphs.map((paragraph, index) => {
+    let text = paragraph.trim();
+    if (!text) return <div key={index} className="h-2" />;
+    
+    const isBullet = text.startsWith('* ') || text.startsWith('- ');
+    if (isBullet) {
+      text = text.substring(2);
+    }
+    
+    const parts = [];
+    let remaining = text;
+    
+    while (remaining) {
+      const boldIdx = remaining.indexOf('**');
+      const codeIdx = remaining.indexOf('`');
+      
+      if (boldIdx !== -1 && (codeIdx === -1 || boldIdx < codeIdx)) {
+        if (boldIdx > 0) {
+          parts.push(remaining.substring(0, boldIdx));
+        }
+        const closingIdx = remaining.indexOf('**', boldIdx + 2);
+        if (closingIdx !== -1) {
+          parts.push(<strong key={remaining.length + closingIdx} className="font-extrabold text-foreground">{remaining.substring(boldIdx + 2, closingIdx)}</strong>);
+          remaining = remaining.substring(closingIdx + 2);
+        } else {
+          parts.push(remaining.substring(boldIdx));
+          remaining = '';
+        }
+      } else if (codeIdx !== -1) {
+        if (codeIdx > 0) {
+          parts.push(remaining.substring(0, codeIdx));
+        }
+        const closingIdx = remaining.indexOf('`', codeIdx + 1);
+        if (closingIdx !== -1) {
+          parts.push(<code key={remaining.length + closingIdx} className="bg-white/10 px-1.5 py-0.5 rounded font-mono text-xs text-primary">{remaining.substring(codeIdx + 1, closingIdx)}</code>);
+          remaining = remaining.substring(closingIdx + 1);
+        } else {
+          parts.push(remaining.substring(codeIdx));
+          remaining = '';
+        }
+      } else {
+        parts.push(remaining);
+        remaining = '';
+      }
+    }
+    
+    if (isBullet) {
+      return (
+        <div key={index} className="flex items-start gap-2 ml-2 my-1 leading-relaxed">
+          <span className="text-primary mt-1.5 shrink-0 w-1.5 h-1.5 rounded-full bg-primary" />
+          <p className="flex-1 m-0">{parts}</p>
+        </div>
+      );
+    }
+    
+    return <p key={index} className="mb-2 leading-relaxed last:mb-0">{parts}</p>;
+  });
+};
+
 const AIChatBubble = () => {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
@@ -103,7 +166,7 @@ const AIChatBubble = () => {
                     ? 'bg-primary/10 text-white border border-primary/20 rounded-tr-none' 
                     : 'bg-white/5 border border-white/5 text-muted-foreground rounded-tl-none'
                   }`}>
-                    {msg.content}
+                    {formatMessage(msg.content)}
                   </div>
                 </motion.div>
               ))}

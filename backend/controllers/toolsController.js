@@ -191,6 +191,9 @@ exports.predictRank = async (req, res) => {
 
     const resultText = await generateWithFallback(prompt);
     
+    const cleaned = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
+    const aiResult = JSON.parse(cleaned);
+    
     // Deduct credits and Save Result
     if (user) {
       user.credits -= 2;
@@ -209,9 +212,6 @@ exports.predictRank = async (req, res) => {
 
       await user.save();
     }
-    
-    const cleaned = resultText.replace(/```json/g, '').replace(/```/g, '').trim();
-    const aiResult = JSON.parse(cleaned);
     
     // Merge AI analysis with rich local data (college details, difficulty, spot rounds)
     return res.json({
