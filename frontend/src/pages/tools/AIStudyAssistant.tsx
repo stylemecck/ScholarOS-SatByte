@@ -3,8 +3,9 @@ import {
   Sparkles, Send, Trash2, Folder, Edit3, Plus, 
   BookOpen, Code, HelpCircle, GraduationCap, Flame, Search, 
   Mic, MicOff, Volume2, VolumeX, Paperclip, Loader2,
-  FileText, BarChart
+  FileText, BarChart, Menu, X
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import axios from 'axios';
 import { useAuth } from '../../context/useAuth';
@@ -194,6 +195,7 @@ const AIStudyAssistant: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [ttsEnabled, setTtsEnabled] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Folder states (reserved for future folder creation modal)
   const [_newFolderName, _setNewFolderName] = useState('');
@@ -451,6 +453,104 @@ const AIStudyAssistant: React.FC = () => {
   // Group chats by folder or folder names
   const filteredChats = chats.filter(c => c.title.toLowerCase().includes(searchQuery.toLowerCase()));
 
+  const renderSidebarContent = () => (
+    <div className="h-full flex flex-col bg-[#050505] lg:bg-transparent">
+      {/* Sidebar Header */}
+      <div className="p-4 border-b border-border/50 space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xs font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-primary animate-pulse" /> Workspace Sessions
+          </h2>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => {
+                handleStartNewSession();
+                setIsSidebarOpen(false);
+              }}
+              className="p-2 bg-primary/10 hover:bg-primary/20 text-primary hover:text-white rounded-xl border border-primary/20 transition-all"
+              title="New Session"
+            >
+              <Plus className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setIsSidebarOpen(false)}
+              className="lg:hidden p-2 hover:bg-white/5 border border-border/50 rounded-xl text-zinc-400"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        <div className="relative">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+          <input 
+            type="text" 
+            placeholder="Search chats..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 text-xs bg-white/5 border border-border/50 rounded-2xl text-zinc-300 placeholder-zinc-500 focus:outline-none focus:border-primary transition-all"
+          />
+        </div>
+      </div>
+
+      {/* Sessions Scroll List */}
+      <div className="flex-grow overflow-y-auto p-4 space-y-2 scrollbar-hide">
+        {historyLoading ? (
+          <div className="flex flex-col items-center justify-center py-10 space-y-3">
+            <Loader2 className="w-6 h-6 text-zinc-600 animate-spin" />
+            <p className="text-[10px] uppercase font-black tracking-widest text-zinc-600">Retrieving chats...</p>
+          </div>
+        ) : filteredChats.length === 0 ? (
+          <div className="text-center py-10">
+            <p className="text-xs text-zinc-600 font-medium italic">No chats found.</p>
+          </div>
+        ) : (
+          filteredChats.map((c) => (
+            <div 
+              key={c._id}
+              onClick={() => {
+                loadChat(c._id);
+                setIsSidebarOpen(false);
+              }}
+              className={`group flex items-center justify-between p-3 rounded-2xl border text-left cursor-pointer transition-all ${
+                currentChatId === c._id 
+                  ? 'bg-primary/10 border-primary/30 text-white shadow-lg' 
+                  : 'bg-white/0 border-transparent text-zinc-400 hover:bg-white/5'
+              }`}
+            >
+              <div className="flex items-center gap-3 overflow-hidden">
+                <Folder className="w-4 h-4 text-primary/70 shrink-0" />
+                <span className="text-xs font-semibold truncate block max-w-[140px]">{c.title}</span>
+              </div>
+              
+              {/* Actions inside list hover */}
+              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button 
+                  onClick={(e) => { e.stopPropagation(); handleRenameSession(c._id, c.title); }}
+                  className="p-1 text-zinc-400 hover:text-white"
+                >
+                  <Edit3 className="w-3 h-3" />
+                </button>
+                <button 
+                  onClick={(e) => handleDeleteSession(c._id, e)}
+                  className="p-1 text-zinc-400 hover:text-rose-500"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Usage status footer */}
+      <div className="p-4 border-t border-border/50 text-[10px] text-zinc-500 font-bold bg-white/5 flex items-center justify-between">
+        <span>Plan: <span className="text-primary uppercase">{user?.plan || 'Free'}</span></span>
+        <span>{user?.plan === 'Free' ? '20 Messages / day limit' : 'Unlimited'}</span>
+      </div>
+    </div>
+  );
+
   return (
     <div className="flex h-[82vh] max-w-7xl mx-auto rounded-[2rem] border border-border/50 bg-card/60 backdrop-blur-xl overflow-hidden shadow-2xl relative">
       <SEO 
@@ -458,100 +558,55 @@ const AIStudyAssistant: React.FC = () => {
         description="Interact with Gemini AI to ask questions, solve homework, write summaries, parse PDF uploads, and generate study material."
       />
       
-      {/* Sidebar: Chats List */}
-      <aside className="w-80 border-r border-border/50 flex flex-col bg-muted/30">
-        
-        {/* Sidebar Header */}
-        <div className="p-4 border-b border-white/5 space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-black uppercase tracking-wider text-zinc-400 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-primary animate-pulse" /> Workspace Sessions
-            </h2>
-            <button 
-              onClick={() => handleStartNewSession()}
-              className="p-2 bg-primary/10 hover:bg-primary/20 text-primary hover:text-white rounded-xl border border-primary/20 transition-all"
-              title="New Session"
-            >
-              <Plus className="w-4 h-4" />
-            </button>
-          </div>
-
-          <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-            <input 
-              type="text" 
-              placeholder="Search chats..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 text-xs bg-white/5 border border-white/5 rounded-2xl text-zinc-300 placeholder-zinc-500 focus:outline-none focus:border-primary transition-all"
-            />
-          </div>
-        </div>
-
-        {/* Sessions Scroll List */}
-        <div className="flex-grow overflow-y-auto p-4 space-y-2 scrollbar-hide">
-          {historyLoading ? (
-            <div className="flex flex-col items-center justify-center py-10 space-y-3">
-              <Loader2 className="w-6 h-6 text-zinc-600 animate-spin" />
-              <p className="text-[10px] uppercase font-black tracking-widest text-zinc-600">Retrieving chats...</p>
-            </div>
-          ) : filteredChats.length === 0 ? (
-            <div className="text-center py-10">
-              <p className="text-xs text-zinc-600">No chats found.</p>
-            </div>
-          ) : (
-            filteredChats.map((c) => (
-              <div 
-                key={c._id}
-                onClick={() => loadChat(c._id)}
-                className={`group flex items-center justify-between p-3 rounded-2xl border text-left cursor-pointer transition-all ${
-                  currentChatId === c._id 
-                    ? 'bg-primary/10 border-primary/30 text-white shadow-lg' 
-                    : 'bg-white/0 border-transparent text-zinc-400 hover:bg-white/5'
-                }`}
-              >
-                <div className="flex items-center gap-3 overflow-hidden">
-                  <Folder className="w-4 h-4 text-primary/70 shrink-0" />
-                  <span className="text-xs font-semibold truncate block max-w-[140px]">{c.title}</span>
-                </div>
-                
-                {/* Actions inside list hover */}
-                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button 
-                    onClick={(e) => { e.stopPropagation(); handleRenameSession(c._id, c.title); }}
-                    className="p-1 text-zinc-400 hover:text-white"
-                  >
-                    <Edit3 className="w-3 h-3" />
-                  </button>
-                  <button 
-                    onClick={(e) => handleDeleteSession(c._id, e)}
-                    className="p-1 text-zinc-400 hover:text-rose-500"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-
-        {/* Usage status footer */}
-        <div className="p-4 border-t border-white/5 text-[10px] text-zinc-500 font-bold bg-white/5 flex items-center justify-between">
-          <span>Plan: <span className="text-primary uppercase">{user?.plan || 'Free'}</span></span>
-          <span>{user?.plan === 'Free' ? '20 Messages / day limit' : 'Unlimited'}</span>
-        </div>
+      {/* Desktop Sidebar: Chats List */}
+      <aside className="w-80 border-r border-border/50 hidden lg:flex flex-col bg-muted/30 shrink-0">
+        {renderSidebarContent()}
       </aside>
+
+      {/* Mobile Sidebar Drawer overlay */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <>
+            {/* Backdrop */}
+            <div 
+              onClick={() => setIsSidebarOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden pointer-events-auto"
+            />
+            {/* Drawer */}
+            <motion.aside
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed top-0 left-0 bottom-0 w-80 bg-[#050505] border-r border-border/50 z-50 flex flex-col shadow-2xl lg:hidden pointer-events-auto"
+            >
+              {renderSidebarContent()}
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Main Panel: Chat Window */}
       <section className="flex-grow flex flex-col bg-muted/10 relative">
         
         {/* Chat Top Header Controls */}
-        <header className="px-6 py-4 border-b border-border/50 flex items-center justify-between bg-muted/40">
-          <div className="space-y-1">
-            <h1 className="text-sm font-black text-foreground">
-              {chats.find(c => c._id === currentChatId)?.title || 'AI Workspace Session'}
-            </h1>
-            <p className="text-[10px] text-zinc-500">Workspace mode: {activeMode}</p>
+        <header className="px-6 py-4 border-b border-border/50 flex items-center justify-between bg-muted/40 gap-4">
+          <div className="flex items-center gap-3 min-w-0">
+            {/* Sidebar toggle button for mobile */}
+            <button 
+              onClick={() => setIsSidebarOpen(true)}
+              className="lg:hidden p-2 bg-white/5 hover:bg-white/10 border border-border/50 rounded-xl text-zinc-400 hover:text-white transition-all shrink-0"
+              title="Sessions list"
+            >
+              <Menu className="w-4 h-4" />
+            </button>
+            
+            <div className="space-y-0.5 min-w-0">
+              <h1 className="text-sm font-black text-foreground truncate">
+                {chats.find(c => c._id === currentChatId)?.title || 'AI Workspace Session'}
+              </h1>
+              <p className="text-[10px] text-zinc-500">Workspace mode: {activeMode}</p>
+            </div>
           </div>
 
           <div className="flex items-center gap-4">

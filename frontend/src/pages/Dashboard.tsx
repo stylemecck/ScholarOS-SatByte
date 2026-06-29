@@ -664,7 +664,22 @@ const Dashboard = () => {
                       <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-bold">Category: {res.data.category || 'General'}</span>
                       <button 
                         onClick={() => {
-                          alert(`Counselor Analysis:\n\n${res.data.analysis}\n\nSuggested Colleges:\n${res.data.suggestedColleges?.map((c: any) => `- ${c.name} (${c.branch})`).join('\n') || 'No suggestions logged.'}`);
+                          const aiColleges = Array.isArray(res.data.suggestedColleges)
+                            ? res.data.suggestedColleges.map((name: string) => `- ${name}`).join('\n')
+                            : 'None';
+                          
+                          const detailedColleges = Array.isArray(res.data.collegeDetails)
+                            ? res.data.collegeDetails.map((c: any) => 
+                                `- ${c.name}\n  • Cutoff: ${c.cutoffGeneral || c.cutoff || 'N/A'}\n  • Avg Placement: ${c.avgPlacement || 'N/A'}\n  • Fee: ${c.fee || 'N/A'}`
+                              ).join('\n')
+                            : '';
+                          
+                          alert(
+                            `AI COUNSELOR REPORT\n===================\n\n` +
+                            `Counselor Analysis:\n${res.data.analysis || 'No analysis available.'}\n\n` +
+                            `AI Recommended Top Pick(s):\n${aiColleges}\n\n` +
+                            (detailedColleges ? `Detailed College Match Options:\n${detailedColleges}` : '')
+                          );
                         }}
                         className="px-3 py-1 bg-white/5 hover:bg-primary hover:text-zinc-950 border border-white/5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all"
                       >
