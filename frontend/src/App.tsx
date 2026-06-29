@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { lazy, Suspense, useEffect } from 'react';
 import { Toaster } from 'sonner';
 import { AuthProvider } from './context/AuthContext';
@@ -85,6 +85,31 @@ const PageSkeleton = () => (
 function AppContent() {
   const { settings } = useSettings();
   const { user } = useAuth();
+  const location = useLocation();
+
+  // Full-screen workspace routes
+  const isFullScreenPage = [
+    '/docs',
+    '/developer',
+    '/tools/ai-study-assistant'
+  ].some(path => location.pathname === path || location.pathname.startsWith(path + '/'));
+
+  // Full-bleed static pages
+  const isFullBleedPage = [
+    '/',
+    '/pricing',
+    '/about',
+    '/contact',
+    '/support',
+    '/privacy',
+    '/terms',
+    '/cookies',
+    '/security',
+    '/tutorials',
+    '/design',
+    '/feedback',
+    '/status'
+  ].includes(location.pathname);
 
   useEffect(() => {
     if (user?.role === 'admin') {
@@ -141,7 +166,13 @@ function AppContent() {
 
         <Navbar />
 
-        <main className="flex-grow container mx-auto px-4 pt-28 pb-12 relative">
+        <main className={
+          isFullScreenPage
+            ? "flex-grow relative w-full overflow-hidden"
+            : isFullBleedPage
+              ? "flex-grow w-full relative"
+              : "flex-grow container mx-auto px-4 pt-24 sm:pt-28 pb-12 relative"
+        }>
           <Suspense fallback={<PageSkeleton />}>
             <Routes>
               <Route path="/"                          element={<Home />} />
