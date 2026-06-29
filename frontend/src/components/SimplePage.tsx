@@ -29,7 +29,7 @@ const SimplePage = ({ title, content }: SimplePageProps) => {
       >
         <h3 className="text-xl font-bold mb-4">Detailed Information</h3>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          This is a placeholder for the detailed {title.toLowerCase()} content. Student Toolkit Pro is committed to providing the best experience for students. If you have any specific questions regarding our {title.toLowerCase()}, please feel free to reach out to our support team.
+          This is a placeholder for the detailed {title.toLowerCase()} content. ScholarOS is committed to providing the best experience for students. If you have any specific questions regarding our {title.toLowerCase()}, please feel free to reach out to our support team.
         </p>
       </motion.div>
     </div>

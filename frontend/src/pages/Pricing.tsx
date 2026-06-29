@@ -35,48 +35,48 @@ const Pricing = () => {
 
   const plans = [
     {
-      name: 'Free',
+      name: 'Free Trial',
       tagline: 'For students & explorers',
       price: { monthly: 0, yearly: 0 },
       features: [
         '1,000 API Requests / mo',
         'Standard Tool Access',
-        'Up to 10MB file size',
-        'Community Support',
-        'Public SDK Access'
+        'Up to 10MB file size limit',
+        'Discord Community Support',
+        'Public Workspace Access'
       ],
       button: 'Get Started',
       pro: false
     },
     {
-      name: 'Pro',
+      name: 'Achiever Pro',
       tagline: 'For power users & creators',
       price: { monthly: 99, yearly: 990 },
       features: [
         '50,000 API Requests / mo',
-        'Priority Processing Queue',
-        'Up to 100MB file size',
+        'Priority AI Processing Queue',
+        'Up to 100MB file size limit',
         'AI Resume Summary (Unlimited)',
-        'Email Support',
-        'Advanced Analytics'
+        'Email Support Workspace',
+        'Advanced Analytics Console'
       ],
       button: 'Upgrade to Pro',
       pro: true,
       popular: true
     },
     {
-      name: 'Business',
-      tagline: 'For teams & platforms',
+      name: 'Elite Enterprise',
+      tagline: 'For college teams & platforms',
       price: { monthly: 499, yearly: 4990 },
       features: [
         'Unlimited API Requests',
         'Dedicated Support Manager',
-        'Custom Webhooks',
+        'Custom Webhooks Integration',
         'SLA Guarantee (99.9%)',
-        'Whitelabel Export support',
-        'Multi-user Dashboard'
+        'Whitelabel Export Support',
+        'Multi-user Team Dashboard'
       ],
-      button: 'Upgrade to Business',
+      button: 'Upgrade to Elite',
       pro: true
     }
   ];
@@ -92,7 +92,7 @@ const Pricing = () => {
   const [savingBilling, setSavingBilling] = useState(false);
 
   const handlePayment = async (planName: string, price: number) => {
-    if (planName === 'Free') {
+    if (planName === 'Free Trial') {
       if (user) {
         setAlertMessage({
           type: 'info',
@@ -130,11 +130,11 @@ const Pricing = () => {
     const price = selectedPlan.price;
 
     const creditsMap: Record<string, Record<'monthly' | 'yearly', number>> = {
-      Pro: {
+      'Achiever Pro': {
         monthly: 100,
         yearly: 1200
       },
-      Business: {
+      'Elite Enterprise': {
         monthly: 1000,
         yearly: 12000
       }
@@ -195,7 +195,7 @@ const Pricing = () => {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: orderRes.data.amount,
         currency: orderRes.data.currency,
-        name: "Student Toolkit Pro",
+        name: "ScholarOS",
         description: `${planName} ${billingCycle === 'monthly' ? 'Monthly' : 'Yearly'} Plan (${credits} Credits)`,
         order_id: orderRes.data.id,
         handler: async function (response: any) {
@@ -214,7 +214,7 @@ const Pricing = () => {
 
             console.log("Verification Response:", verifyRes.data);
 
-            // High premium design: Confetti explosion!
+            // Confetti explosion!
             confetti({
               particleCount: 150,
               spread: 80,
@@ -224,7 +224,7 @@ const Pricing = () => {
             setAlertMessage({
               type: 'success',
               title: 'Purchase Successful!',
-              text: `Fantastic! Your account has been credited with ${credits} credits. A professional tax invoice has been generated and sent to your email. Redirecting to dashboard...`
+              text: `Fantastic! Your workspace has been upgraded and credited with ${credits} tokens. A compliant GST tax invoice has been generated and sent to your email. Redirecting to console...`
             });
 
             await refreshUser();
@@ -276,86 +276,86 @@ const Pricing = () => {
   };
 
   return (
-    <div className="space-y-32 pb-32">
+    <div className="space-y-24 md:space-y-32 pb-32 bg-background text-foreground transition-colors duration-300">
       {/* Premium Billing Modal Overlay */}
       {showBillingModal && selectedPlan && (
-        <div className="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-background/60 backdrop-blur-md flex items-center justify-center z-50 p-4 overflow-y-auto">
           <motion.div 
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="max-w-lg w-full saas-card space-y-6 my-8 border-primary/20 shadow-2xl relative"
+            className="max-w-lg w-full saas-card space-y-6 my-8 border-border/40 shadow-md relative bg-card text-foreground p-8 sm:p-10 rounded-[3rem]"
           >
             <div className="space-y-1">
-              <h3 className="text-2xl font-black text-white italic">Confirm Billing Information</h3>
-              <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">
-                Required for Indian Tax & Compliant Invoice Generation
+              <h3 className="text-2xl font-black text-foreground italic">Confirm Billing Address</h3>
+              <p className="text-[10px] text-muted-foreground font-black uppercase tracking-wider">
+                Required for Compliant GST Tax Invoicing
               </p>
             </div>
             
-            <div className="bg-primary/5 border border-primary/20 p-4 rounded-xl flex justify-between items-center text-xs">
+            <div className="bg-primary/5 border border-primary/20 p-4 rounded-2xl flex justify-between items-center text-xs">
               <div>
-                <span className="font-bold text-white uppercase tracking-wider block">Selected Plan</span>
+                <span className="font-bold text-foreground uppercase tracking-wider block">Selected Plan</span>
                 <span className="text-muted-foreground italic font-medium">
                   {selectedPlan.name} ({billingCycle === 'monthly' ? 'Monthly' : 'Yearly'})
                 </span>
               </div>
-              <span className="text-xl font-black text-primary italic">₹{selectedPlan.price}</span>
+              <span className="text-2xl font-black text-primary italic">₹{selectedPlan.price}</span>
             </div>
 
             <form onSubmit={proceedToCheckout} className="space-y-4">
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Mobile Number</label>
+                <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Mobile Number</label>
                 <input 
                   type="tel" 
                   required
                   pattern="[0-9]{10}"
-                  placeholder="10-digit mobile number (e.g. 9876543210)"
+                  placeholder="10-digit mobile number"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                  className="saas-input text-white focus:ring-1 focus:ring-primary/50"
+                  className="saas-input text-foreground focus:ring-1 focus:ring-primary/50 text-sm"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Billing Address (Line 1)</label>
+                <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Billing Address (Line 1)</label>
                 <input 
                   type="text" 
                   required
-                  placeholder="House/Flat No, Apartment, Street name"
+                  placeholder="House/Flat No, Street name"
                   value={addressLine1}
                   onChange={(e) => setAddressLine1(e.target.value)}
-                  className="saas-input text-white focus:ring-1 focus:ring-primary/50"
+                  className="saas-input text-foreground focus:ring-1 focus:ring-primary/50 text-sm"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">City</label>
+                  <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">City</label>
                   <input 
                     type="text" 
                     required
-                    placeholder="e.g. Gurgaon"
+                    placeholder="e.g. Noida"
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    className="saas-input text-white focus:ring-1 focus:ring-primary/50"
+                    className="saas-input text-foreground focus:ring-1 focus:ring-primary/50 text-sm"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">State</label>
+                  <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">State</label>
                   <input 
                     type="text" 
                     required
-                    placeholder="e.g. Haryana"
+                    placeholder="e.g. Uttar Pradesh"
                     value={stateName}
                     onChange={(e) => setStateName(e.target.value)}
-                    className="saas-input text-white focus:ring-1 focus:ring-primary/50"
+                    className="saas-input text-foreground focus:ring-1 focus:ring-primary/50 text-sm"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Postal Code / PIN</label>
+                  <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">PIN Code</label>
                   <input 
                     type="text" 
                     required
@@ -363,17 +363,17 @@ const Pricing = () => {
                     placeholder="6-digit PIN code"
                     value={zipCode}
                     onChange={(e) => setZipCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    className="saas-input text-white focus:ring-1 focus:ring-primary/50"
+                    className="saas-input text-foreground focus:ring-1 focus:ring-primary/50 text-sm"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Country</label>
+                  <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Country</label>
                   <input 
                     type="text" 
                     required
                     disabled
                     value={country}
-                    className="saas-input text-muted-foreground bg-muted/40"
+                    className="saas-input text-muted-foreground bg-muted/30 border border-border/30 text-sm"
                   />
                 </div>
               </div>
@@ -382,14 +382,14 @@ const Pricing = () => {
                 <button 
                   type="button"
                   onClick={() => setShowBillingModal(false)}
-                  className="saas-button-secondary flex-1 py-4"
+                  className="saas-button-secondary flex-1 py-4 text-xs font-black animate-none hover:bg-foreground/[0.05]"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
                   disabled={savingBilling}
-                  className="saas-button-primary flex-1 py-4 flex items-center justify-center gap-2"
+                  className="saas-button-primary flex-1 py-4 flex items-center justify-center gap-2 text-xs font-black"
                 >
                   {savingBilling ? (
                     <>
@@ -397,7 +397,7 @@ const Pricing = () => {
                     </>
                   ) : (
                     <>
-                      Pay Now <ArrowRight className="w-4 h-4" />
+                      Proceed <ArrowRight className="w-4 h-4" />
                     </>
                   )}
                 </button>
@@ -409,11 +409,11 @@ const Pricing = () => {
 
       {/* Sleek Custom Notification Overlay */}
       {alertMessage && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-background/60 backdrop-blur-md flex items-center justify-center z-50 p-4">
           <motion.div 
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className={`max-w-md w-full saas-card text-center space-y-6 ${
+            className={`max-w-md w-full saas-card text-center space-y-6 p-8 rounded-[2.5rem] bg-card ${
               alertMessage.type === 'success' 
                 ? 'border-emerald-500/30' 
                 : alertMessage.type === 'error' 
@@ -438,9 +438,9 @@ const Pricing = () => {
             {alertMessage.type !== 'success' && (
               <button 
                 onClick={() => setAlertMessage(null)}
-                className="saas-button-primary w-full"
+                className="saas-button-primary w-full py-4 text-xs font-black"
               >
-                Okay
+                Acknowledge
               </button>
             )}
           </motion.div>
@@ -455,31 +455,31 @@ const Pricing = () => {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 text-primary rounded-full text-[10px] font-black uppercase tracking-[0.3em] border border-primary/20 shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)]"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-foreground/[0.04] text-primary rounded-full text-[10px] font-black uppercase tracking-[0.3em] border border-primary/20 shadow-sm"
           >
-            <Zap className="w-4 h-4" /> SaaS & API Pricing
+            <Zap className="w-4 h-4" /> Subscription Tiers
           </motion.div>
           
-          <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-none text-white italic">
-            Fair pricing for <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 pr-4">everyone.</span>
+          <h1 className="text-5xl md:text-8xl font-black tracking-tighter leading-none text-foreground italic">
+            Fair rates for <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 pr-4">academic scale.</span>
           </h1>
           
-          <p className="text-lg md:text-2xl text-muted-foreground font-medium max-w-2xl mx-auto italic">
-            Choose the plan that fits your ambition. From individual student tools to industrial-grade APIs.
+          <p className="text-lg md:text-2xl text-muted-foreground font-medium max-w-2xl mx-auto italic leading-relaxed">
+            Choose the workspace plan that coordinates your study pace. Standard tool limits up to fully integrated team interfaces.
           </p>
 
-          <div className="flex justify-center pt-8">
-             <div className="bg-[#111] p-1 rounded-2xl border border-white/5 flex gap-1">
+          <div className="flex justify-center pt-4">
+             <div className="bg-muted p-1 rounded-2xl border border-border/30 flex gap-1">
                 <button 
                   onClick={() => setBillingCycle('monthly')}
-                  className={`px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${billingCycle === 'monthly' ? 'bg-primary text-white shadow-xl' : 'text-muted-foreground hover:text-white'}`}
+                  className={`px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${billingCycle === 'monthly' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
                 >
                   Monthly
                 </button>
                 <button 
                   onClick={() => setBillingCycle('yearly')}
-                  className={`px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${billingCycle === 'yearly' ? 'bg-primary text-white shadow-xl' : 'text-muted-foreground hover:text-white'}`}
+                  className={`px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${billingCycle === 'yearly' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
                 >
                   Yearly <span className="text-[10px] opacity-60 ml-2">(Save 20%)</span>
                 </button>
@@ -490,99 +490,109 @@ const Pricing = () => {
 
       {/* Pricing Grid */}
       <section className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
-        {plans.map((plan, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className={`saas-card flex flex-col gap-10 p-12 relative overflow-hidden group ${plan.popular ? 'border-primary/50 shadow-[0_0_40px_rgba(var(--primary-rgb),0.1)]' : 'border-white/5'}`}
-          >
-            {plan.popular && (
-              <div className="absolute top-6 right-[-35px] bg-primary text-white text-[9px] font-black uppercase tracking-widest px-10 py-1 rotate-45 shadow-xl">
-                Most Popular
-              </div>
-            )}
+        {plans.map((plan, i) => {
+          const creditsMap: Record<string, Record<'monthly' | 'yearly', number>> = {
+            'Achiever Pro': { monthly: 100, yearly: 1200 },
+            'Elite Enterprise': { monthly: 1000, yearly: 12000 }
+          };
+          const credits = creditsMap[plan.name]?.[billingCycle] || 0;
 
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <h3 className="text-2xl font-black text-white italic">{plan.name}</h3>
-                {plan.name !== 'Free' && (
-                  <span className="text-[10px] font-black uppercase bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-full">
-                    +{plan.name === 'Pro' ? (billingCycle === 'monthly' ? '100' : '1,200') : (billingCycle === 'monthly' ? '1,000' : '12,000')} Credits
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">{plan.tagline}</p>
-            </div>
-
-            <div className="flex items-baseline gap-2">
-              <span className="text-5xl font-black text-white italic">₹{plan.price[billingCycle]}</span>
-              <span className="text-muted-foreground font-medium italic">/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
-            </div>
-
-            <div className="space-y-6 flex-1">
-              <p className="text-[10px] font-black uppercase tracking-widest text-primary italic">What's Included</p>
-              <div className="space-y-4">
-                {plan.features.map((feature, j) => (
-                  <div key={j} className="flex items-start gap-4 text-sm text-muted-foreground font-medium italic">
-                    <Check className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
-                    {feature}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <button 
-              onClick={() => handlePayment(plan.name, plan.price[billingCycle])}
-              disabled={loadingPlan !== null}
-              className={`w-full !py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 ${
-                plan.popular ? 'saas-button-primary' : 'saas-button-secondary'
-              } disabled:opacity-50 disabled:cursor-not-allowed`}
+          return (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className={`saas-card flex flex-col gap-10 p-12 relative overflow-hidden group rounded-[2.5rem] bg-card/80 backdrop-blur-xl border ${
+                plan.popular ? 'border-primary/50 shadow-sm' : 'border-border/40'
+              }`}
             >
-              {loadingPlan === plan.name ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" /> Processing...
-                </>
-              ) : (
-                <>
-                  {plan.button} <ArrowRight className="w-4 h-4" />
-                </>
+              {plan.popular && (
+                <div className="absolute top-6 right-[-35px] bg-primary text-primary-foreground text-[9px] font-black uppercase tracking-widest px-10 py-1.5 rotate-45 shadow-sm">
+                  Most Popular
+                </div>
               )}
-            </button>
-          </motion.div>
-        ))}
+
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-2xl font-black text-foreground italic">{plan.name}</h3>
+                  {plan.price[billingCycle] > 0 && (
+                    <span className="text-[9px] font-black uppercase bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-full shrink-0">
+                      +{credits} Tokens
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest leading-relaxed">{plan.tagline}</p>
+              </div>
+
+              <div className="flex items-baseline gap-2">
+                <span className="text-5xl font-black text-foreground italic">₹{plan.price[billingCycle]}</span>
+                <span className="text-muted-foreground font-medium italic">/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
+              </div>
+
+              <div className="space-y-6 flex-1">
+                <p className="text-[10px] font-black uppercase tracking-widest text-primary italic">Workspace Benefits</p>
+                <div className="space-y-4">
+                  {plan.features.map((feature, j) => (
+                    <div key={j} className="flex items-start gap-4 text-sm text-muted-foreground font-medium italic">
+                      <Check className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
+                      {feature}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <button 
+                onClick={() => handlePayment(plan.name, plan.price[billingCycle])}
+                disabled={loadingPlan !== null}
+                className={`w-full !py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 ${
+                  plan.popular ? 'saas-button-primary' : 'saas-button-secondary'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                {loadingPlan === plan.name ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" /> Processing...
+                  </>
+                ) : (
+                  <>
+                    {plan.button} <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </motion.div>
+          );
+        })}
       </section>
 
       {/* Comparison Section */}
       <section className="max-w-5xl mx-auto px-4 space-y-16">
         <div className="text-center space-y-4">
-          <h2 className="text-4xl font-black text-white tracking-tighter italic">Compare Platform Features</h2>
+          <h2 className="text-4xl font-black text-foreground tracking-tighter italic">Compare Platform Features</h2>
           <p className="text-muted-foreground font-medium max-w-xl mx-auto italic opacity-60">A detailed breakdown of our student and developer offerings.</p>
         </div>
 
-        <div className="saas-card !p-0 overflow-hidden border-white/5">
+        <div className="saas-card !p-0 overflow-hidden border border-border/40 rounded-[2.5rem] bg-card/40 backdrop-blur-md">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-white/5 border-b border-white/5">
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Feature</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-center">Free</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-center">Pro</th>
-                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-center">API Plan</th>
+              <tr className="bg-foreground/[0.04] border-b border-border/40">
+                <th className="px-8 py-6 text-[9px] font-black uppercase tracking-widest text-muted-foreground">Feature</th>
+                <th className="px-8 py-6 text-[9px] font-black uppercase tracking-widest text-muted-foreground text-center">Free Trial</th>
+                <th className="px-8 py-6 text-[9px] font-black uppercase tracking-widest text-muted-foreground text-center">Achiever Pro</th>
+                <th className="px-8 py-6 text-[9px] font-black uppercase tracking-widest text-muted-foreground text-center">Elite Enterprise</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-border/30">
               {[
-                { name: 'Tool Access', free: 'Basic', pro: 'All', api: 'Full API' },
-                { name: 'API Quota', free: '1K', pro: '50K', api: 'Unlimited' },
-                { name: 'File Storage', free: 'Temp', pro: 'Permanent', api: 'S3 Sync' },
-                { name: 'AI Generation', free: 'Limited', pro: 'Priority', api: 'Direct AI' },
-                { name: 'Support', free: 'Discord', pro: 'Email', api: 'Dedicated' },
+                { name: 'Workspace Modules', free: 'Basic', pro: 'All', api: 'Full API Stack' },
+                { name: 'API Quotas', free: '1K Limit', pro: '50K Limit', api: 'Unlimited' },
+                { name: 'File Storage Limit', free: '10 MB', pro: '100 MB', api: '1 GB' },
+                { name: 'AI Priority Queue', free: 'Standard', pro: 'Priority Queue', api: 'Direct Pipeline' },
+                { name: 'Workspace Support', free: 'Discord', pro: 'Email Desk', api: 'Dedicated Manager' },
               ].map((row, i) => (
-                <tr key={i} className="hover:bg-white/[0.02] transition-colors">
-                  <td className="px-8 py-6 text-sm font-bold text-white italic">{row.name}</td>
+                <tr key={i} className="hover:bg-foreground/[0.02] transition-colors">
+                  <td className="px-8 py-6 text-sm font-bold text-foreground italic">{row.name}</td>
                   <td className="px-8 py-6 text-center text-xs text-muted-foreground font-medium">{row.free}</td>
-                  <td className="px-8 py-6 text-center text-xs text-white font-black">{row.pro}</td>
+                  <td className="px-8 py-6 text-center text-xs text-foreground font-black">{row.pro}</td>
                   <td className="px-8 py-6 text-center text-xs text-primary font-black uppercase tracking-widest">{row.api}</td>
                 </tr>
               ))}
@@ -591,21 +601,21 @@ const Pricing = () => {
         </div>
       </section>
 
-      {/* FAQ or Trust Section */}
+      {/* FAQ Accordion Section */}
       <section className="max-w-4xl mx-auto px-4">
-        <div className="saas-card !p-12 text-center space-y-10 bg-white/[0.01]">
+        <div className="saas-card !p-12 text-center space-y-10 bg-card/20 border border-border/40 rounded-[3rem]">
            <div className="space-y-4">
-              <h3 className="text-2xl font-black text-white italic">Frequently Asked Questions</h3>
-              <p className="text-muted-foreground font-medium max-w-xl mx-auto italic">Everything you need to know about our billing and API platform.</p>
+              <h3 className="text-2xl font-black text-foreground italic">Frequently Asked Questions</h3>
+              <p className="text-muted-foreground font-medium max-w-xl mx-auto italic">Everything you need to know about our billing and subscription cycles.</p>
            </div>
            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
               {[
-                 { q: 'Can I cancel my Pro subscription?', a: 'Yes, you can cancel at any time. Your Pro features will remain active until the end of the billing period.' },
-                 { q: 'What happens if I exceed my API limit?', a: 'For the Free tier, requests will be blocked. For Pro users, you can buy extra credits or upgrade to Business.' },
+                 { q: 'Can I cancel my Achiever Pro subscription?', a: 'Yes, you can cancel at any time via your billing workspace settings. Your Pro benefits remain active until your current term expires.' },
+                 { q: 'What happens if I exhaust my credit quota?', a: 'If your token balance reaches 0, you can top-up additional credits from your dashboard or upgrade to a higher tier.' },
               ].map((faq, i) => (
                  <div key={i} className="space-y-3">
-                    <p className="text-sm font-black text-white flex items-center gap-2 italic">
-                       <HelpCircle className="w-4 h-4 text-primary" /> {faq.q}
+                    <p className="text-sm font-black text-foreground flex items-center gap-2 italic">
+                       <HelpCircle className="w-4 h-4 text-primary shrink-0" /> {faq.q}
                     </p>
                     <p className="text-xs text-muted-foreground leading-relaxed font-medium italic">{faq.a}</p>
                  </div>

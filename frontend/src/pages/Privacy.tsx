@@ -143,7 +143,7 @@ const Privacy = () => {
                 Your data is used solely to provide personalized results, sync your study plans across devices, and manage your API credits.
               </p>
               <div className="p-8 bg-[#111] border border-white/5 rounded-3xl">
-                <p className="text-sm font-bold text-white italic">"STP does not sell your academic performance data to recruiters or educational institutions without your explicit opt-in consent."</p>
+                <p className="text-sm font-bold text-white italic">"ScholarOS does not sell your academic performance data to recruiters or educational institutions without your explicit opt-in consent."</p>
               </div>
             </div>
 

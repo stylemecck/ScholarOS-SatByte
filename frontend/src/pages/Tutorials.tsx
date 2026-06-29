@@ -44,7 +44,7 @@ const Tutorials = () => {
     },
     {
       id: 3,
-      title: 'Automating PDF Reports with Node.js and STP',
+      title: 'Automating PDF Reports with Node.js and ScholarOS',
       excerpt: 'Stop manual generation. A deep dive into using our background workers for batch processing.',
       category: 'dev',
       readTime: '12 min read',

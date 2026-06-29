@@ -37,7 +37,7 @@ const Status = () => {
           System <span className="text-primary italic">Pulse</span>
         </h1>
         <p className="text-muted-foreground font-medium text-lg max-w-xl mx-auto">
-          Real-time health monitoring and performance metrics for the STP Pro ecosystem.
+          Real-time health monitoring and performance metrics for the ScholarOS ecosystem.
         </p>
       </div>
 

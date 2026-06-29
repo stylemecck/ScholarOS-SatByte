@@ -138,7 +138,7 @@ const Terms = () => {
             <SectionHeading id="intro" title="1. Introduction" icon={Gavel} />
             <div className="space-y-6">
               <p>
-                By accessing and using the SatByte AI Student Toolkit Pro ("STP"), you acknowledge and agree to be bound by the following terms and conditions. These terms constitute a legally binding agreement between you ("User") and SatByte AI ("Company").
+                By accessing and using the SatByte AI ScholarOS ("ScholarOS"), you acknowledge and agree to be bound by the following terms and conditions. These terms constitute a legally binding agreement between you ("User") and SatByte AI ("Company").
               </p>
               <p>
                 The materials contained in this website are protected by applicable copyright and trademark law. You are granted a limited, non-exclusive, non-transferable license to access the tools for personal, academic, or professional use subject to these terms.
@@ -165,7 +165,7 @@ const Terms = () => {
             <SectionHeading id="tool-usage" title="3. Tool Usage Policy" icon={Cpu} />
             <div className="space-y-6">
               <p>
-                STP provides a variety of browser-based and server-side tools (Image Compressor, PDF Suite, Rank Predictor, etc.). Usage of these tools is subject to the following rules:
+                ScholarOS provides a variety of browser-based and server-side tools (Image Compressor, PDF Suite, Rank Predictor, etc.). Usage of these tools is subject to the following rules:
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="saas-card !p-8 space-y-4">
@@ -202,7 +202,7 @@ const Terms = () => {
             <SectionHeading id="payments" title="5. Payments & Subscriptions" icon={CreditCard} />
             <div className="space-y-6">
               <p>
-                STP operates on a credit-based system and subscription tiers. 
+                ScholarOS operates on a credit-based system and subscription tiers. 
               </p>
               <p>
                 Credits are non-refundable and non-transferable. Subscription plans are billed monthly or annually and can be cancelled at any time, but no partial refunds will be issued for remaining billing cycles. In the event of a verified technical failure, we may issue credit restorations at our discretion.

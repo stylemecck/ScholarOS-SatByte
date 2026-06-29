@@ -1,38 +1,57 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @layer base {
   :root {
-    --primary: 59, 130, 246; /* Electric Blue */
+    /* Light Mode: Softer background & white cards */
+    --primary: 217, 119, 6; /* Warm Amber/Yellow: #D97706 */
+    --primary-foreground: 255, 255, 255;
+    --secondary: 16, 185, 129; /* Emerald/Green */
+    --secondary-foreground: 255, 255, 255;
+    --background: 245, 247, 250; /* Soft off-white */
+    --foreground: 15, 23, 42; /* Charcoal */
+    --muted: 236, 240, 244; /* Soft slate */
+    --muted-foreground: 100, 116, 139; /* Slate 500 */
+    --card: 255, 255, 255; /* Crisp card white */
+    --card-foreground: 15, 23, 42;
+    --border: 15, 23, 42;
+    --radius: 1.5rem;
+    --scrollbar-thumb: rgba(0, 0, 0, 0.1);
+  }
+
+  .dark {
+    /* Dark Mode: Slate-Black Background & Electric Indigo Accent */
+    --primary: 99, 102, 241; /* Electric Indigo: #6366F1 */
     --primary-foreground: 255, 255, 255;
     --secondary: 168, 85, 247; /* Purple */
     --secondary-foreground: 255, 255, 255;
-    --background: 10, 10, 10; /* #0A0A0A */
-    --foreground: 255, 255, 255;
-    --muted: 17, 17, 17; /* #111111 */
-    --muted-foreground: 161, 161, 170;
-    --card: 22, 22, 22; /* #161616 */
-    --card-foreground: 255, 255, 255;
-    --border: 255, 255, 255, 0.08;
-    --radius: 1.5rem;
+    --background: 8, 9, 12; /* Deep space slate */
+    --foreground: 248, 250, 252;
+    --muted: 17, 24, 39; /* Space grey */
+    --muted-foreground: 148, 163, 184; /* Slate 400 */
+    --card: 13, 17, 28; /* Space Slate card */
+    --card-foreground: 248, 250, 252;
+    --border: 255, 255, 255;
+    --scrollbar-thumb: rgba(255, 255, 255, 0.1);
   }
 
   * {
-    border-color: rgb(var(--border));
+    border-color: rgba(var(--border), 0.08);
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
   }
   
   body {
     background-color: rgb(var(--background));
     color: rgb(var(--foreground));
-    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
     font-weight: 800;
     letter-spacing: -0.04em;
     line-height: 1.1;
@@ -68,15 +87,15 @@
   }
 
   .saas-card {
-    @apply bg-card/80 backdrop-blur-xl border border-border/50 rounded-[2rem] p-8 hover:border-primary/30 transition-all duration-500 shadow-xl;
+    @apply bg-card/80 backdrop-blur-xl border border-border/50 rounded-[2rem] p-8 hover:border-primary/20 transition-all duration-500 shadow-sm;
   }
 
   .saas-button-primary {
-    @apply bg-primary text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20 hover:shadow-primary/40;
+    @apply bg-primary text-primary-foreground px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:scale-102 active:scale-98 transition-all shadow-sm;
   }
 
   .saas-button-secondary {
-    @apply bg-muted text-foreground border border-border/50 px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-border transition-all;
+    @apply bg-muted text-foreground border border-border/50 px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-border transition-all shadow-sm;
   }
 
   .saas-input {
@@ -103,7 +122,7 @@
   --color-muted-foreground: rgb(var(--muted-foreground));
   --color-card: rgb(var(--card));
   --color-card-foreground: rgb(var(--card-foreground));
-  --color-border: rgb(var(--border));
+  --color-border: rgba(var(--border), 0.08);
 
   --breakpoint-xs: 380px;
 

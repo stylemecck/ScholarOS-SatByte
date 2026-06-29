@@ -4,7 +4,7 @@ import {
   Menu, X, Zap, Sparkles, 
   BarChart3, ChevronDown, LayoutDashboard, Settings,
   FileText, Image as ImageIcon, GraduationCap, ArrowRight,
-  LogOut, CreditCard
+  LogOut, CreditCard, Sun, Moon
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,6 +12,25 @@ import { motion, AnimatePresence } from 'framer-motion';
 const Navbar = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
+
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -82,8 +101,8 @@ const Navbar = () => {
         flex items-center justify-between px-3 sm:px-6 h-14 sm:h-16 w-full max-w-7xl
         transition-all duration-500 rounded-full border pointer-events-auto
         ${scrolled 
-          ? 'bg-background/80 backdrop-blur-3xl border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)]' 
-          : 'bg-background/40 backdrop-blur-xl border-white/5 shadow-xl'}
+          ? 'bg-background/80 backdrop-blur-3xl border-border/60 shadow-sm' 
+          : 'bg-background/40 backdrop-blur-xl border-border/30 shadow-none'}
       `}>
           {/* Logo Section */}
           <Link 
@@ -91,16 +110,20 @@ const Navbar = () => {
             className="flex items-center gap-2 sm:gap-3 group shrink-0" 
           >
             <div className="relative">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-primary/20 rounded-2xl flex items-center justify-center overflow-hidden border border-primary/30 group-hover:rotate-[360deg] transition-transform duration-700">
-                <img src="/logo.svg" alt="STP PRO" className="w-6 h-6 sm:w-7 sm:h-7 object-contain" />
+              <div className="w-9 h-9 sm:w-10 sm:h-10 bg-primary/20 rounded-2xl flex items-center justify-center border border-primary/30 group-hover:rotate-[360deg] transition-transform duration-700 relative overflow-hidden">
+                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M2 17l10 5 10-5M2 12l10 5 10-5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <div className="absolute inset-0 bg-primary/10 blur-sm -z-10" />
               </div>
               <div className="absolute -top-1 -right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-primary rounded-full border-2 border-background animate-pulse" />
             </div>
             <div className="flex flex-col">
               <span className="text-sm sm:text-lg font-black tracking-tighter leading-none">
-                STP <span className="text-primary italic">PRO</span>
+                SatByte<span className="text-primary italic">Toolkit</span>
               </span>
-              <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-50 hidden sm:block">Student OS</span>
+              <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-50 hidden sm:block">SEO & PDF Suite</span>
             </div>
           </Link>
 
@@ -111,7 +134,7 @@ const Navbar = () => {
                 onMouseEnter={() => setIsToolsOpen(true)}
                 className={`
                   px-4 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-2
-                  ${isToolsOpen ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'}
+                  ${isToolsOpen ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04]'}
                 `}
               >
                 Tools <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isToolsOpen ? 'rotate-180' : ''}`} />
@@ -124,7 +147,7 @@ const Navbar = () => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 15, scale: 0.95 }}
                     onMouseLeave={() => setIsToolsOpen(false)}
-                    className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-[560px] bg-background/95 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-6 shadow-2xl overflow-hidden"
+                    className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-[560px] bg-background/95 backdrop-blur-3xl border border-border/50 rounded-[2.5rem] p-6 shadow-sm overflow-hidden"
                   >
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-indigo-500 to-rose-500" />
                     
@@ -140,7 +163,7 @@ const Navbar = () => {
                               <Link 
                                 key={tool.path}
                                 to={tool.path}
-                                className="group flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 transition-all"
+                                className="group flex items-center gap-4 p-3 rounded-2xl hover:bg-foreground/[0.04] transition-all"
                               >
                                 <div className="w-9 h-9 rounded-xl bg-muted/50 flex items-center justify-center text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
                                   <tool.icon className="w-4 h-4" />
@@ -156,7 +179,7 @@ const Navbar = () => {
                       ))}
                     </div>
                     
-                    <div className="mt-6 pt-6 border-t border-white/5">
+                    <div className="mt-6 pt-6 border-t border-border/40">
                       <Link to="/tools" className="flex items-center justify-between p-4 bg-primary/10 rounded-2xl group hover:bg-primary transition-all">
                         <span className="text-[10px] font-black uppercase tracking-widest group-hover:text-white">Explore All Marketplace Tools</span>
                         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -173,7 +196,7 @@ const Navbar = () => {
                 to={link.path}
                 className={`
                   relative px-4 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all
-                  ${location.pathname === link.path ? 'text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'}
+                  ${location.pathname === link.path ? 'text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04]'}
                 `}
               >
                 {link.name}
@@ -189,13 +212,22 @@ const Navbar = () => {
 
           {/* Right Section */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Theme Toggle Button */}
+            <button 
+              onClick={toggleTheme}
+              className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-foreground/[0.05] hover:bg-foreground/[0.1] text-foreground border border-border/40 transition-all transform active:scale-90 cursor-pointer shrink-0"
+              aria-label="Toggle Theme"
+            >
+              {theme === 'dark' ? <Sun className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-amber-400" /> : <Moon className="w-4.5 h-4.5 sm:w-5 sm:h-5 text-indigo-600" />}
+            </button>
+
             {user ? (
               <div className="relative" ref={userRef}>
                 <button 
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center gap-2 p-1 lg:pr-4 bg-white/5 hover:bg-white/10 rounded-full border border-white/5 transition-all group"
+                  className="flex items-center gap-2 p-1 lg:pr-4 bg-foreground/[0.04] hover:bg-foreground/[0.08] rounded-full border border-border/30 transition-all group"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-purple-600 text-white flex items-center justify-center text-xs font-black shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform overflow-hidden border border-white/20">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-purple-600 text-white flex items-center justify-center text-xs font-black group-hover:scale-105 transition-transform overflow-hidden border border-border/20">
                     {user.avatar ? (
                       <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
                     ) : (
@@ -212,9 +244,9 @@ const Navbar = () => {
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute top-full right-0 mt-4 w-64 bg-background/95 backdrop-blur-3xl border border-white/10 rounded-[2rem] p-4 shadow-2xl"
+                      className="absolute top-full right-0 mt-4 w-64 bg-background/95 backdrop-blur-3xl border border-border/50 rounded-[2rem] p-4 shadow-sm"
                     >
-                      <div className="p-4 bg-white/5 rounded-2xl mb-2">
+                      <div className="p-4 bg-foreground/[0.04] rounded-2xl mb-2 border border-border/30">
                         <div className="flex items-center justify-between mb-1">
                           <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Balance</p>
                           <CreditCard className="w-3 h-3 text-muted-foreground" />
@@ -226,7 +258,7 @@ const Navbar = () => {
                         <Link 
                           to="/dashboard" 
                           onClick={() => setIsUserMenuOpen(false)}
-                          className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all group"
+                          className="flex items-center gap-3 p-3 rounded-xl hover:bg-foreground/[0.04] transition-all group"
                         >
                           <LayoutDashboard className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
                           <span className="text-[10px] font-black uppercase tracking-widest">Dashboard</span>
@@ -234,12 +266,12 @@ const Navbar = () => {
                         <Link 
                           to="/settings" 
                           onClick={() => setIsUserMenuOpen(false)}
-                          className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all group"
+                          className="flex items-center gap-3 p-3 rounded-xl hover:bg-foreground/[0.04] transition-all group"
                         >
                           <Settings className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
                           <span className="text-[10px] font-black uppercase tracking-widest">Settings</span>
                         </Link>
-                        <div className="h-px bg-white/5 my-1 mx-2" />
+                        <div className="h-px bg-border/40 my-1 mx-2" />
                         <button 
                           onClick={() => { logout(); setIsUserMenuOpen(false); }}
                           className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-rose-500/10 text-rose-500 transition-all"
@@ -264,7 +296,7 @@ const Navbar = () => {
             {/* Mobile Toggle */}
             <button 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/20 transform active:scale-90 transition-all"
+              className="md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-primary text-white transform active:scale-90 transition-all"
             >
               <AnimatePresence mode="wait">
                 {isMenuOpen ? (
@@ -297,14 +329,14 @@ const Navbar = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-[85%] sm:w-[400px] z-[90] md:hidden bg-background border-l border-white/5 flex flex-col pointer-events-auto"
+              className="fixed top-0 right-0 bottom-0 w-[85%] sm:w-[400px] z-[90] md:hidden bg-background border-l border-border/40 flex flex-col pointer-events-auto"
             >
               <div className="flex flex-col h-full overflow-y-auto p-8 pt-24">
                 {/* User Info on Mobile */}
                 {user && (
-                  <div className="mb-10 p-6 bg-white/5 rounded-[2.5rem] border border-white/5">
+                  <div className="mb-10 p-6 bg-foreground/[0.04] rounded-[2.5rem] border border-border/40">
                     <div className="flex items-center gap-4 mb-6">
-                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary to-purple-600 p-0.5 shadow-xl shadow-primary/20">
+                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary to-purple-600 p-0.5">
                          <div className="w-full h-full rounded-[0.9rem] overflow-hidden bg-background flex items-center justify-center text-xl font-black">
                             {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : user.name.charAt(0).toUpperCase()}
                          </div>
@@ -315,10 +347,10 @@ const Navbar = () => {
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
-                       <Link to="/dashboard" className="flex items-center justify-center gap-2 p-3 bg-white/5 rounded-xl text-[10px] font-black uppercase tracking-widest">
+                       <Link to="/dashboard" className="flex items-center justify-center gap-2 p-3 bg-foreground/[0.04] rounded-xl text-[10px] font-black uppercase tracking-widest">
                           <LayoutDashboard className="w-3.5 h-3.5" /> Dash
                        </Link>
-                       <Link to="/settings" className="flex items-center justify-center gap-2 p-3 bg-white/5 rounded-xl text-[10px] font-black uppercase tracking-widest">
+                       <Link to="/settings" className="flex items-center justify-center gap-2 p-3 bg-foreground/[0.04] rounded-xl text-[10px] font-black uppercase tracking-widest">
                           <Settings className="w-3.5 h-3.5" /> Settings
                        </Link>
                     </div>
@@ -329,21 +361,21 @@ const Navbar = () => {
                   <div className="space-y-4">
                     <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground opacity-50 px-2">Navigation</h3>
                     <div className="grid grid-cols-1 gap-2">
-                      <Link to="/" className="p-5 bg-white/5 rounded-3xl text-2xl font-black tracking-tighter hover:bg-primary/10 hover:text-primary transition-all">Home</Link>
+                      <Link to="/" className="p-5 bg-foreground/[0.04] rounded-3xl text-2xl font-black tracking-tighter hover:bg-primary/10 hover:text-primary transition-all">Home</Link>
                       {navLinks.map(link => (
-                        <Link key={link.path} to={link.path} className="p-5 bg-white/5 rounded-3xl text-2xl font-black tracking-tighter hover:bg-primary/10 hover:text-primary transition-all">{link.name}</Link>
+                        <Link key={link.path} to={link.path} className="p-5 bg-foreground/[0.04] rounded-3xl text-2xl font-black tracking-tighter hover:bg-primary/10 hover:text-primary transition-all">{link.name}</Link>
                       ))}
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <Link to="/tools" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-white transition-colors">Explore</Link>
+                    <Link to="/tools" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors">Explore</Link>
                     <div className="grid grid-cols-1 gap-3">
                       {toolCategories.flatMap(c => c.tools).slice(0, 4).map(tool => (
                         <Link 
                           key={tool.path}
                           to={tool.path}
-                          className="flex items-center gap-4 p-4 bg-white/5 rounded-3xl border border-white/5 hover:border-primary/30 transition-all group"
+                          className="flex items-center gap-4 p-4 bg-foreground/[0.04] rounded-3xl border border-border/40 hover:border-primary/30 transition-all group"
                         >
                           <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
                             <tool.icon className="w-6 h-6" />
@@ -359,7 +391,7 @@ const Navbar = () => {
                   </div>
                 </div>
 
-                <div className="mt-auto pt-10 border-t border-white/5 space-y-6">
+                <div className="mt-auto pt-10 border-t border-border/40 space-y-6">
                   {user ? (
                     <button 
                       onClick={() => logout()}

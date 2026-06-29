@@ -350,7 +350,7 @@ const RankPredictor = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 text-white/80 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest border border-white/10 shadow-[0_0_20px_rgba(255,255,255,0.05)]"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-foreground/[0.04] text-foreground/80 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest border border-border/40 shadow-sm"
           >
             <Sparkles className="w-4 h-4 text-primary" /> AI-Powered Accuracy
           </motion.div>
@@ -406,7 +406,7 @@ const RankPredictor = () => {
           animate={{ opacity: 1, x: 0 }}
           className="lg:col-span-5 space-y-8"
         >
-          <div className="bg-[#111111] border border-white/5 p-8 md:p-10 rounded-[2.5rem] shadow-2xl space-y-8 relative overflow-hidden">
+          <div className="bg-card border border-border/40 p-8 md:p-10 rounded-[2.5rem] shadow-sm space-y-8 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -mr-10 -mt-10 blur-2xl" />
             
             <div className="space-y-1">
@@ -428,10 +428,10 @@ const RankPredictor = () => {
                         totalMarks: selected ? selected.maxMarks.toString() : formData.totalMarks
                       });
                     }}
-                    className="w-full px-6 py-4 rounded-2xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none transition-all font-bold text-sm appearance-none"
+                    className="w-full px-6 py-4 rounded-2xl bg-foreground/[0.04] border border-border/40 focus:border-primary/50 outline-none transition-all font-bold text-sm appearance-none text-foreground"
                   >
                     {examsConfig.map(ex => (
-                      <option key={ex.name} value={ex.name} className="bg-[#0A0A0A]">
+                      <option key={ex.name} value={ex.name} className="bg-card text-foreground">
                         {ex.name}
                       </option>
                     ))}
@@ -447,7 +447,7 @@ const RankPredictor = () => {
                       placeholder="Scored"
                       value={formData.marks}
                       onChange={(e) => setFormData({...formData, marks: e.target.value})}
-                      className="w-full px-6 py-4 rounded-2xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none transition-all font-bold text-sm placeholder:text-white/20"
+                      className="w-full px-6 py-4 rounded-2xl bg-foreground/[0.04] border border-border/40 focus:border-primary/50 outline-none transition-all font-bold text-sm placeholder:text-muted-foreground/50 text-foreground"
                     />
                   </div>
                   <div className="space-y-2">
@@ -456,7 +456,7 @@ const RankPredictor = () => {
                       type="number"
                       readOnly
                       value={formData.totalMarks}
-                      className="w-full px-6 py-4 rounded-2xl bg-white/5 border border-white/10 outline-none font-bold text-sm text-muted-foreground cursor-not-allowed opacity-50"
+                      className="w-full px-6 py-4 rounded-2xl bg-foreground/[0.04] border border-border/40 outline-none font-bold text-sm text-muted-foreground cursor-not-allowed opacity-50"
                     />
                   </div>
                 </div>
@@ -471,7 +471,7 @@ const RankPredictor = () => {
                         placeholder="e.g. SCQP09"
                         value={(formData as any).subject || ''}
                         onChange={(e) => setFormData({...formData, subject: e.target.value} as any)}
-                        className="w-full px-6 py-4 rounded-2xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none transition-all font-bold text-sm placeholder:text-white/20"
+                        className="w-full px-6 py-4 rounded-2xl bg-foreground/[0.04] border border-border/40 focus:border-primary/50 outline-none transition-all font-bold text-sm placeholder:text-muted-foreground/50 text-foreground"
                       />
                       <datalist id="subject-suggestions">
                         {(CUET_SUBJECTS[formData.exam as keyof typeof CUET_SUBJECTS] || CUET_SUBJECTS['Others']).map(sub => (
@@ -488,9 +488,9 @@ const RankPredictor = () => {
                     <select 
                       value={formData.category}
                       onChange={(e) => setFormData({...formData, category: e.target.value})}
-                      className="w-full px-6 py-4 rounded-2xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none transition-all font-bold text-sm appearance-none"
+                      className="w-full px-6 py-4 rounded-2xl bg-foreground/[0.04] border border-border/40 focus:border-primary/50 outline-none transition-all font-bold text-sm appearance-none text-foreground"
                     >
-                      {categories.map(cat => <option key={cat} value={cat} className="bg-[#0A0A0A]">{cat}</option>)}
+                      {categories.map(cat => <option key={cat} value={cat} className="bg-card text-foreground">{cat}</option>)}
                     </select>
                   </div>
                   <div className="space-y-2">
@@ -498,10 +498,10 @@ const RankPredictor = () => {
                     <select 
                       value={formData.year}
                       onChange={(e) => setFormData({...formData, year: e.target.value})}
-                      className="w-full px-6 py-4 rounded-2xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none transition-all font-bold text-sm appearance-none"
+                      className="w-full px-6 py-4 rounded-2xl bg-foreground/[0.04] border border-border/40 focus:border-primary/50 outline-none transition-all font-bold text-sm appearance-none text-foreground"
                     >
-                      <option value="2026" className="bg-[#0A0A0A]">2026</option>
-                      <option value="2025" className="bg-[#0A0A0A]">2025</option>
+                      <option value="2026" className="bg-card text-foreground">2026</option>
+                      <option value="2025" className="bg-card text-foreground">2025</option>
                     </select>
                   </div>
                 </div>
@@ -510,7 +510,7 @@ const RankPredictor = () => {
               <button 
                 type="submit"
                 disabled={loading}
-                className="w-full py-5 bg-gradient-to-r from-primary to-secondary text-white rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-70 flex items-center justify-center gap-3"
+                className="w-full py-5 bg-gradient-to-r from-primary to-secondary text-primary-foreground rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-sm hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-70 flex items-center justify-center gap-3"
               >
                 {loading ? (
                   <>
@@ -538,11 +538,11 @@ const RankPredictor = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="p-6 bg-white/5 rounded-3xl border border-white/5 text-center space-y-1">
-              <p className="text-2xl font-black text-white">850K+</p>
+            <div className="p-6 bg-foreground/[0.04] rounded-3xl border border-border/40 text-center space-y-1">
+              <p className="text-2xl font-black text-foreground">850K+</p>
               <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Predictions Made</p>
             </div>
-            <div className="p-6 bg-white/5 rounded-3xl border border-white/5 text-center space-y-1">
+            <div className="p-6 bg-foreground/[0.04] rounded-3xl border border-border/40 text-center space-y-1">
               <p className="text-2xl font-black text-primary">98.4%</p>
               <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Accuracy Score</p>
             </div>
@@ -558,13 +558,13 @@ const RankPredictor = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="h-full flex flex-col items-center justify-center p-12 border-2 border-dashed border-white/5 rounded-[2.5rem] text-muted-foreground space-y-6"
+                className="h-full flex flex-col items-center justify-center p-12 border-2 border-dashed border-border/40 rounded-[2.5rem] text-muted-foreground space-y-6"
               >
-                <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center">
+                <div className="w-24 h-24 bg-foreground/[0.04] rounded-full flex items-center justify-center">
                   <TrendingUp className="w-12 h-12 opacity-20" />
                 </div>
                 <div className="text-center space-y-2">
-                  <p className="font-black text-xl text-white">Awaiting Performance Data</p>
+                  <p className="font-black text-xl text-foreground">Awaiting Performance Data</p>
                   <p className="text-sm font-medium">Complete the form to generate your <br /> personalized rank and college insights.</p>
                 </div>
               </motion.div>
@@ -574,7 +574,7 @@ const RankPredictor = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="h-full flex flex-col items-center justify-center p-12 bg-[#111111] border border-white/5 rounded-[2.5rem] space-y-8"
+                className="h-full flex flex-col items-center justify-center p-12 bg-card border border-border/40 rounded-[2.5rem] space-y-8"
               >
                 <div className="relative">
                   <div className="w-32 h-32 border-4 border-primary/10 border-t-primary rounded-full animate-spin" />
@@ -609,7 +609,7 @@ const RankPredictor = () => {
                   <button 
                     onClick={handleDownload}
                     disabled={isExporting}
-                    className="flex items-center gap-3 px-6 py-3 bg-white/5 text-white rounded-2xl text-xs font-black hover:bg-white/10 transition-all border border-white/10 disabled:opacity-50"
+                    className="flex items-center gap-3 px-6 py-3 bg-foreground/[0.04] text-foreground rounded-2xl hover:bg-foreground/[0.08] transition-all border border-border/40 disabled:opacity-50"
                   >
                     {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
                     {isExporting ? `Generating ${exportProgress}%` : 'Export Report'}
@@ -624,16 +624,16 @@ const RankPredictor = () => {
                     <div className="space-y-6">
                       <div className="space-y-1">
                         <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Predicted AIR Rank</p>
-                        <h2 className="text-6xl md:text-7xl font-black tracking-tighter text-white">
+                        <h2 className="text-6xl md:text-7xl font-black tracking-tighter text-foreground">
                           {prediction?.predictedRank}
                         </h2>
                       </div>
                       <div className="flex items-center gap-4">
-                        <div className="px-4 py-2 bg-white/5 rounded-xl border border-white/10">
+                        <div className="px-4 py-2 bg-foreground/[0.04] rounded-xl border border-border/40">
                           <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Percentile</p>
-                          <p className="text-lg font-black text-white">{prediction?.predictedPercentile}%</p>
+                          <p className="text-lg font-black text-foreground">{prediction?.predictedPercentile}%</p>
                         </div>
-                        <div className="px-4 py-2 bg-white/5 rounded-xl border border-white/10">
+                        <div className="px-4 py-2 bg-foreground/[0.04] rounded-xl border border-border/40">
                           <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Better Than</p>
                           <p className="text-lg font-black text-emerald-500">{prediction?.betterThan || '84%'}</p>
                         </div>
@@ -647,12 +647,12 @@ const RankPredictor = () => {
                         </div>
                       </div>
                       
-                      <div className="w-full bg-white/5 rounded-2xl p-4 border border-white/10 space-y-3">
+                      <div className="w-full bg-foreground/[0.04] rounded-2xl p-4 border border-border/40 space-y-3">
                         <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
                           <span className="text-muted-foreground">Admission Chance</span>
                           <span className="text-primary">{prediction?.admissionChances}</span>
                         </div>
-                        <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+                        <div className="h-2 w-full bg-foreground/[0.08] rounded-full overflow-hidden">
                           <motion.div 
                             initial={{ width: 0 }}
                             animate={{ width: prediction?.admissionChances?.includes('High') ? '85%' : prediction?.admissionChances?.includes('Moderate') ? '55%' : '25%' }}
@@ -670,13 +670,13 @@ const RankPredictor = () => {
 
                 {/* Difficulty & Trend Analysis */}
                 {prediction?.paperDifficultyAnalysis && (
-                  <div className="bg-[#161616] border border-white/5 rounded-3xl p-6 space-y-6">
+                  <div className="bg-card border border-border/40 rounded-3xl p-6 space-y-6">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-white">
+                      <div className="flex items-center gap-2 text-foreground">
                         <Zap className="w-4 h-4 text-amber-500" />
                         <h4 className="text-xs font-black uppercase tracking-widest">Difficulty & Trend Analysis</h4>
                       </div>
-                      <span className="text-[10px] font-bold text-muted-foreground bg-white/5 px-2 py-1 rounded">2026 Shift Analysis</span>
+                      <span className="text-[10px] font-bold text-muted-foreground bg-foreground/[0.04] px-2 py-1 rounded">2026 Shift Analysis</span>
                     </div>
                     
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -694,7 +694,7 @@ const RankPredictor = () => {
                       ))}
                     </div>
                     
-                    <p className="text-xs text-muted-foreground italic leading-relaxed border-t border-white/5 pt-4">
+                    <p className="text-xs text-muted-foreground italic leading-relaxed border-t border-border/30 pt-4">
                       "{prediction.paperDifficultyAnalysis.paperInsight}"
                     </p>
                   </div>
@@ -703,7 +703,7 @@ const RankPredictor = () => {
                 {/* Categorized College Suggestions */}
                 {prediction?.collegeDetails && prediction.collegeDetails.length > 0 && (
                   <div className="space-y-6">
-                    <div className="flex items-center gap-2 text-white">
+                    <div className="flex items-center gap-2 text-foreground">
                       <School className="w-5 h-5 text-primary" />
                       <h3 className="text-xl font-black tracking-tight">Personalized College Roadmap</h3>
                     </div>
@@ -736,11 +736,11 @@ const RankPredictor = () => {
                                   initial={{ opacity: 0, y: 10 }}
                                   whileInView={{ opacity: 1, y: 0 }}
                                   viewport={{ once: true }}
-                                  className="group bg-[#111111] border border-white/5 rounded-3xl p-6 hover:border-white/10 transition-all space-y-4"
+                                  className="group bg-card border border-border/40 rounded-3xl p-6 hover:border-primary/20 transition-all space-y-4"
                                 >
                                   <div className="flex justify-between items-start gap-4">
                                     <div className="space-y-1">
-                                      <h5 className="font-black text-white group-hover:text-primary transition-colors">{college.name}</h5>
+                                      <h5 className="font-black text-foreground group-hover:text-primary transition-colors">{college.name}</h5>
                                       <div className="flex items-center gap-4 flex-wrap">
                                         <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-bold">
                                           <MapPin className="w-3 h-3" /> {college.location || 'Pan India'}
@@ -751,7 +751,7 @@ const RankPredictor = () => {
                                       </div>
                                     </div>
                                     {college.naacGrade && (
-                                      <span className="px-3 py-1 bg-white/5 text-white text-[9px] font-black rounded-full border border-white/10 uppercase tracking-widest shrink-0">
+                                      <span className="px-3 py-1 bg-foreground/[0.04] text-foreground text-[9px] font-black rounded-full border border-border/40 uppercase tracking-widest shrink-0">
                                         NAAC {college.naacGrade}
                                       </span>
                                     )}
@@ -768,17 +768,17 @@ const RankPredictor = () => {
                                         <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">{stat.label}</p>
                                         <div className="flex items-center gap-1.5">
                                           <stat.icon className={`w-3 h-3 ${stat.color}`} />
-                                          <span className="text-[11px] font-black text-white truncate">{stat.value}</span>
+                                          <span className="text-[11px] font-black text-foreground truncate">{stat.value}</span>
                                         </div>
                                       </div>
                                     ))}
                                   </div>
 
                                   {college.topRecruiters && (
-                                    <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-white/5">
+                                    <div className="flex items-center gap-2 flex-wrap pt-2 border-t border-border/30">
                                       <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mr-2">Top Recruiters</span>
                                       {college.topRecruiters.slice(0, 4).map((r, ri) => (
-                                        <span key={ri} className="px-2 py-0.5 bg-white/5 rounded text-[9px] font-medium text-white/60">
+                                        <span key={ri} className="px-2 py-0.5 bg-foreground/[0.04] rounded text-[9px] font-medium text-muted-foreground">
                                           {r}
                                         </span>
                                       ))}
@@ -813,7 +813,7 @@ const RankPredictor = () => {
       </div>
 
       {/* Trust & Methodology Section */}
-      <section className="py-20 border-t border-white/5 space-y-12">
+      <section className="py-20 border-t border-border/30 space-y-12">
         <div className="text-center space-y-4">
           <h2 className="text-3xl font-black tracking-tight">Trust & <span className="text-primary">Algorithm</span> Transparency</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto font-medium">
@@ -839,7 +839,7 @@ const RankPredictor = () => {
               icon: ShieldCheck
             }
           ].map((card, i) => (
-            <div key={i} className="p-8 bg-[#111111] border border-white/5 rounded-[2.5rem] space-y-4">
+            <div key={i} className="p-8 bg-card border border-border/40 rounded-[2.5rem] space-y-4">
               <div className="w-12 h-12 bg-primary/10 text-primary rounded-2xl flex items-center justify-center">
                 <card.icon className="w-6 h-6" />
               </div>
@@ -881,7 +881,7 @@ const RankPredictor = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] bg-[#0A0A0A]/90 backdrop-blur-md flex flex-col items-center justify-center space-y-6"
+            className="fixed inset-0 z-[200] bg-background/90 backdrop-blur-md flex flex-col items-center justify-center space-y-6"
           >
             <div className="relative">
               <div className="w-24 h-24 border-4 border-primary/10 border-t-primary rounded-full animate-spin" />
@@ -890,10 +890,10 @@ const RankPredictor = () => {
               </div>
             </div>
             <div className="text-center space-y-2">
-              <h3 className="text-xl font-black tracking-tight text-white">Preparing Your Report</h3>
+              <h3 className="text-xl font-black tracking-tight text-foreground">Preparing Your Report</h3>
               <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">Optimizing Tables & AI Verdicts...</p>
               
-              <div className="w-48 h-1 bg-white/5 rounded-full mt-4 overflow-hidden">
+              <div className="w-48 h-1 bg-foreground/[0.04] rounded-full mt-4 overflow-hidden">
                 <motion.div 
                   initial={{ width: 0 }}
                   animate={{ width: `${exportProgress}%` }}
@@ -940,11 +940,11 @@ const LimitModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void 
           <div className="grid grid-cols-1 gap-4">
             <a 
               href="/signup"
-              className="w-full py-4 bg-primary text-primary-foreground rounded-2xl font-black text-lg shadow-lg hover:shadow-primary/25 hover:translate-y-[-2px] transition-all flex items-center justify-center gap-2"
+              className="w-full py-4 bg-primary text-primary-foreground rounded-2xl font-black text-lg shadow-sm hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2"
             >
               Sign Up for Free
             </a>
-            <div className="p-6 bg-muted/50 rounded-[2rem] border border-border text-left space-y-4">
+            <div className="p-6 bg-muted/50 rounded-[2rem] border border-border/40 text-left space-y-4">
               <div className="flex justify-between items-center">
                 <span className="font-bold text-sm">PRO PLAN</span>
                 <span className="text-primary font-black">₹99/month</span>

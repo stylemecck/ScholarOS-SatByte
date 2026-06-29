@@ -6,7 +6,7 @@ import axios from 'axios';
 const ChatAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string }[]>([
-    { role: 'assistant', content: "Hello! I'm your STP AI Assistant. How can I help you with your academic goals today?" }
+    { role: 'assistant', content: "Hello! I'm your ScholarOS Copilot. How can I help you with your academic goals today?" }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -89,7 +89,7 @@ const ChatAssistant = () => {
                   <Sparkles className="w-5 h-5 fill-white" />
                 </div>
                 <div>
-                  <h4 className="font-black text-sm tracking-tight">STP AI Assistant</h4>
+                  <h4 className="font-black text-sm tracking-tight">ScholarOS Copilot</h4>
                   <div className="flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
                     <span className="text-[10px] font-black uppercase tracking-widest opacity-70">Online</span>

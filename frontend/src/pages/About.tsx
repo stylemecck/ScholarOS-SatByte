@@ -183,7 +183,7 @@ const About = () => {
             </div>
             <h3 className="text-4xl md:text-6xl font-black text-white tracking-tighter italic">Satyam Kumar</h3>
             <p className="text-lg md:text-xl text-muted-foreground font-medium leading-relaxed italic">
-              "I built Student Toolkit Pro to solve my own problems as a student. Today, it serves thousands. My goal is simple: to provide industrial-grade quality to every student in India, completely ad-free and affordable."
+              "I built ScholarOS to solve my own problems as a student. Today, it serves thousands. My goal is simple: to provide industrial-grade quality to every student in India, completely ad-free and affordable."
             </p>
           </div>
         </div>
@@ -195,7 +195,7 @@ const About = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-purple-500/10 opacity-50" />
           <h2 className="text-4xl md:text-7xl font-black text-white tracking-tighter leading-none relative z-10">
             Start your journey with <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 italic">Student Toolkit Pro.</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 italic">ScholarOS.</span>
           </h2>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4 pt-6 relative z-10">

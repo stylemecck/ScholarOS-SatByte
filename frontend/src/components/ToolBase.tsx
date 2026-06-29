@@ -32,7 +32,7 @@ const ToolBase: React.FC<ToolBaseProps> = ({
 
   // Dynamic SEO management
   useEffect(() => {
-    document.title = `${title} - Student Toolkit Pro`;
+    document.title = `${title} - ScholarOS`;
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       metaDescription.setAttribute('content', description);
@@ -141,7 +141,7 @@ const ToolBase: React.FC<ToolBaseProps> = ({
       {settings.adsterraNativeBanner ? (
         <AdsterraAd type="native" code={settings.adsterraNativeBanner} />
       ) : (
-        <div className="w-full h-24 bg-white/5 border border-dashed border-white/10 rounded-3xl flex items-center justify-center text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground/30">
+        <div className="w-full h-24 bg-foreground/[0.04] border border-dashed border-border/40 rounded-3xl flex items-center justify-center text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground/30">
           Advertisement Placeholder
         </div>
       )}
@@ -162,8 +162,8 @@ const ToolBase: React.FC<ToolBaseProps> = ({
             className="relative group cursor-pointer"
           >
             <div className="absolute -inset-2 bg-gradient-to-r from-primary via-indigo-500 to-amber-500 rounded-[3rem] blur opacity-10 group-hover:opacity-30 transition duration-1000"></div>
-            <div className="relative aspect-[21/9] flex flex-col items-center justify-center border-2 border-dashed border-white/10 bg-card/40 backdrop-blur-3xl rounded-[3rem] p-12 text-center group-hover:border-primary/50 transition-all border-spacing-4">
-              <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+            <div className="relative aspect-[21/9] flex flex-col items-center justify-center border-2 border-dashed border-border/40 bg-card/40 backdrop-blur-3xl rounded-[3rem] p-12 text-center group-hover:border-primary/50 transition-all border-spacing-4">
+              <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-6 group-hover:scale-[1.02] transition-transform duration-500">
                 <Upload className="w-10 h-10 text-primary" />
               </div>
               <p className="text-2xl font-black uppercase tracking-tight">Drop your files here</p>
@@ -192,7 +192,7 @@ const ToolBase: React.FC<ToolBaseProps> = ({
                     key={idx} 
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="relative aspect-[3/4] bg-white/5 rounded-3xl overflow-hidden border border-white/10 group/file"
+                    className="relative aspect-[3/4] bg-foreground/[0.04] rounded-3xl overflow-hidden border border-border/40 group/file"
                   >
                     {file.type.startsWith('image/') ? (
                       <img src={previews[idx]} alt="preview" className="w-full h-full object-cover opacity-60 group-hover/file:opacity-100 transition-opacity" />
@@ -216,9 +216,9 @@ const ToolBase: React.FC<ToolBaseProps> = ({
                 {multiple && (
                   <button 
                     onClick={() => fileInputRef.current?.click()}
-                    className="aspect-[3/4] border-2 border-dashed border-white/5 rounded-3xl text-muted-foreground hover:text-primary hover:border-primary/50 transition-all flex flex-col items-center justify-center gap-2 group"
+                    className="aspect-[3/4] border-2 border-dashed border-border/30 rounded-3xl text-muted-foreground hover:text-primary hover:border-primary/50 transition-all flex flex-col items-center justify-center gap-2 group"
                   >
-                    <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-primary/10 group-hover:text-primary transition-all">
+                    <div className="w-10 h-10 bg-foreground/[0.04] rounded-full flex items-center justify-center group-hover:bg-primary/10 group-hover:text-primary transition-all">
                         <Plus className="w-5 h-5" />
                     </div>
                     <span className="text-[10px] font-black uppercase tracking-[0.2em]">Add More</span>
@@ -231,7 +231,7 @@ const ToolBase: React.FC<ToolBaseProps> = ({
 
         {/* Sidebar Controls */}
         <div className="space-y-8">
-          <div className="bg-card/40 backdrop-blur-3xl border border-white/10 rounded-[3rem] p-8 space-y-8 shadow-2xl">
+          <div className="bg-card/40 backdrop-blur-3xl border border-border/40 rounded-[3rem] p-8 space-y-8 shadow-sm">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
                 <Settings className="w-4 h-4 text-primary" />
@@ -251,7 +251,7 @@ const ToolBase: React.FC<ToolBaseProps> = ({
                 <button
                 onClick={handleProcess}
                 disabled={files.length === 0 || isProcessing}
-                className="w-full py-5 bg-primary text-primary-foreground rounded-[1.5rem] font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:hover:scale-100 transition-all flex items-center justify-center gap-3"
+                className="w-full py-5 bg-primary text-primary-foreground rounded-[1.5rem] font-black uppercase tracking-[0.2em] shadow-sm hover:scale-[1.02] active:scale-98 disabled:opacity-50 disabled:hover:scale-100 transition-all flex items-center justify-center gap-3"
                 >
                 {isProcessing ? (
                     <>
@@ -267,7 +267,7 @@ const ToolBase: React.FC<ToolBaseProps> = ({
                 <a 
                     href={result} 
                     download={resultFilename}
-                    className="w-full py-5 bg-amber-500 text-amber-950 rounded-[1.5rem] font-black uppercase tracking-[0.2em] shadow-xl shadow-amber-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 animate-pulse"
+                    className="w-full py-5 bg-amber-500 text-amber-950 rounded-[1.5rem] font-black uppercase tracking-[0.2em] shadow-sm hover:scale-[1.02] active:scale-98 transition-all flex items-center justify-center gap-3 animate-pulse"
                 >
                     <Download className="w-5 h-5" />
                     Download
@@ -286,7 +286,7 @@ const ToolBase: React.FC<ToolBaseProps> = ({
                 <span className="text-[8px] font-bold uppercase tracking-[0.3em]">Advertisement</span>
                 <div className="h-[1px] flex-grow bg-gradient-to-l from-transparent to-border/50" />
               </div>
-              <div className="w-full aspect-video bg-white/5 rounded-2xl border border-dashed border-white/10" />
+              <div className="w-full aspect-video bg-foreground/[0.04] rounded-2xl border border-dashed border-border/40" />
             </div>
           )}
 

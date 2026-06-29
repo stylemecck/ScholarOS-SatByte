@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  LayoutDashboard, Trash2, ExternalLink, 
+  LayoutDashboard, Trash2, 
   BarChart3, Target, Loader2, Coins, Zap, ShieldCheck, TrendingUp,
   X, Sparkles, Award, MapPin, IndianRupee, Users, Briefcase, Zap as ZapIcon, Info, AlignLeft,
-  Calendar, Gift, Send, Mail
+  Calendar, Gift, Send, Mail, ChevronRight, Menu, FileText, GraduationCap
 } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../context/useAuth';
@@ -17,14 +17,21 @@ const Dashboard = () => {
   const [creditHistory, setCreditHistory] = useState<any[]>([]);
   const [credits, setCredits] = useState<number>(0);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'results' | 'credits' | 'network'>('results');
+  
+  // Tab Management: overview, results, credits, network
+  const [activeTab, setActiveTab] = useState<'overview' | 'results' | 'credits' | 'network'>('overview');
   const [selectedResult, setSelectedResult] = useState<any | null>(null);
   const [pulse, setPulse] = useState<any[]>([]);
+  
+  // Gifting modal states
   const [isGiftModalOpen, setIsGiftModalOpen] = useState(false);
   const [giftData, setGiftData] = useState({ email: '', amount: 5 });
   const [giftLoading, setGiftLoading] = useState(false);
   const [isCustomAmount, setIsCustomAmount] = useState(false);
   const [customAmountVal, setCustomAmountVal] = useState('');
+
+  // Mobile sidebar visibility
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const amountToGift = isCustomAmount ? (parseFloat(customAmountVal) || 0) : giftData.amount;
   const systemFee = parseFloat((amountToGift * 0.015).toFixed(2));
@@ -108,9 +115,9 @@ const Dashboard = () => {
 
   if (isLoading) {
     return (
-      <div className="h-[60vh] flex flex-col items-center justify-center space-y-4">
+      <div className="h-[65vh] flex flex-col items-center justify-center space-y-4">
         <Loader2 className="w-10 h-10 animate-spin text-primary" />
-        <p className="font-bold text-muted-foreground tracking-tight">Checking authentication...</p>
+        <p className="font-bold text-muted-foreground tracking-tight">Accessing workspace...</p>
       </div>
     );
   }
@@ -121,332 +128,501 @@ const Dashboard = () => {
 
   if (!user) {
     return (
-      <div className="h-[60vh] flex flex-col items-center justify-center space-y-6">
+      <div className="h-[65vh] flex flex-col items-center justify-center space-y-6 bg-background text-foreground transition-colors duration-300">
         <div className="p-6 bg-primary/10 rounded-full">
-          <LayoutDashboard className="w-12 h-12 text-primary" />
+          <LayoutDashboard className="w-12 h-12 text-primary animate-pulse" />
         </div>
         <div className="text-center space-y-2">
-          <h2 className="text-2xl font-black">Authentication Required</h2>
-          <p className="text-muted-foreground">Please login to view your personal dashboard and saved analyses.</p>
+          <h2 className="text-2xl font-black italic text-foreground">Authentication Required</h2>
+          <p className="text-muted-foreground max-w-sm">Log in to launch your personal workspace and save your rank predictions.</p>
         </div>
-        <Link to="/login" className="bg-primary text-primary-foreground px-8 py-3 rounded-xl font-bold shadow-lg hover:shadow-primary/20 transition-all">
+        <Link to="/login" className="saas-button-primary !px-10 !py-4 shadow-sm">
           Login Now
         </Link>
       </div>
     );
   }
 
+  // Credit Progress Ring Configuration
+  const limit = 100;
+  const radius = 34;
+  const stroke = 6;
+  const normalizedRadius = radius - stroke * 2;
+  const circumference = normalizedRadius * 2 * Math.PI;
+  const strokeDashoffset = circumference - (Math.min(credits, limit) / limit) * circumference;
+
+  const sidebarTabs = [
+    { id: 'overview', label: 'Workspace Home', icon: LayoutDashboard },
+    { id: 'results', label: 'Saved Analyses', icon: BarChart3 },
+    { id: 'credits', label: 'Billing & Limits', icon: Coins },
+    { id: 'network', label: 'My Network', icon: Users },
+  ];
+
   return (
-    <div className="max-w-7xl mx-auto pb-12 px-4 space-y-12">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div className="space-y-2">
-          <h1 className="text-4xl font-black tracking-tight">Personal <span className="text-primary">Dashboard</span></h1>
-          <p className="text-muted-foreground font-medium">Welcome back, {user.name}! Track all your AI-powered insights.</p>
+    <div className="max-w-7xl mx-auto pb-12 px-2 sm:px-4 flex flex-col lg:flex-row gap-8 relative min-h-[75vh] bg-background text-foreground transition-colors duration-300">
+      {/* Mobile Toggle Bar */}
+      <div className="lg:hidden w-full flex justify-between items-center bg-foreground/[0.03] border border-border/40 px-6 py-4 rounded-2xl mb-2 shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/30">
+            <svg className="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" />
+              <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
+            </svg>
+          </div>
+          <span className="text-xs font-black uppercase tracking-widest text-foreground">ScholarOS</span>
         </div>
-        <div className="flex items-center gap-2">
-           {user.role === 'admin' && (
-            <Link to="/admin" className="flex items-center gap-2 text-xs font-black text-amber-500 bg-amber-500/10 px-4 py-2 rounded-xl border border-amber-500/20">
-              <ShieldCheck className="w-3.5 h-3.5" /> Admin Panel
-            </Link>
-          )}
+        <button 
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="p-2 hover:bg-foreground/[0.08] rounded-lg text-foreground"
+        >
+          <Menu className="w-6 h-6" />
+        </button>
+      </div>
+
+      {/* Sidebar Navigation */}
+      <div className={`
+        fixed inset-y-0 left-0 z-50 w-64 bg-background border-r border-border/40 p-6 flex flex-col gap-6 shrink-0 transition-all duration-300
+        lg:relative lg:translate-x-0 lg:w-64 lg:z-0 lg:bg-card/50 lg:backdrop-blur-3xl lg:border lg:border-border/30 lg:rounded-[2.5rem] lg:p-6 lg:h-fit lg:sticky lg:top-28 lg:shadow-sm
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
+        <div className="lg:hidden flex justify-between items-center mb-6">
+          <span className="text-xs font-black text-foreground uppercase tracking-widest">Workspace Menu</span>
+          <button onClick={() => setSidebarOpen(false)} className="p-2 hover:bg-foreground/[0.08] rounded-lg">
+            <X className="w-5 h-5 text-foreground" />
+          </button>
+        </div>
+
+        <div className="space-y-4">
+          <div className="hidden lg:flex items-center gap-3 bg-foreground/[0.03] border border-border/30 p-3 rounded-2xl mb-4 overflow-hidden">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-primary to-purple-600 flex items-center justify-center text-primary-foreground font-black text-xs shrink-0 border border-border/20 overflow-hidden">
+               {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover rounded-full" /> : user.name.charAt(0).toUpperCase()}
+            </div>
+            <div className="min-w-0 flex-grow">
+              <h4 className="text-[11px] font-black text-foreground truncate">{user.name}</h4>
+              <p className="text-[9px] text-muted-foreground font-bold truncate tracking-wider">{user.email}</p>
+            </div>
+          </div>
+
+          <nav className="space-y-1">
+            {sidebarTabs.map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => {
+                  setActiveTab(tab.id as any);
+                  setSidebarOpen(false);
+                }}
+                className={`
+                  w-full px-4 py-3.5 rounded-2xl text-[10px] font-black uppercase tracking-widest text-left flex items-center gap-3.5 transition-all group
+                  ${activeTab === tab.id 
+                    ? 'bg-primary border border-primary/20 text-primary-foreground shadow-sm' 
+                    : 'border border-transparent text-muted-foreground hover:bg-foreground/[0.05] hover:text-foreground'}
+                `}
+              >
+                <tab.icon className={`w-4 h-4 shrink-0 transition-colors ${activeTab === tab.id ? 'text-primary-foreground' : 'text-muted-foreground group-hover:text-foreground'}`} />
+                <span className="flex-grow">{tab.label}</span>
+                {activeTab === tab.id && (
+                  <motion.div 
+                    layoutId="activeIndicator"
+                    className="w-1.5 h-1.5 rounded-full bg-primary-foreground shrink-0"
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  />
+                )}
+              </button>
+            ))}
+          </nav>
+        </div>
+
+        {/* Sidebar Footer Controls */}
+        <div className="mt-auto space-y-3 pt-6 border-t border-border/40">
           <button 
             onClick={() => setIsGiftModalOpen(true)}
-            className="flex items-center gap-2 text-xs font-black text-amber-500 bg-amber-500/10 px-4 py-2 rounded-xl border border-amber-500/20"
+            className="w-full flex items-center gap-3 px-4 py-3 bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 border border-amber-500/20 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all"
           >
-            <Gift className="w-3.5 h-3.5" /> Gift Credits
+            <Gift className="w-4 h-4 shrink-0" />
+            Gift Credits
           </button>
-          <Link to="/pricing" className="flex items-center gap-2 text-xs font-black text-primary bg-primary/10 px-4 py-2 rounded-xl border border-primary/20">
-            <Zap className="w-3.5 h-3.5" /> Buy Credits
+          <Link 
+            to="/pricing"
+            className="w-full flex items-center gap-3 px-4 py-3 bg-primary/15 hover:bg-primary/25 text-primary border border-primary/25 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all text-center block"
+          >
+            <Zap className="w-4 h-4 shrink-0" />
+            Upgrade Plan
           </Link>
         </div>
       </div>
 
-      {/* Quick Overview Bento Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="md:col-span-2 bg-primary text-primary-foreground p-8 rounded-[2.5rem] shadow-xl shadow-primary/20 relative overflow-hidden group"
-        >
-          <div className="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-all duration-700" />
-          <div className="relative z-10 space-y-6">
-            <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center">
-              <Target className="w-6 h-6" />
+      {/* Main Console Viewport */}
+      <div className="flex-grow min-w-0 space-y-8">
+        <AnimatePresence mode="wait">
+          {loading ? (
+            <div className="h-[50vh] flex flex-col items-center justify-center space-y-4">
+              <Loader2 className="w-10 h-10 animate-spin text-primary" />
+              <p className="font-bold text-muted-foreground">Synchronizing workspace details...</p>
             </div>
-            <div>
-              <h3 className="text-2xl font-black leading-tight">Ready for your next goal?</h3>
-              <p className="text-sm opacity-80 font-medium mt-2">Our AI is ready to analyze your next target.</p>
-            </div>
-            <Link to="/" className="inline-block px-8 py-3 bg-white text-primary rounded-xl font-black text-sm hover:scale-105 transition-all shadow-lg">
-              Explore Tools
-            </Link>
-          </div>
-        </motion.div>
-
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="backdrop-blur-md bg-card/40 border border-white/10 p-8 rounded-[2.5rem] shadow-xl flex flex-col justify-between"
-        >
-          <div className="p-4 bg-amber-500/10 rounded-2xl w-fit">
-            <Coins className="w-8 h-8 text-amber-500" />
-          </div>
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-70">Credits Available</p>
-            <h3 className="text-4xl font-black">{credits}</h3>
-          </div>
-        </motion.div>
-
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="backdrop-blur-md bg-card/40 border border-white/10 p-8 rounded-[2.5rem] shadow-xl flex flex-col justify-between"
-        >
-          <div className="p-4 bg-emerald-500/10 rounded-2xl w-fit">
-            <BarChart3 className="w-8 h-8 text-emerald-500" />
-          </div>
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-70">Total Saved</p>
-            <h3 className="text-4xl font-black">{results.length}</h3>
-          </div>
-        </motion.div>
-
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="md:col-span-1 backdrop-blur-md bg-card/40 border border-white/10 p-6 rounded-[2.5rem] shadow-xl flex flex-col justify-between group overflow-hidden relative"
-        >
-          <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform">
-             <Calendar className="w-20 h-20" />
-          </div>
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-primary/10 rounded-xl">
-                <Calendar className="w-4 h-4 text-primary" />
-              </div>
-              <h3 className="text-sm font-black uppercase tracking-widest text-primary">Academic Pulse</h3>
-            </div>
-            {pulse.length > 0 && <div className="w-2 h-2 bg-emerald-500 rounded-full animate-ping" />}
-          </div>
-          
-          <div className="space-y-3 mb-4">
-            {pulse.length > 0 ? (
-              pulse.map((task, i) => (
-                <div key={i} className="bg-white/5 p-3 rounded-2xl border border-white/5 flex items-center justify-between group/task">
-                   <div className="min-w-0">
-                      <p className="text-[10px] font-black text-foreground truncate uppercase">{task.subject}</p>
-                      <p className="text-[9px] text-muted-foreground truncate font-medium">{task.topic}</p>
-                   </div>
-                   <div className={`text-[8px] font-black px-1.5 py-0.5 rounded uppercase ${
-                      task.priority === 'High' ? 'bg-rose-500/10 text-rose-500' :
-                      task.priority === 'Medium' ? 'bg-amber-500/10 text-amber-500' :
-                      'bg-emerald-500/10 text-emerald-500'
-                   }`}>
-                      {task.priority}
-                   </div>
+          ) : activeTab === 'overview' ? (
+            <motion.div
+              key="overview"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              className="space-y-8"
+            >
+              {/* Header Title Banner */}
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-border/40 pb-6">
+                <div>
+                  <h1 className="text-3xl sm:text-4xl font-black tracking-tighter text-foreground italic">
+                    Workspace <span className="text-primary">Overview</span>
+                  </h1>
+                  <p className="text-muted-foreground font-medium text-sm">Monitor credits, verify activity logs, and launch active modules.</p>
                 </div>
-              ))
-            ) : (
-              <div className="py-4 text-center space-y-2 opacity-30">
-                <Sparkles className="w-6 h-6 mx-auto" />
-                <p className="text-[9px] font-black uppercase">No tasks today</p>
-              </div>
-            )}
-          </div>
-
-          <Link to="/tools/study-planner" className="w-full py-2.5 bg-primary/10 text-primary rounded-xl text-[10px] font-black hover:bg-primary hover:text-white transition-all border border-primary/20 text-center block uppercase tracking-widest">
-            Planner
-          </Link>
-        </motion.div>
-      </div>
-
-      {/* Main Tabs Area */}
-      <div className="space-y-8">
-        <div className="flex overflow-x-auto whitespace-nowrap gap-6 border-b border-white/10 pb-px -mb-px scroll-hide">
-          <button 
-            onClick={() => setActiveTab('results')}
-            className={`pb-4 px-2 text-sm font-black transition-all relative shrink-0 ${activeTab === 'results' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-          >
-            Saved Analyses
-            {activeTab === 'results' && <motion.div layoutId="tab" className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-full" />}
-          </button>
-          <button 
-            onClick={() => setActiveTab('credits')}
-            className={`pb-4 px-2 text-sm font-black transition-all relative shrink-0 ${activeTab === 'credits' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-          >
-            Credit History
-            {activeTab === 'credits' && <motion.div layoutId="tab" className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-full" />}
-          </button>
-          <button 
-            onClick={() => setActiveTab('network')}
-            className={`pb-4 px-2 text-sm font-black transition-all relative shrink-0 ${activeTab === 'network' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-          >
-            My Network
-            {activeTab === 'network' && <motion.div layoutId="tab" className="absolute bottom-0 left-0 right-0 h-1 bg-primary rounded-full" />}
-          </button>
-        </div>
-
-        {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 space-y-4">
-            <Loader2 className="w-10 h-10 animate-spin text-primary" />
-            <p className="font-bold text-muted-foreground">Loading your data...</p>
-          </div>
-        ) : activeTab === 'results' ? (
-          results.length === 0 ? (
-            <div className="p-20 text-center border-2 border-dashed border-white/10 rounded-[3rem] space-y-4">
-              <div className="p-5 bg-muted rounded-full inline-block text-muted-foreground">
-                <BarChart3 className="w-12 h-12" />
-              </div>
-              <p className="text-sm font-bold text-muted-foreground">No analyses saved yet.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <AnimatePresence>
-                {results.map((res, idx) => (
-                  <motion.div 
-                    key={res._id || idx}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.05 }}
-                    className="backdrop-blur-md bg-card/40 border border-white/10 p-5 md:p-6 rounded-[1.8rem] md:rounded-[2rem] hover:bg-card/60 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 group cursor-pointer"
-                    onClick={() => setSelectedResult(res)}
-                  >
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-start">
-                        <div className={`p-2.5 rounded-xl ${
-                          res.toolName.includes('Rank') ? 'bg-amber-500/10 text-amber-500' : 
-                          res.toolName.includes('Percentile') ? 'bg-indigo-500/10 text-indigo-500' :
-                          'bg-primary/10 text-primary'
-                        }`}>
-                          {res.toolName.includes('Rank') ? <Target className="w-5 h-5" /> : 
-                           res.toolName.includes('Percentile') ? <TrendingUp className="w-5 h-5" /> : 
-                           <Sparkles className="w-5 h-5" />}
-                        </div>
-                        <span className="text-[10px] font-black text-muted-foreground bg-white/5 px-2 py-1 rounded-lg uppercase">
-                          {new Date(res.date).toLocaleDateString()}
-                        </span>
-                      </div>
-                      <div>
-                        <h4 className="font-black text-lg">{res.toolName}</h4>
-                        <p className="text-xs text-muted-foreground font-medium">{res.data.exam || res.data.jobTitle || 'AI Analysis'}</p>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2 pt-2">
-                        <div className="bg-white/5 p-3 rounded-2xl">
-                          <p className="text-[9px] font-black uppercase text-muted-foreground opacity-60">Result</p>
-                          <p className="text-xs font-black text-primary truncate">
-                            {res.toolName === 'Rank Predictor' ? res.data.predictedRank : 
-                             res.toolName === 'Marks vs Percentile' ? `${res.data.percentile}%` : 
-                             res.toolName.includes('Resume') ? 'Generated' : 'Analyzed'}
-                          </p>
-                        </div>
-                        <div className="bg-white/5 p-3 rounded-2xl">
-                          <p className="text-[9px] font-black uppercase text-muted-foreground opacity-60">Detail</p>
-                          <p className="text-xs font-black truncate">
-                            {res.data.performanceLevel || res.data.admissionChances || res.data.marks || 'View More'}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex gap-2 pt-2">
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); setSelectedResult(res); }}
-                          className="flex-grow flex items-center justify-center gap-2 py-2.5 bg-primary/10 text-primary rounded-xl text-xs font-black hover:bg-primary hover:text-primary-foreground transition-all"
-                        >
-                          <ExternalLink className="w-3.5 h-3.5" /> View Analysis
-                        </button>
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); deleteResult(res._id); }}
-                          className="p-2.5 bg-white/5 text-muted-foreground rounded-xl hover:bg-rose-500/20 hover:text-rose-500 transition-all"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
-          )
-        ) : activeTab === 'credits' ? (
-          creditHistory.length === 0 ? (
-            <div className="p-20 text-center border-2 border-dashed border-white/10 rounded-[3rem] space-y-4">
-              <div className="p-5 bg-muted rounded-full inline-block text-muted-foreground">
-                <Coins className="w-12 h-12" />
-              </div>
-              <p className="text-sm font-bold text-muted-foreground">No credit transactions yet.</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {/* Desktop Table View */}
-              <div className="hidden md:block bg-card/40 backdrop-blur-md border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl">
-                <table className="w-full text-left">
-                  <thead>
-                    <tr className="bg-white/5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                      <th className="px-8 py-5">Transaction</th>
-                      <th className="px-8 py-5">Type</th>
-                      <th className="px-8 py-5 text-center">Amount</th>
-                      <th className="px-8 py-5 text-right">Date</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/5">
-                    {creditHistory.map((item, i) => (
-                      <tr key={i} className="hover:bg-white/5 transition-all">
-                        <td className="px-8 py-5 font-bold text-sm">{item.description}</td>
-                        <td className="px-8 py-5">
-                          <span className={`text-[9px] font-black uppercase px-2.5 py-1 rounded-lg ${
-                            item.type === 'added' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'
-                          }`}>
-                            {item.type}
-                          </span>
-                        </td>
-                        <td className="px-8 py-5 text-center font-black text-sm">
-                          <span className={item.type === 'added' ? 'text-emerald-500' : 'text-rose-500'}>
-                            {item.type === 'added' ? '+' : '-'}{item.amount}
-                          </span>
-                        </td>
-                        <td className="px-8 py-5 text-right text-xs text-muted-foreground font-medium">
-                          {new Date(item.date).toLocaleDateString()}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <div className="text-[10px] font-black uppercase tracking-widest bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 px-3.5 py-1.5 rounded-xl">
+                  ● Cloud Online
+                </div>
               </div>
 
-              {/* Mobile List View */}
-              <div className="block md:hidden space-y-3">
-                {creditHistory.map((item, i) => (
-                  <div key={i} className="bg-card/40 backdrop-blur-md border border-white/10 p-5 rounded-2xl flex flex-col gap-3 hover:bg-white/60 transition-all duration-300">
-                    <div className="flex justify-between items-start gap-3">
-                      <span className="font-bold text-sm leading-snug">{item.description}</span>
-                      <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded-md shrink-0 ${
-                        item.type === 'added' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'
-                      }`}>
-                        {item.type}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center pt-2 border-t border-white/5">
-                      <span className="text-[10px] text-muted-foreground font-medium">
-                        {new Date(item.date).toLocaleDateString()}
-                      </span>
-                      <span className={`font-black text-sm ${item.type === 'added' ? 'text-emerald-500' : 'text-rose-500'}`}>
-                        {item.type === 'added' ? '+' : '-'}{item.amount}
-                      </span>
+              {/* Grid of Key SaaS Metrics */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                {/* Circular Progress Credits Ring */}
+                <div className="bg-card border border-border/40 p-6 rounded-[2rem] shadow-sm flex items-center justify-between group overflow-hidden relative">
+                  <div className="absolute top-0 right-0 w-28 h-28 bg-primary/5 rounded-bl-full blur-xl" />
+                  <div className="space-y-4 relative z-10">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Limit balance</p>
+                    <div>
+                      <h3 className="text-3xl font-black text-foreground">{credits}</h3>
+                      <p className="text-[10px] text-primary font-bold uppercase tracking-wider mt-1">AI Tokens Available</p>
                     </div>
                   </div>
-                ))}
+                  
+                  {/* SVG progress ring */}
+                  <div className="relative flex items-center justify-center shrink-0">
+                    <svg className="w-20 h-20 transform -rotate-90">
+                      <circle 
+                        className="text-foreground/[0.04]" 
+                        strokeWidth={stroke} 
+                        stroke="currentColor" 
+                        fill="transparent" 
+                        r={normalizedRadius} 
+                        cx="40" 
+                        cy="40" 
+                      />
+                      <circle 
+                        className="text-primary" 
+                        strokeWidth={stroke} 
+                        strokeDasharray={circumference} 
+                        strokeDashoffset={strokeDashoffset} 
+                        strokeLinecap="round" 
+                        stroke="currentColor" 
+                        fill="transparent" 
+                        r={normalizedRadius} 
+                        cx="40" 
+                        cy="40" 
+                      />
+                    </svg>
+                    <span className="absolute text-[10px] font-black text-foreground">{Math.round((Math.min(credits, limit) / limit) * 100)}%</span>
+                  </div>
+                </div>
+
+                {/* Total Saved Analyses Card */}
+                <div className="bg-card border border-border/40 p-6 rounded-[2rem] shadow-sm flex flex-col justify-between group relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-28 h-28 bg-emerald-500/5 rounded-bl-full blur-xl" />
+                  <div className="p-3 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded-xl w-fit">
+                    <BarChart3 className="w-5 h-5" />
+                  </div>
+                  <div className="mt-4">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Stored Repositories</p>
+                    <h3 className="text-3xl font-black text-foreground mt-1">{results.length}</h3>
+                  </div>
+                </div>
+
+                {/* Academic Pulse Planner widget */}
+                <div className="bg-card border border-border/40 p-6 rounded-[2rem] shadow-sm flex flex-col justify-between group relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-28 h-28 bg-indigo-500/5 rounded-bl-full blur-xl" />
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="flex items-center gap-2">
+                      <div className="p-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-500 rounded-xl">
+                        <Calendar className="w-4 h-4" />
+                      </div>
+                      <span className="text-[9px] font-black uppercase tracking-widest text-indigo-400">Roadmap Task</span>
+                    </div>
+                    {pulse.length > 0 && <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping" />}
+                  </div>
+
+                  <div className="space-y-2 my-2 min-h-[60px] max-h-[85px] overflow-y-auto scroll-hide">
+                    {pulse.length > 0 ? (
+                      pulse.slice(0, 2).map((task, i) => (
+                        <div key={i} className="bg-foreground/[0.04] p-2 rounded-xl border border-border/30 flex items-center justify-between text-[10px]">
+                          <span className="font-bold text-foreground truncate max-w-[100px]">{task.subject}</span>
+                          <span className="text-muted-foreground truncate text-[8px] font-medium max-w-[80px]">{task.topic}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-4 text-muted-foreground opacity-30 space-y-1">
+                        <Sparkles className="w-5 h-5 mx-auto" />
+                        <p className="text-[8px] font-black uppercase">No goals assigned</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <Link to="/tools/study-planner" className="w-full py-2 bg-foreground/[0.04] border border-border/40 hover:bg-primary hover:text-primary-foreground rounded-xl text-[9px] font-black uppercase tracking-widest transition-all text-center block">
+                    Launch Scheduler
+                  </Link>
+                </div>
               </div>
-            </div>
-          )
-        ) : (
-          <ReferralNetwork />
-        )}
+
+              {/* Quick Launcher Suite Grid */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <h3 className="text-lg font-black text-foreground uppercase italic">Launcher Suite</h3>
+                  <div className="h-px flex-grow bg-gradient-to-r from-border/40 to-transparent" />
+                </div>
+                
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {[
+                    { title: 'AI Rank Predictor', path: '/tools/rank-predictor', color: 'border-primary/20 hover:border-primary/50', icon: Target },
+                    { title: 'Resume Builder', path: '/tools/resume-builder', color: 'border-indigo-500/20 hover:border-indigo-500/50', icon: Briefcase },
+                    { title: 'Study Planner', path: '/tools/study-planner', color: 'border-emerald-500/20 hover:border-emerald-500/50', icon: Calendar },
+                    { title: 'Marks vs Percentile', path: '/tools/marks-vs-percentile', color: 'border-purple-500/20 hover:border-purple-500/50', icon: TrendingUp },
+                    { title: 'PDF Editor', path: '/tools/pdf/merge', color: 'border-border/40 hover:border-primary/45', icon: FileText },
+                    { title: 'Grade Calculator', path: '/tools/cgpa-calculator', color: 'border-border/40 hover:border-primary/45', icon: GraduationCap }
+                  ].map((mod, i) => (
+                    <Link 
+                      key={i} 
+                      to={mod.path}
+                      className={`bg-card border ${mod.color} p-4 rounded-2xl flex items-center justify-between group hover:scale-[1.02] hover:bg-card transition-all shadow-sm`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-foreground/[0.04] rounded-xl group-hover:bg-primary/10 group-hover:text-primary transition-colors text-muted-foreground">
+                          <mod.icon className="w-4 h-4" />
+                        </div>
+                        <span className="text-xs font-bold text-foreground">{mod.title}</span>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              {/* Recent Activity Log Preview */}
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-black text-foreground uppercase italic">Activity Log</h3>
+                  <button onClick={() => setActiveTab('results')} className="text-[9px] font-black text-primary uppercase tracking-widest hover:underline">
+                    View Stored Reports
+                  </button>
+                </div>
+                
+                {results.length === 0 ? (
+                  <div className="p-12 text-center border border-dashed border-border/40 rounded-[2rem] text-muted-foreground italic text-xs bg-card">
+                    No active processes registered in this workspace yet.
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {results.slice(0, 3).map((item, idx) => (
+                      <div 
+                        key={idx}
+                        onClick={() => setSelectedResult(item)}
+                        className="bg-card hover:bg-foreground/[0.02] border border-border/40 hover:border-primary/20 p-4 rounded-2xl flex items-center justify-between transition-all cursor-pointer group shadow-sm"
+                      >
+                        <div className="flex items-center gap-4 min-w-0">
+                          <div className="p-2 bg-primary/10 text-primary rounded-xl shrink-0">
+                            {item.toolName.includes('Rank') ? <Target className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs font-black text-foreground truncate">{item.toolName}</h4>
+                            <p className="text-[9px] text-muted-foreground font-medium italic truncate">{item.data.exam || item.data.jobTitle || 'AI Session'}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <span className="text-[9px] text-muted-foreground font-medium">{new Date(item.date).toLocaleDateString()}</span>
+                          <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          ) : activeTab === 'results' ? (
+            <motion.div
+              key="results"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              className="space-y-8"
+            >
+              <div className="border-b border-border/40 pb-6">
+                <h2 className="text-2xl sm:text-3xl font-black text-foreground italic">Saved Analyses</h2>
+                <p className="text-muted-foreground font-medium text-sm">Review, delete, or inspect details of your saved predictive files.</p>
+              </div>
+
+              {results.length === 0 ? (
+                <div className="p-20 text-center border border-dashed border-border/40 bg-card rounded-[2.5rem] space-y-4">
+                  <div className="p-4 bg-muted rounded-full inline-block text-muted-foreground">
+                    <BarChart3 className="w-10 h-10" />
+                  </div>
+                  <p className="text-xs font-bold text-muted-foreground italic">No saved analysis records found.</p>
+                  <Link to="/" className="saas-button-primary !py-3 inline-block text-[10px] tracking-wider font-black">
+                    Run Analysis Now
+                  </Link>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {results.map((res, idx) => (
+                    <motion.div 
+                      key={res._id || idx}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className="bg-card border border-border/40 hover:border-primary/30 p-6 rounded-3xl hover:bg-card/50 transition-all duration-300 group cursor-pointer shadow-sm"
+                      onClick={() => setSelectedResult(res)}
+                    >
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-start">
+                          <div className={`p-2.5 rounded-xl ${res.toolName.includes('Rank') ? 'bg-amber-500/10 text-amber-500' : 'bg-primary/10 text-primary'}`}>
+                            {res.toolName.includes('Rank') ? <Target className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
+                          </div>
+                          <span className="text-[8px] font-black text-muted-foreground bg-foreground/[0.04] px-2.5 py-1 rounded-md uppercase">
+                            {new Date(res.date).toLocaleDateString()}
+                          </span>
+                        </div>
+                        
+                        <div>
+                          <h4 className="font-black text-base text-foreground">{res.toolName}</h4>
+                          <p className="text-[10px] text-muted-foreground font-medium italic mt-0.5">{res.data.exam || res.data.jobTitle || 'AI Session'}</p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 bg-foreground/[0.02] p-3 rounded-2xl border border-border/30">
+                          <div>
+                            <p className="text-[8px] font-black uppercase text-muted-foreground/60">Value</p>
+                            <p className="text-xs font-black text-primary truncate mt-0.5">
+                              {res.toolName === 'Rank Predictor' ? res.data.predictedRank : 
+                               res.toolName === 'Marks vs Percentile' ? `${res.data.percentile}%` : 'Generated'}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-[8px] font-black uppercase text-muted-foreground/60">Rating</p>
+                            <p className="text-xs font-black text-foreground truncate mt-0.5">
+                              {res.data.performanceLevel || res.data.admissionChances || res.data.marks || 'Complete'}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-2 pt-2">
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); setSelectedResult(res); }}
+                            className="flex-grow py-2.5 bg-primary/10 text-primary rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-primary-foreground transition-all"
+                          >
+                            Inspect Details
+                          </button>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); deleteResult(res._id); }}
+                            className="p-2.5 bg-foreground/[0.04] text-muted-foreground rounded-xl hover:bg-rose-500/25 hover:text-rose-500 transition-all border border-border/40"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          ) : activeTab === 'credits' ? (
+            <motion.div
+              key="credits"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              className="space-y-8"
+            >
+              <div className="border-b border-border/40 pb-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+                <div>
+                  <h2 className="text-2xl sm:text-3xl font-black text-foreground italic">Billing & Ledger</h2>
+                  <p className="text-muted-foreground font-medium text-sm">View transaction histories, deposits, and token usage reports.</p>
+                </div>
+                <Link to="/pricing" className="saas-button-primary !py-2.5 !px-6 text-[10px]">
+                  Add Credits <Zap className="w-3.5 h-3.5 inline ml-1 fill-current" />
+                </Link>
+              </div>
+
+              {creditHistory.length === 0 ? (
+                <div className="p-20 text-center border border-dashed border-border/40 bg-card rounded-[2.5rem] space-y-4">
+                  <div className="p-4 bg-muted rounded-full inline-block text-muted-foreground">
+                    <Coins className="w-10 h-10" />
+                  </div>
+                  <p className="text-xs font-bold text-muted-foreground italic">No transactions cataloged yet.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* Desktop view */}
+                  <div className="hidden md:block bg-card border border-border/40 rounded-[2rem] overflow-hidden shadow-sm">
+                    <table className="w-full text-left">
+                      <thead>
+                        <tr className="bg-foreground/[0.04] text-[9px] font-black uppercase tracking-widest text-muted-foreground">
+                          <th className="px-8 py-5">Transaction Details</th>
+                          <th className="px-8 py-5">Type</th>
+                          <th className="px-8 py-5 text-center">Value</th>
+                          <th className="px-8 py-5 text-right">Date</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/40">
+                        {creditHistory.map((item, i) => (
+                          <tr key={i} className="hover:bg-foreground/[0.02] transition-all text-xs font-medium">
+                            <td className="px-8 py-5 text-foreground font-bold">{item.description}</td>
+                            <td className="px-8 py-5">
+                              <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded ${item.type === 'added' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
+                                {item.type}
+                              </span>
+                            </td>
+                            <td className="px-8 py-5 text-center font-black">
+                              <span className={item.type === 'added' ? 'text-emerald-500' : 'text-rose-500'}>
+                                {item.type === 'added' ? '+' : '-'}{item.amount}
+                              </span>
+                            </td>
+                            <td className="px-8 py-5 text-right text-muted-foreground">{new Date(item.date).toLocaleDateString()}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Mobile view */}
+                  <div className="block md:hidden space-y-3">
+                    {creditHistory.map((item, i) => (
+                      <div key={i} className="bg-card border border-border/40 p-5 rounded-2xl flex flex-col gap-3">
+                        <div className="flex justify-between items-start gap-2 text-xs">
+                          <span className="font-bold text-foreground">{item.description}</span>
+                          <span className={`text-[7px] font-black uppercase px-2 py-0.5 rounded ${item.type === 'added' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
+                            {item.type}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center pt-2 border-t border-border/30 text-[10px]">
+                          <span className="text-muted-foreground">{new Date(item.date).toLocaleDateString()}</span>
+                          <span className={`font-black ${item.type === 'added' ? 'text-emerald-500' : 'text-rose-500'}`}>
+                            {item.type === 'added' ? '+' : '-'}{item.amount}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="network"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+            >
+              <ReferralNetwork />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* Gifting Modal */}
+      {/* Gifting Modal Overlay */}
       <AnimatePresence>
         {isGiftModalOpen && (
           <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
@@ -454,17 +630,17 @@ const Dashboard = () => {
               initial={{ opacity: 0 }} 
               animate={{ opacity: 1 }} 
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-background/90 backdrop-blur-md" 
+              className="absolute inset-0 bg-background/60 backdrop-blur-md" 
               onClick={closeGiftModal} 
             />
             <motion.div 
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative bg-card border border-white/10 w-full max-w-md rounded-[3rem] shadow-2xl p-10 overflow-hidden"
+              className="relative bg-card border border-border/40 w-full max-w-md rounded-[3rem] shadow-md p-10 overflow-hidden text-foreground"
             >
               <div className="absolute -right-10 -top-10 opacity-5">
-                 <Gift className="w-40 h-40" />
+                 <Gift className="w-40 h-40 text-primary" />
               </div>
 
               <div className="space-y-8 relative z-10">
@@ -472,8 +648,8 @@ const Dashboard = () => {
                   <div className="w-16 h-16 bg-amber-500/10 text-amber-500 rounded-3xl flex items-center justify-center mx-auto mb-4">
                      <Gift className="w-8 h-8" />
                   </div>
-                  <h3 className="text-2xl font-black uppercase tracking-tighter">Gift Credits</h3>
-                  <p className="text-xs text-muted-foreground font-medium">Spread the academic fuel to your friends.</p>
+                  <h3 className="text-2xl font-black uppercase tracking-tighter text-foreground">Gift Credits</h3>
+                  <p className="text-xs text-muted-foreground font-medium">Send tokens to other workspace users.</p>
                 </div>
 
                 <form onSubmit={handleGiftCredits} className="space-y-6">
@@ -486,7 +662,7 @@ const Dashboard = () => {
                          placeholder="friend@example.com"
                          value={giftData.email}
                          onChange={(e) => setGiftData({ ...giftData, email: e.target.value })}
-                         className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 pl-14 pr-6 focus:ring-4 focus:ring-amber-500/20 outline-none transition-all font-bold"
+                         className="w-full bg-foreground/[0.04] border border-border/30 rounded-2xl py-4 pl-14 pr-6 focus:ring-4 focus:ring-amber-500/20 outline-none transition-all font-bold text-foreground text-sm"
                        />
                     </div>
                   </div>
@@ -501,7 +677,7 @@ const Dashboard = () => {
                              setIsCustomAmount(false);
                              setGiftData({ ...giftData, amount: amt });
                            }}
-                           className={`py-3 rounded-xl text-sm font-black border transition-all ${(!isCustomAmount && giftData.amount === amt) ? 'bg-amber-500 text-amber-950 border-amber-500 shadow-lg shadow-amber-500/20' : 'bg-white/5 border-white/5 hover:bg-white/10 text-foreground'}`}
+                           className={`py-3 rounded-xl text-sm font-black border transition-all ${(!isCustomAmount && giftData.amount === amt) ? 'bg-amber-500 text-amber-950 border-amber-500 shadow-sm' : 'bg-foreground/[0.04] border-border/30 hover:bg-foreground/[0.08] text-foreground'}`}
                          >
                            {amt}
                          </button>
@@ -511,7 +687,7 @@ const Dashboard = () => {
                          onClick={() => {
                            setIsCustomAmount(true);
                          }}
-                         className={`py-3 rounded-xl text-sm font-black border transition-all ${isCustomAmount ? 'bg-amber-500 text-amber-950 border-amber-500 shadow-lg shadow-amber-500/20' : 'bg-white/5 border-white/5 hover:bg-white/10 text-foreground'}`}
+                         className={`py-3 rounded-xl text-sm font-black border transition-all ${isCustomAmount ? 'bg-amber-500 text-amber-950 border-amber-500 shadow-sm' : 'bg-foreground/[0.04] border-border/30 hover:bg-foreground/[0.08] text-foreground'}`}
                        >
                          Custom
                        </button>
@@ -535,10 +711,10 @@ const Dashboard = () => {
                             step="any" 
                             required
                             min="0.01"
-                            placeholder="Enter amount (e.g. 15.5)"
+                            placeholder="Enter amount"
                             value={customAmountVal}
                             onChange={(e) => setCustomAmountVal(e.target.value)}
-                            className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 pl-14 pr-6 focus:ring-4 focus:ring-amber-500/20 outline-none transition-all font-bold"
+                            className="w-full bg-foreground/[0.04] border border-border/30 rounded-2xl py-4 pl-14 pr-6 focus:ring-4 focus:ring-amber-500/20 outline-none transition-all font-bold text-foreground text-sm"
                           />
                         </div>
                       </motion.div>
@@ -558,21 +734,18 @@ const Dashboard = () => {
                       <span>Recipient Receives:</span>
                       <span className="text-amber-500 font-black">{netTransferred > 0 ? netTransferred.toFixed(2) : '0.00'} credits</span>
                     </div>
-                    <p className="text-[10px] text-muted-foreground/60 leading-relaxed text-center pt-1">
-                      Total deducted from your balance: <span className="font-black text-amber-500/80">{amountToGift.toFixed(2)} credits</span> (Current balance: {credits})
-                    </p>
                   </div>
 
                   <div className="flex gap-4">
                     <button 
                       type="button" onClick={closeGiftModal}
-                      className="flex-grow py-4 bg-muted text-muted-foreground rounded-2xl font-black uppercase tracking-widest text-xs"
+                      className="flex-grow py-4 bg-muted text-muted-foreground rounded-2xl font-black uppercase tracking-widest text-[10px]"
                     >
                       Cancel
                     </button>
                     <button 
                       type="submit" disabled={giftLoading || credits < amountToGift || amountToGift <= 0}
-                      className="flex-[2] py-4 bg-amber-500 text-amber-950 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-amber-500/20 hover:scale-105 active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                      className="flex-[2] py-4 bg-amber-500 text-amber-950 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-sm hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 transition-all flex items-center justify-center gap-2"
                     >
                       {giftLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Send className="w-4 h-4" /> Send Gift</>}
                     </button>
@@ -605,17 +778,17 @@ const AnalysisDetailModal = ({ isOpen, onClose, result }: { isOpen: boolean, onC
         initial={{ opacity: 0 }} 
         animate={{ opacity: 1 }} 
         exit={{ opacity: 0 }}
-        className="absolute inset-0 bg-background/90 backdrop-blur-md" 
+        className="absolute inset-0 bg-background/60 backdrop-blur-md" 
         onClick={onClose} 
       />
       
       <motion.div 
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="relative bg-card border border-border w-full max-w-4xl max-h-[85vh] rounded-[3rem] shadow-2xl overflow-hidden flex flex-col"
+        className="relative bg-card border border-border/40 w-full max-w-4xl max-h-[85vh] rounded-[3rem] shadow-md overflow-hidden flex flex-col"
       >
         {/* Modal Header */}
-        <div className="p-8 border-b border-border flex items-center justify-between shrink-0">
+        <div className="p-8 border-b border-border/40 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-primary/10 text-primary rounded-2xl">
                 {result.toolName.includes('Rank') ? <Target className="w-6 h-6" /> : 
@@ -623,15 +796,15 @@ const AnalysisDetailModal = ({ isOpen, onClose, result }: { isOpen: boolean, onC
                  <Sparkles className="w-6 h-6" />}
             </div>
             <div>
-              <h3 className="text-2xl font-black">{result.toolName}</h3>
-              <p className="text-sm text-muted-foreground font-medium">Analysis from {new Date(result.date).toLocaleDateString()}</p>
+              <h3 className="text-2xl font-black text-foreground italic">{result.toolName}</h3>
+              <p className="text-sm text-muted-foreground font-medium">Session logs from {new Date(result.date).toLocaleDateString()}</p>
             </div>
           </div>
           <button 
             onClick={onClose}
             className="p-3 bg-muted hover:bg-rose-500/10 hover:text-rose-500 rounded-2xl transition-all"
           >
-            <X className="w-6 h-6" />
+            <X className="w-6 h-6 text-foreground" />
           </button>
         </div>
 
@@ -641,37 +814,37 @@ const AnalysisDetailModal = ({ isOpen, onClose, result }: { isOpen: boolean, onC
           {/* Quick Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
              {result.toolName === 'Rank Predictor' ? (
-               <>
-                 <StatItem label="Predicted Rank" value={data.predictedRank} icon={Target} color="text-primary" bg="bg-primary/10" />
-                 <StatItem label="Percentile" value={data.predictedPercentile} icon={TrendingUp} color="text-indigo-500" bg="bg-indigo-500/10" />
-                 <StatItem label="Admission" value={data.admissionChances} icon={Award} color="text-amber-500" bg="bg-amber-500/10" />
-                 <StatItem label="Exam" value={data.exam} icon={Info} color="text-emerald-500" bg="bg-emerald-500/10" />
-               </>
+                <>
+                  <StatItem label="Predicted Rank" value={data.predictedRank} icon={Target} color="text-primary" bg="bg-primary/10" />
+                  <StatItem label="Percentile" value={data.predictedPercentile} icon={TrendingUp} color="text-indigo-500" bg="bg-indigo-500/10" />
+                  <StatItem label="Admission" value={data.admissionChances} icon={Award} color="text-amber-500" bg="bg-amber-500/10" />
+                  <StatItem label="Exam" value={data.exam} icon={Info} color="text-emerald-500" bg="bg-emerald-500/10" />
+                </>
              ) : result.toolName === 'Marks vs Percentile' ? (
-               <>
-                 <StatItem label="Percentile" value={`${data.percentile}%`} icon={TrendingUp} color="text-primary" bg="bg-primary/10" />
-                 <StatItem label="Performance" value={data.performanceLevel} icon={Award} color="text-indigo-500" bg="bg-indigo-500/10" />
-                 <StatItem label="Better Than" value={data.betterThan} icon={BarChart3} color="text-amber-500" bg="bg-amber-500/10" />
-                 <StatItem label="Confidence" value={data.confidence} icon={ShieldCheck} color="text-emerald-500" bg="bg-emerald-500/10" />
-               </>
+                <>
+                  <StatItem label="Percentile" value={`${data.percentile}%`} icon={TrendingUp} color="text-primary" bg="bg-primary/10" />
+                  <StatItem label="Performance" value={data.performanceLevel} icon={Award} color="text-indigo-500" bg="bg-indigo-500/10" />
+                  <StatItem label="Better Than" value={data.betterThan} icon={BarChart3} color="text-amber-500" bg="bg-amber-500/10" />
+                  <StatItem label="Confidence" value={data.confidence} icon={ShieldCheck} color="text-emerald-500" bg="bg-emerald-500/10" />
+                </>
              ) : result.toolName === 'Resume AI Summary' ? (
-               <>
-                 <StatItem label="Job Title" value={data.jobTitle} icon={Briefcase} color="text-primary" bg="bg-primary/10" />
-                 <StatItem label="Tool" value="Resume AI" icon={ZapIcon} color="text-indigo-500" bg="bg-indigo-500/10" />
-                 <StatItem label="Status" value="Generated" icon={Award} color="text-amber-500" bg="bg-amber-500/10" />
-                 <StatItem label="Credits" value="1 Spent" icon={Coins} color="text-emerald-500" bg="bg-emerald-500/10" />
-               </>
+                <>
+                  <StatItem label="Job Title" value={data.jobTitle} icon={Briefcase} color="text-primary" bg="bg-primary/10" />
+                  <StatItem label="Tool" value="Resume AI" icon={ZapIcon} color="text-indigo-500" bg="bg-indigo-500/10" />
+                  <StatItem label="Status" value="Generated" icon={Award} color="text-amber-500" bg="bg-amber-500/10" />
+                  <StatItem label="Credits" value="1 Spent" icon={Coins} color="text-emerald-500" bg="bg-emerald-500/10" />
+                </>
              ) : result.toolName === 'Resume Bullet Enhancer' ? (
-               <>
-                 <StatItem label="Tool" value="Enhancer" icon={ZapIcon} color="text-primary" bg="bg-primary/10" />
-                 <StatItem label="Status" value="Enhanced" icon={Sparkles} color="text-indigo-500" bg="bg-indigo-500/10" />
-                 <StatItem label="Credits" value="1 Spent" icon={Coins} color="text-amber-500" bg="bg-amber-500/10" />
-                 <StatItem label="Type" value="Bullet" icon={Info} color="text-emerald-500" bg="bg-emerald-500/10" />
-               </>
+                <>
+                  <StatItem label="Tool" value="Enhancer" icon={ZapIcon} color="text-primary" bg="bg-primary/10" />
+                  <StatItem label="Status" value="Enhanced" icon={Sparkles} color="text-indigo-500" bg="bg-indigo-500/10" />
+                  <StatItem label="Credits" value="1 Spent" icon={Coins} color="text-amber-500" bg="bg-amber-500/10" />
+                  <StatItem label="Type" value="Bullet" icon={Info} color="text-emerald-500" bg="bg-emerald-500/10" />
+                </>
              ) : (
-                <div className="col-span-4 bg-muted/30 p-4 rounded-2xl border border-border">
+                <div className="col-span-4 bg-muted/30 p-4 rounded-2xl border border-border/30">
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Details</p>
-                    <pre className="text-xs font-medium whitespace-pre-wrap">{JSON.stringify(data, null, 2)}</pre>
+                    <pre className="text-xs font-medium text-foreground whitespace-pre-wrap">{JSON.stringify(data, null, 2)}</pre>
                 </div>
              )}
           </div>
@@ -691,13 +864,13 @@ const AnalysisDetailModal = ({ isOpen, onClose, result }: { isOpen: boolean, onC
 
           {result.toolName === 'Resume Bullet Enhancer' && (
             <div className="space-y-6">
-              <div className="p-6 bg-muted/30 rounded-3xl border border-border space-y-2">
+              <div className="p-6 bg-muted/30 rounded-3xl border border-border/30 space-y-2">
                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Original Bullet</p>
                 <p className="text-sm font-medium text-muted-foreground">{data.original}</p>
               </div>
               <div className="p-6 bg-primary/5 rounded-3xl border border-primary/10 space-y-2">
                 <div className="flex items-center gap-2 text-primary">
-                    <Sparkles className="w-4 h-4" />
+                    <Sparkles className="w-4 h-4 animate-pulse" />
                     <p className="text-[10px] font-black uppercase tracking-widest">Enhanced with AI</p>
                 </div>
                 <p className="text-sm font-black text-foreground leading-relaxed">{data.enhanced}</p>
@@ -730,7 +903,7 @@ const AnalysisDetailModal = ({ isOpen, onClose, result }: { isOpen: boolean, onC
               {data.suggestions && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
                     {data.suggestions.map((s: string, i: number) => (
-                        <div key={i} className="flex gap-3 p-3 bg-white/5 rounded-xl border border-border/50 text-[11px] font-bold">
+                        <div key={i} className="flex gap-3 p-3 bg-card rounded-xl border border-border/30 text-[11px] font-bold text-foreground">
                             <div className="w-5 h-5 rounded-lg bg-indigo-500 text-white flex items-center justify-center shrink-0">{i+1}</div>
                             {s}
                         </div>
@@ -740,7 +913,7 @@ const AnalysisDetailModal = ({ isOpen, onClose, result }: { isOpen: boolean, onC
             </div>
           )}
 
-          {/* Paper Difficulty Analysis (Rank Predictor specific) */}
+          {/* Paper Difficulty Analysis */}
           {data.paperDifficultyAnalysis && (
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-orange-500">
@@ -748,28 +921,28 @@ const AnalysisDetailModal = ({ isOpen, onClose, result }: { isOpen: boolean, onC
                 <h4 className="font-black uppercase tracking-wider text-sm">Historical Difficulty Analysis</h4>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                 <div className="bg-card border border-border p-4 rounded-2xl text-center">
+                 <div className="bg-card border border-border/40 p-4 rounded-2xl text-center">
                     <p className="text-[10px] font-bold text-muted-foreground uppercase">Level</p>
                     <p className="text-lg font-black text-orange-500">{data.paperDifficultyAnalysis.currentYear?.difficultyLevel || 'N/A'}</p>
                  </div>
-                 <div className="bg-card border border-border p-4 rounded-2xl text-center">
+                 <div className="bg-card border border-border/40 p-4 rounded-2xl text-center">
                     <p className="text-[10px] font-bold text-muted-foreground uppercase">Avg Marks</p>
-                    <p className="text-lg font-black">{data.paperDifficultyAnalysis.currentYear?.avgMarksScored || 'N/A'}</p>
+                    <p className="text-lg font-black text-foreground">{data.paperDifficultyAnalysis.currentYear?.avgMarksScored || 'N/A'}</p>
                  </div>
-                 <div className="bg-card border border-border p-4 rounded-2xl text-center">
+                 <div className="bg-card border border-border/40 p-4 rounded-2xl text-center">
                     <p className="text-[10px] font-bold text-muted-foreground uppercase">Normalized</p>
                     <p className="text-lg font-black text-emerald-500">{data.paperDifficultyAnalysis.yourPerformance?.normalizedScore || 'N/A'}</p>
                  </div>
-                 <div className="bg-card border border-border p-4 rounded-2xl text-center">
+                 <div className="bg-card border border-border/40 p-4 rounded-2xl text-center">
                     <p className="text-[10px] font-bold text-muted-foreground uppercase">Verdict</p>
-                    <p className="text-xs font-black">{data.paperDifficultyAnalysis.yourPerformance?.verdict || 'N/A'}</p>
+                    <p className="text-xs font-black text-foreground">{data.paperDifficultyAnalysis.yourPerformance?.verdict || 'N/A'}</p>
                  </div>
               </div>
               <p className="text-xs text-muted-foreground italic leading-relaxed px-2">{data.paperDifficultyAnalysis.paperInsight}</p>
             </div>
           )}
 
-          {/* Suggested Colleges (Rank Predictor specific) */}
+          {/* Suggested Colleges */}
           {data.collegeDetails && data.collegeDetails.length > 0 && (
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-primary">
@@ -778,9 +951,9 @@ const AnalysisDetailModal = ({ isOpen, onClose, result }: { isOpen: boolean, onC
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {data.collegeDetails.slice(0, 6).map((college: any, idx: number) => (
-                  <div key={idx} className="bg-card border border-border p-5 rounded-[2rem] space-y-3 shadow-sm">
+                  <div key={idx} className="bg-card border border-border/40 p-5 rounded-[2rem] space-y-3 shadow-sm">
                     <div className="flex justify-between items-start gap-2">
-                        <h5 className="font-black text-sm leading-tight">{college.name}</h5>
+                        <h5 className="font-black text-sm leading-tight text-foreground">{college.name}</h5>
                         {college.naacGrade && <span className="px-2 py-0.5 bg-primary/10 text-primary text-[9px] font-black rounded-lg">NAAC {college.naacGrade}</span>}
                     </div>
                     <div className="grid grid-cols-2 gap-y-2 gap-x-4">
@@ -808,20 +981,20 @@ const AnalysisDetailModal = ({ isOpen, onClose, result }: { isOpen: boolean, onC
         </div>
 
         {/* Modal Footer */}
-        <div className="p-8 border-t border-border flex items-center justify-between shrink-0 bg-muted/10">
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Saved on {new Date(result.date).toLocaleDateString()}</p>
+        <div className="p-8 border-t border-border/40 flex items-center justify-between shrink-0 bg-muted/10">
+          <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Logs recorded on {new Date(result.date).toLocaleDateString()}</p>
           <div className="flex gap-4">
             <button 
               onClick={onClose}
-              className="px-6 py-2.5 bg-muted text-muted-foreground rounded-xl text-xs font-black hover:bg-muted/80 transition-all"
+              className="px-6 py-2.5 bg-card hover:bg-foreground/[0.04] text-foreground rounded-xl text-xs font-black transition-all border border-border/40"
             >
               Close
             </button>
             <Link 
               to={result.toolName === 'Rank Predictor' ? '/tools/rank-predictor' : '/tools/marks-percentile'}
-              className="px-6 py-2.5 bg-primary text-primary-foreground rounded-xl text-xs font-black hover:scale-105 transition-all shadow-lg"
+              className="px-6 py-2.5 bg-primary text-primary-foreground rounded-xl text-xs font-black hover:scale-105 transition-all shadow-sm"
             >
-              Run New Analysis
+              Restart Module
             </Link>
           </div>
         </div>
@@ -831,10 +1004,10 @@ const AnalysisDetailModal = ({ isOpen, onClose, result }: { isOpen: boolean, onC
 };
 
 const StatItem = ({ label, value, icon: Icon, color, bg }: any) => (
-  <div className="bg-card border border-border p-4 rounded-2xl space-y-2 shadow-sm">
+  <div className="bg-card border border-border/40 p-4 rounded-2xl space-y-2 shadow-sm">
     <div className={`p-1.5 rounded-lg ${bg} ${color} w-fit`}><Icon className="w-4 h-4" /></div>
-    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{label}</p>
-    <p className={`text-lg font-black ${color} truncate`}>{value || 'N/A'}</p>
+    <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">{label}</p>
+    <p className={`text-base font-black ${color} truncate`}>{value || 'N/A'}</p>
   </div>
 );
 

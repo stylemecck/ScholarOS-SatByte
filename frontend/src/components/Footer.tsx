@@ -36,7 +36,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="relative mt-48 border-t border-white/5 bg-background overflow-hidden">
+    <footer className="relative mt-48 border-t border-border/40 bg-background overflow-hidden transition-colors duration-300">
       {/* Background Decor */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
       <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[160px] -z-10" />
@@ -47,12 +47,16 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="lg:col-span-2 space-y-10">
             <Link to="/" className="flex items-center gap-4 group w-fit">
-              <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center overflow-hidden border border-white/10 group-hover:border-primary/50 transition-all duration-500">
-                <img src="/logo.svg" alt="STP PRO" className="w-9 h-9 object-contain" />
+              <div className="w-14 h-14 bg-foreground/[0.04] rounded-2xl flex items-center justify-center border border-border/30 group-hover:border-primary/50 transition-all duration-500 relative overflow-hidden">
+                <svg className="w-7 h-7 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M2 17l10 5 10-5M2 12l10 5 10-5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <div className="absolute inset-0 bg-primary/10 blur-md -z-10" />
               </div>
               <div className="flex flex-col">
-                <span className="text-3xl font-black tracking-tighter text-white uppercase leading-none">STP <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 italic">PRO</span></span>
-                <span className="text-[9px] font-black uppercase tracking-[0.4em] text-muted-foreground opacity-50 mt-1">Student Operating System</span>
+                <span className="text-3xl font-black tracking-tighter text-foreground uppercase leading-none">SatByte<span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 italic">Toolkit</span></span>
+                <span className="text-[9px] font-black uppercase tracking-[0.4em] text-muted-foreground opacity-50 mt-1">SEO & PDF Suite</span>
               </div>
             </Link>
             <p className="text-muted-foreground text-lg max-w-sm leading-relaxed font-medium">
@@ -67,7 +71,7 @@ const Footer = () => {
                 <a 
                   key={i} 
                   href={social.href}
-                  className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-white transition-all border border-white/5 hover:border-transparent group"
+                  className="w-12 h-12 rounded-2xl bg-foreground/[0.04] flex items-center justify-center text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-all border border-border/30 hover:border-transparent group"
                 >
                   <social.icon size={18} className="group-hover:scale-110 transition-transform" />
                 </a>
@@ -78,7 +82,7 @@ const Footer = () => {
           {/* Links Sections */}
           {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title} className="space-y-10">
-              <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30">{title}</h4>
+              <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/30">{title}</h4>
               <ul className="space-y-5">
                 {links.map((link) => (
                   <li key={link.name}>
@@ -86,7 +90,7 @@ const Footer = () => {
                       to={link.path} 
                       className="text-base font-medium text-muted-foreground hover:text-primary transition-all flex items-center gap-4 group"
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-white/5 group-hover:bg-primary transition-all" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-foreground/[0.04] group-hover:bg-primary transition-all" />
                       {link.name}
                     </Link>
                   </li>
@@ -97,13 +101,13 @@ const Footer = () => {
         </div>
 
         {/* Divider */}
-        <div className="h-px w-full bg-gradient-to-r from-transparent via-white/5 to-transparent my-20" />
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-border/30 to-transparent my-20" />
 
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-10">
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40">
-            <span>© {currentYear} STP PRO SYSTEM</span>
-            <span className="hidden md:block w-1.5 h-1.5 bg-white/5 rounded-full" />
+            <span>© {currentYear} SatByte Toolkit</span>
+            <span className="hidden md:block w-1.5 h-1.5 bg-border/40 rounded-full" />
             <span>Propulsion by SatByte Technologies</span>
           </div>
           
@@ -115,7 +119,7 @@ const Footer = () => {
               href="https://satbyte.in" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-3 px-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-white hover:bg-primary/10 hover:border-primary/50 transition-all"
+              className="flex items-center gap-3 px-6 py-3 bg-foreground/[0.04] border border-border/30 rounded-2xl text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground hover:bg-primary/10 hover:border-primary/50 transition-all"
             >
               Developer <ExternalLink size={14} />
             </a>

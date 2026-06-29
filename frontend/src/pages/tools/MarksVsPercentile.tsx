@@ -88,7 +88,7 @@ const MarksVsPercentile = () => {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 text-primary rounded-full text-[10px] font-black uppercase tracking-[0.3em] border border-primary/20"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-foreground/[0.04] text-primary rounded-full text-[10px] font-black uppercase tracking-[0.3em] border border-primary/20"
           >
             <LineChart className="w-4 h-4" /> Exam Analytics Engine
           </motion.div>
@@ -96,7 +96,7 @@ const MarksVsPercentile = () => {
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-6xl md:text-8xl font-black tracking-tighter leading-none text-white"
+            className="text-6xl md:text-8xl font-black tracking-tighter leading-none text-foreground"
           >
             Convert Marks Into <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 italic pr-4">Percentile Instantly.</span>
@@ -123,13 +123,13 @@ const MarksVsPercentile = () => {
             <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest">
                 <Globe className="w-4 h-4 text-primary" /> All India Coverage
             </div>
-            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white/40">
+            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-foreground/40">
                 JEE • NEET • CUET • GATE
             </div>
           </motion.div>
           
           <div className="pt-6">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest bg-white/5 inline-block px-4 py-2 rounded-full border border-white/5">
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest bg-foreground/[0.04] inline-block px-4 py-2 rounded-full border border-border/30">
                 * Percentiles are estimated and may vary from official results.
             </p>
           </div>
@@ -208,8 +208,8 @@ const MarksVsPercentile = () => {
                                 onClick={() => setFormData({...formData, difficulty: d})}
                                 className={`py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border ${
                                 formData.difficulty === d 
-                                    ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20 scale-[1.02]' 
-                                    : 'bg-white/5 border-white/5 text-muted-foreground hover:bg-white/10'
+                                    ? 'bg-primary border-primary text-primary-foreground shadow-sm scale-[1.01]' 
+                                    : 'bg-foreground/[0.04] border-border/30 text-muted-foreground hover:bg-foreground/[0.08]'
                                 }`}
                             >
                                 {d}
@@ -227,7 +227,7 @@ const MarksVsPercentile = () => {
                 </button>
               </form>
 
-              <div className="p-6 bg-white/5 rounded-2xl border border-white/5 flex gap-4">
+              <div className="p-6 bg-foreground/[0.04] rounded-2xl border border-border/40 flex gap-4">
                 <Info className="w-5 h-5 text-primary shrink-0" />
                 <p className="text-[11px] text-muted-foreground font-medium leading-relaxed">
                     We use normalization algorithms that account for shift variations and difficulty weights observed in recent years.
@@ -242,13 +242,13 @@ const MarksVsPercentile = () => {
                   <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
                     <TrendingUp className="w-5 h-5" />
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-white/70">Trend Analysis</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-foreground/70">Trend Analysis</span>
               </div>
               <div className="saas-card !p-6 flex items-center gap-4">
                   <div className="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center text-purple-500">
                     <Target className="w-5 h-5" />
                   </div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-white/70">Rank Range</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-foreground/70">Rank Range</span>
               </div>
           </div>
         </motion.div>
@@ -259,13 +259,13 @@ const MarksVsPercentile = () => {
             {!result && !loading ? (
               <motion.div 
                 key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                className="h-full flex flex-col items-center justify-center p-16 saas-card border-dashed border-white/10 text-muted-foreground space-y-6 text-center"
+                className="h-full flex flex-col items-center justify-center p-16 saas-card border-dashed border-border/40 text-muted-foreground space-y-6 text-center"
               >
-                <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center border border-white/5 mb-4">
+                <div className="w-24 h-24 bg-foreground/[0.04] rounded-full flex items-center justify-center border border-border/30 mb-4">
                   <LineChart className="w-12 h-12 opacity-20" />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-black text-white">Insights Await.</h3>
+                  <h3 className="text-2xl font-black text-foreground">Insights Await.</h3>
                   <p className="text-sm font-medium">Your detailed percentile report and <br /> college roadmap will appear here.</p>
                 </div>
               </motion.div>
@@ -275,13 +275,13 @@ const MarksVsPercentile = () => {
                 className="h-full flex flex-col items-center justify-center p-16 saas-card space-y-10"
               >
                 <div className="relative">
-                  <div className="w-40 h-40 border-4 border-white/5 border-t-primary rounded-full animate-spin" />
+                  <div className="w-40 h-40 border-4 border-border/10 border-t-primary rounded-full animate-spin" />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <Zap className="w-12 h-12 text-primary animate-pulse" />
                   </div>
                 </div>
                 <div className="text-center space-y-4">
-                  <h3 className="text-3xl font-black text-white uppercase italic tracking-tighter">Normalizing Results...</h3>
+                  <h3 className="text-3xl font-black text-foreground uppercase italic tracking-tighter">Normalizing Results...</h3>
                   <p className="text-muted-foreground font-medium flex items-center justify-center gap-2">
                     <Loader2 className="w-4 h-4 animate-spin" /> Comparing against 100k+ historical data points
                   </p>
@@ -299,12 +299,12 @@ const MarksVsPercentile = () => {
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
                         <div className="space-y-2">
                             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Estimated Percentile</span>
-                            <h2 className="text-8xl font-black tracking-tighter text-white leading-none">{result?.percentile}<span className="text-4xl text-primary/50 font-medium ml-2">%</span></h2>
+                            <h2 className="text-8xl font-black tracking-tighter text-foreground leading-none">{result?.percentile}<span className="text-4xl text-primary/50 font-medium ml-2">%</span></h2>
                             <div className="flex items-center gap-3 pt-4">
                                 <div className="px-4 py-1.5 bg-primary/10 border border-primary/20 rounded-full text-[10px] font-black uppercase text-primary">
                                     {result?.performanceLevel}
                                 </div>
-                                <div className="px-4 py-1.5 bg-white/5 border border-white/5 rounded-full text-[10px] font-black uppercase text-muted-foreground">
+                                <div className="px-4 py-1.5 bg-foreground/[0.04] border border-border/40 rounded-full text-[10px] font-black uppercase text-muted-foreground">
                                     Range: {result?.range}
                                 </div>
                             </div>
@@ -312,7 +312,7 @@ const MarksVsPercentile = () => {
 
                         {/* 4. VISUAL ANALYTICS - Distribution Curve */}
                         <div className="flex-shrink-0 w-full md:w-auto">
-                            <div className="w-full md:w-64 h-40 bg-white/5 rounded-3xl p-6 border border-white/5 relative overflow-hidden group/chart">
+                            <div className="w-full md:w-64 h-40 bg-foreground/[0.04] rounded-3xl p-6 border border-border/40 relative overflow-hidden group/chart">
                                 <svg className="w-full h-full" viewBox="0 0 100 40" preserveAspectRatio="none">
                                     <defs>
                                         <linearGradient id="curveGradient" x1="0" y1="0" x2="0" y2="1">
@@ -332,13 +332,13 @@ const MarksVsPercentile = () => {
                                     <motion.circle 
                                         cx={result ? (parseFloat(result.percentile) || 50) : 50} 
                                         cy={result ? (40 - (Math.sin((parseFloat(result.percentile) || 50) / 100 * Math.PI) * 40)) : 20}
-                                        r="2" fill="white"
+                                        r="2" fill="currentColor"
                                         initial={{ scale: 0 }}
                                         animate={{ scale: 1 }}
                                         transition={{ delay: 0.5 }}
                                     />
                                 </svg>
-                                <div className="absolute bottom-3 left-0 w-full flex justify-between px-4 text-[8px] font-black uppercase tracking-widest text-white/20">
+                                <div className="absolute bottom-3 left-0 w-full flex justify-between px-4 text-[8px] font-black uppercase tracking-widest text-muted-foreground/30">
                                     <span>Lower</span>
                                     <span>Average</span>
                                     <span>Topper</span>
@@ -347,21 +347,21 @@ const MarksVsPercentile = () => {
                         </div>
                     </div>
 
-                    <div className="pt-10 border-t border-white/5 grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="pt-10 border-t border-border/30 grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="space-y-2">
                             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Standing</p>
-                            <p className="text-xl font-bold text-white tracking-tight">Better than {result?.betterThan}</p>
+                            <p className="text-xl font-bold text-foreground tracking-tight">Better than {result?.betterThan}</p>
                         </div>
                         <div className="space-y-2">
                             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Confidence</p>
                             <div className="flex items-center gap-2">
-                                <span className="text-xl font-bold text-white tracking-tight">{result?.confidence}</span>
+                                <span className="text-xl font-bold text-foreground tracking-tight">{result?.confidence}</span>
                                 <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
                             </div>
                         </div>
                         <div className="space-y-2">
                             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Expected Rank</p>
-                            <p className="text-xl font-bold text-white tracking-tight">~ Top {Math.round(100 - (parseFloat(result?.percentile || '0')))}%</p>
+                            <p className="text-xl font-bold text-foreground tracking-tight">~ Top {Math.round(100 - (parseFloat(result?.percentile || '0')))}%</p>
                         </div>
                     </div>
                   </div>
@@ -373,7 +373,7 @@ const MarksVsPercentile = () => {
                         <div className="p-8 space-y-6 relative z-10">
                             <div className="flex items-center gap-3 text-primary">
                                 <Lightbulb className="w-6 h-6" />
-                                <h4 className="text-xl font-black tracking-tight">AI Insights</h4>
+                                <h4 className="text-xl font-black tracking-tight text-foreground">AI Insights</h4>
                             </div>
                             <p className="text-sm font-medium text-muted-foreground leading-relaxed italic">
                                 "{result?.insights}"
@@ -386,7 +386,7 @@ const MarksVsPercentile = () => {
                         <div className="p-8 space-y-6">
                             <div className="flex items-center gap-3 text-indigo-400">
                                 <Award className="w-6 h-6" />
-                                <h4 className="text-xl font-black tracking-tight">Next Steps</h4>
+                                <h4 className="text-xl font-black tracking-tight text-foreground">Next Steps</h4>
                             </div>
                             <p className="text-sm font-medium text-muted-foreground leading-relaxed">
                                 Based on your {result?.percentile} percentile, explore the colleges where you have the highest probability of admission.
@@ -403,14 +403,14 @@ const MarksVsPercentile = () => {
 
                 {/* Roadmaps / Suggestions */}
                 <div className="saas-card !p-8 space-y-8">
-                    <h4 className="text-xs font-black uppercase tracking-[0.3em] text-white/30">Target Recommendations</h4>
+                    <h4 className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground/40">Target Recommendations</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {result?.suggestions?.map((s, i) => (
-                            <div key={i} className="flex gap-4 p-5 bg-white/5 rounded-2xl border border-white/5 hover:border-primary/20 transition-all group/item">
-                                <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-primary font-black shrink-0 group-hover/item:bg-primary group-hover/item:text-white transition-all">
+                            <div key={i} className="flex gap-4 p-5 bg-foreground/[0.04] rounded-2xl border border-border/40 hover:border-primary/20 transition-all group/item">
+                                <div className="w-10 h-10 rounded-xl bg-foreground/[0.04] flex items-center justify-center text-primary font-black shrink-0 group-hover/item:bg-primary group-hover/item:text-primary-foreground transition-all">
                                     {i + 1}
                                 </div>
-                                <p className="text-xs font-bold leading-relaxed text-muted-foreground group-hover/item:text-white transition-colors">{s}</p>
+                                <p className="text-xs font-bold leading-relaxed text-muted-foreground group-hover/item:text-foreground transition-colors">{s}</p>
                             </div>
                         ))}
                     </div>
@@ -419,12 +419,12 @@ const MarksVsPercentile = () => {
                 {/* Action Bar */}
                 <div className="flex flex-col md:flex-row items-center justify-between gap-6 px-4">
                     <div className="flex gap-4">
-                        <button className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/5 rounded-xl text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-white hover:bg-white/10 transition-all">
+                        <button className="flex items-center gap-2 px-6 py-3 bg-foreground/[0.04] border border-border/40 rounded-xl text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground hover:bg-foreground/[0.08] transition-all">
                             <Share2 className="w-4 h-4" /> Share Report
                         </button>
                         <button 
                             onClick={() => setResult(null)}
-                            className="flex items-center gap-2 px-6 py-3 bg-white/5 border border-white/5 rounded-xl text-[10px] font-black uppercase tracking-widest text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-all"
+                            className="flex items-center gap-2 px-6 py-3 bg-foreground/[0.04] border border-border/40 rounded-xl text-[10px] font-black uppercase tracking-widest text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-all"
                         >
                             Reset Analysis
                         </button>
@@ -438,16 +438,16 @@ const MarksVsPercentile = () => {
 
       {/* 7. TRUST & TRANSPARENCY SECTION */}
       <section className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="space-y-4 saas-card !p-8 border-white/5">
-            <h4 className="text-lg font-black text-white">How it Works</h4>
+        <div className="space-y-4 saas-card !p-8 border-border/40">
+            <h4 className="text-lg font-black text-foreground">How it Works</h4>
             <p className="text-sm text-muted-foreground leading-relaxed">Our engine compares your score against shift-wise historical data and calculates a weighted percentile based on exam-specific normalization rules.</p>
         </div>
-        <div className="space-y-4 saas-card !p-8 border-white/5">
-            <h4 className="text-lg font-black text-white">Data Integrity</h4>
+        <div className="space-y-4 saas-card !p-8 border-border/40">
+            <h4 className="text-lg font-black text-foreground">Data Integrity</h4>
             <p className="text-sm text-muted-foreground leading-relaxed">Predictions are based on millions of public data points from previous sessions (2019-2024) to ensure high-confidence results.</p>
         </div>
-        <div className="space-y-4 saas-card !p-8 border-white/5">
-            <h4 className="text-lg font-black text-white">Confidentiality</h4>
+        <div className="space-y-4 saas-card !p-8 border-border/40">
+            <h4 className="text-lg font-black text-foreground">Confidentiality</h4>
             <p className="text-sm text-muted-foreground leading-relaxed">Your data is processed locally to generate insights. We do not store your scores unless you explicitly save them to your profile.</p>
         </div>
       </section>
@@ -457,7 +457,7 @@ const MarksVsPercentile = () => {
         <div className="max-w-5xl mx-auto saas-card !p-12 md:!p-24 text-center space-y-12 relative overflow-hidden group shadow-2xl">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-purple-500/10 opacity-50" />
           <div className="space-y-6 relative z-10">
-            <h2 className="text-4xl md:text-7xl font-black text-white tracking-tighter leading-none">
+            <h2 className="text-4xl md:text-7xl font-black text-foreground tracking-tighter leading-none">
               Master your <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 italic">Academic Strategy.</span>
             </h2>

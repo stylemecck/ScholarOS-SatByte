@@ -73,7 +73,7 @@ const DOCS_CONTENT: Record<string, DocCategory> = {
           code: {
             lang: 'bash',
             title: 'Authentication Header',
-            snippet: `curl -H "x-api-key: stp_live_51P..." https://toolkit.satbyte.in/api/v1/user/profile`
+            snippet: `curl -H "x-api-key: sos_live_51P..." https://toolkit.satbyte.in/api/v1/user/profile`
           }
         }
       },
@@ -236,7 +236,7 @@ const Docs = () => {
                 <Code2 className="w-5 h-5 text-white" />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-black uppercase tracking-widest text-white leading-none">STP <span className="text-primary italic">DOCS</span></span>
+                <span className="text-sm font-black uppercase tracking-widest text-white leading-none">ScholarOS <span className="text-primary italic">DOCS</span></span>
                 <span className="text-[7px] font-black uppercase tracking-[0.4em] text-muted-foreground opacity-50">API v1.0.4</span>
               </div>
             </Link>

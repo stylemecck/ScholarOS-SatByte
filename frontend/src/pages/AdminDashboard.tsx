@@ -152,7 +152,7 @@ const AdminDashboard = () => {
             <ShieldCheck className="w-4 h-4" /> Admin Access Only
           </div>
           <h1 className="text-4xl font-black tracking-tight">Platform <span className="text-primary">Analytics</span></h1>
-          <p className="text-muted-foreground font-medium">Overview of Student Toolkit Pro performance and growth.</p>
+          <p className="text-muted-foreground font-medium">Overview of ScholarOS performance and growth.</p>
         </div>
         <Link to="/dashboard" className="flex items-center gap-2 text-sm font-bold bg-muted px-4 py-2 rounded-xl hover:bg-primary hover:text-primary-foreground transition-all">
           <LayoutDashboard className="w-4 h-4" /> Back to Dashboard

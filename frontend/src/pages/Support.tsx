@@ -51,7 +51,7 @@ const Support = () => {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: orderAmount.toString(),
         currency: currency,
-        name: "Student Toolkit Pro",
+        name: "ScholarOS",
         description: `Coffee Support: ${quantity}x ${label}`,
         order_id: order_id,
         handler: async (response: any) => {
@@ -253,7 +253,7 @@ const Support = () => {
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-primary pr-4">Innovation.</span>
                 </h2>
                 <p className="text-xl text-muted-foreground font-medium italic leading-relaxed">
-                  Student Toolkit Pro is built solo with love. Your support helps cover API infrastructure costs and keeps these tools free for everyone.
+                  ScholarOS is built solo with love. Your support helps cover API infrastructure costs and keeps these tools free for everyone.
                 </p>
               </div>
 

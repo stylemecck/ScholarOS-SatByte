@@ -106,9 +106,9 @@ const sampleData: ResumeData = {
   projects: [
     {
       id: '1',
-      name: 'Student Toolkit Pro',
-      link: 'github.com/satyam/toolkit',
-      description: 'A full-stack utility platform for students featuring AI rank predictors and resume builders.'
+      name: 'ScholarOS Workspace',
+      link: 'github.com/satyam/scholaros',
+      description: 'A full-stack SaaS academic operating system featuring AI rank predictors and resume builders.'
     }
   ],
   certifications: [

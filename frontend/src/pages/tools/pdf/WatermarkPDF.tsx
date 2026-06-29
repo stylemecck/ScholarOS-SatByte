@@ -3,7 +3,7 @@ import ToolBase from '../../../components/ToolBase';
 import { ShieldCheck } from 'lucide-react';
 
 const WatermarkPDF = () => {
-  const [text, setText] = useState('Student Toolkit Pro');
+  const [text, setText] = useState('ScholarOS');
   const [opacity, setOpacity] = useState(0.3);
 
   const options = (
