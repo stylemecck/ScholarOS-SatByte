@@ -7,6 +7,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="google-adsense-account" content="ca-pub-8982898590398979">
 
+  <!-- ⚡ Blocking theme script — prevents dark-mode flash on hard refresh -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (t === 'dark' || (!t && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <!-- Primary Meta Tags -->
   <title>ScholarOS - SEO, PDF Generation & AI Academic Tools</title>
   <meta name="title" content="ScholarOS - SEO, PDF Generation & AI Academic Tools" />

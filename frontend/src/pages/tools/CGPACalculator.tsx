@@ -1,3 +1,4 @@
+import { toast } from '../../lib/toast';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -68,9 +69,9 @@ const CGPACalculator = () => {
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      alert('Result saved successfully!');
+      toast.success('Result saved successfully!');
     } catch (err) {
-      alert('Failed to save result');
+      toast.error('Failed to save result.');
     } finally {
       setSaving(false);
     }

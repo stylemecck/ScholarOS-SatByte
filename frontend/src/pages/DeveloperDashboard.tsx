@@ -1,3 +1,4 @@
+import { toast } from '../lib/toast';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -48,7 +49,7 @@ const DeveloperDashboard = () => {
       setNewKeyName('');
       fetchKeys();
     } catch (err: any) {
-      alert(err.response?.data?.details || 'Failed to generate key');
+      toast.error(err.response?.data?.details || 'Failed to generate key');
     } finally {
       setIsGenerating(false);
     }
@@ -62,7 +63,7 @@ const DeveloperDashboard = () => {
       });
       fetchKeys();
     } catch (err) {
-      alert('Failed to revoke key');
+      toast.error('Failed to revoke key.');
     }
   };
 

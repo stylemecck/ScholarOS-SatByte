@@ -1,3 +1,4 @@
+import { toast } from '../lib/toast';
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
@@ -98,11 +99,11 @@ const AdminDashboard = () => {
       await axios.post(`${import.meta.env.VITE_API_URL}/api/settings`, { key: 'adsterraPopunder', value: settings.adsterraPopunder }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
-      alert('✅ All settings saved successfully!');
+      toast.success('All settings saved successfully!');
     } catch (err: any) {
       console.error("Failed to save settings:", err);
       const errorMessage = err.response?.data?.error || err.message || 'Failed to save settings.';
-      alert(`❌ Error: ${errorMessage}`);
+      toast.error(`Error: ${errorMessage}`);
     } finally {
       setSaving(false);
     }

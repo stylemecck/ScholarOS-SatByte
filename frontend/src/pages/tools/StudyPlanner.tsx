@@ -1,3 +1,4 @@
+import { toast } from '../../lib/toast';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -295,7 +296,7 @@ const StudyPlanner = () => {
               setShowAIModal(false);
             } catch (err) {
               console.error(err);
-              alert("Failed to generate AI plan. Please try again.");
+              toast.error("Failed to generate AI plan. Please try again.");
             } finally {
               setAILoading(false);
             }

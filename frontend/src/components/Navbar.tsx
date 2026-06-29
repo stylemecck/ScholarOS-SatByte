@@ -309,6 +309,10 @@ const Navbar = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 220 }}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={{ left: 0, right: 0.15 }}
+              onDragEnd={(_, info) => { if (info.offset.x > 80) setIsMenuOpen(false); }}
               className="fixed top-0 right-0 bottom-0 z-[90] md:hidden w-[82vw] max-w-[360px] bg-background border-l border-border/40 flex flex-col shadow-2xl pointer-events-auto"
             >
               {/* Drawer header */}

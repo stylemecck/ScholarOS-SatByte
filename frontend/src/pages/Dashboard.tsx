@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { toast } from '../lib/toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, Trash2, 
@@ -64,12 +65,12 @@ const Dashboard = () => {
     const amountToGiftVal = isCustomAmount ? parseFloat(customAmountVal) : giftData.amount;
     
     if (isNaN(amountToGiftVal) || amountToGiftVal <= 0) {
-      alert("Please enter a valid credit amount greater than 0.");
+      toast.error('Enter a valid credit amount greater than 0.');
       return;
     }
     
     if (credits < amountToGiftVal) {
-      alert("You do not have enough credits to complete this transfer.");
+      toast.error('Not enough credits to complete this transfer.');
       return;
     }
 
@@ -81,14 +82,14 @@ const Dashboard = () => {
       }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
-      alert("Credits gifted successfully!");
+      toast.success('Credits gifted successfully!');
       setIsGiftModalOpen(false);
       setGiftData({ email: '', amount: 5 });
       setIsCustomAmount(false);
       setCustomAmountVal('');
       fetchUserData();
     } catch (err: any) {
-      alert(err.response?.data?.error || "Failed to gift credits");
+      toast.error(err.response?.data?.error || 'Failed to gift credits');
     } finally {
       setGiftLoading(false);
     }
@@ -109,7 +110,7 @@ const Dashboard = () => {
         });
         fetchUserData();
     } catch (err) {
-        alert("Failed to delete result. Please try again.");
+        toast.error('Failed to delete result. Please try again.');
     }
   };
 

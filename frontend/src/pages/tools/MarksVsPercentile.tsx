@@ -1,3 +1,4 @@
+import { toast } from '../../lib/toast';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -71,7 +72,7 @@ const MarksVsPercentile = () => {
         localStorage.setItem('pending_marks_percentile_data', JSON.stringify(formData));
         window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
       } else {
-        alert("Failed to analyze performance. Please try again.");
+        toast.error("Failed to analyze performance. Please try again.");
       }
     } finally {
       setLoading(false);

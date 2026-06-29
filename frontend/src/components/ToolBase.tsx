@@ -1,3 +1,4 @@
+import { toast } from '../lib/toast';
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, X, FileText, Download, Loader2, Plus, Settings, ShieldCheck } from 'lucide-react';
@@ -108,15 +109,15 @@ const ToolBase: React.FC<ToolBaseProps> = ({
         reader.onload = () => {
           try {
             const errorObj = JSON.parse(reader.result as string);
-            alert(errorObj.error || errorObj.details || errorMessage);
+            toast.error(errorObj.error || errorObj.details || errorMessage);
           } catch (e) {
-            alert(errorMessage);
+            toast.error(errorMessage);
           }
         };
         reader.readAsText(err.response.data);
       } else {
         errorMessage = err.response?.data?.error || err.response?.data?.details || errorMessage;
-        alert(errorMessage);
+        toast.error(errorMessage);
       }
     } finally {
       setIsProcessing(false);

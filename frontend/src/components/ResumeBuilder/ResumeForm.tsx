@@ -1,3 +1,4 @@
+import { toast } from '../../lib/toast';
 import { useResume } from '../../context/ResumeContext';
 import { User, Mail, Phone, MapPin, Link, AlignLeft, GraduationCap, Briefcase, Award, Plus, Trash2, Zap, Sparkles, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,7 +13,7 @@ const ResumeForm = () => {
 
   const generateAIWeightSummary = async () => {
     if (!resumeData.personalInfo.title) {
-      alert("Please enter a Professional Title first!");
+      toast.error('Please enter a Professional Title first!');
       return;
     }
     setIsGeneratingSummary(true);
@@ -25,7 +26,7 @@ const ResumeForm = () => {
       setResumeData(prev => ({ ...prev, summary: response.data.summary }));
     } catch (err) {
       console.error(err);
-      alert("Failed to generate summary");
+      toast.error('Failed to generate summary.');
     } finally {
       setIsGeneratingSummary(false);
     }
@@ -39,7 +40,7 @@ const ResumeForm = () => {
       updateEntry(section, id, 'description', response.data.enhanced);
     } catch (err) {
       console.error(err);
-      alert("Failed to enhance bullet point");
+      toast.error('Failed to enhance bullet point.');
     } finally {
       setEnhancingBulletId(null);
     }

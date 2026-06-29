@@ -1,3 +1,4 @@
+import { toast } from '../../../lib/toast';
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -58,7 +59,7 @@ const CompressImage = () => {
       setResult(url);
     } catch (err) {
       console.error('Compression error:', err);
-      alert('Failed to compress image. Please try again.');
+      toast.error('Failed to compress image. Please try again.');
     } finally {
       setIsProcessing(false);
     }

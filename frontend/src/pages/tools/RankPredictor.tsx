@@ -7,6 +7,7 @@ import html2pdf from 'html2pdf.js';
 import ResultPDFTemplate from '../../components/ResultPDFTemplate';
 import { useAuth } from '../../context/useAuth';
 import SEO from '../../components/SEO';
+import { toast } from '../../lib/toast';
 
 interface CollegeDetail {
   name: string;
@@ -59,15 +60,33 @@ interface Prediction {
 
 const RankPredictor = () => {
   const { user, refreshUser } = useAuth();
-  const [formData, setFormData] = useState({
-    exam: 'CUET PG (MCA)',
-    marks: '',
-    totalMarks: '300',
-    category: 'General',
-    year: '2026'
+
+  // ── Restore last session from localStorage ──────────────────────────────
+  const [formData, setFormData] = useState<{
+    exam: string;
+    marks: string;
+    totalMarks: string;
+    category: string;
+    year: string;
+  }>(() => {
+    try {
+      const saved = localStorage.getItem('rp_formData');
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return { exam: 'CUET PG (MCA)', marks: '', totalMarks: '300', category: 'General', year: '2026' };
   });
+
+  const [prediction, setPrediction] = useState<Prediction | null>(() => {
+    try {
+      const saved = localStorage.getItem('rp_prediction');
+      return saved ? JSON.parse(saved) : null;
+    } catch {}
+    return null;
+  });
+
+  const [restoredSession] = useState(() => !!localStorage.getItem('rp_prediction'));
+
   const [examsConfig, setExamsConfig] = useState<{name: string, maxMarks: number, type: string}[]>([]);
-  const [prediction, setPrediction] = useState<Prediction | null>(null);
   const [loading, setLoading] = useState(false);
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
@@ -78,13 +97,13 @@ const RankPredictor = () => {
     
     const element = document.getElementById('pdf-report-content');
     if (!element) {
-      alert("Report template not found. Please try again.");
+      toast.error('Report template not found. Please try again.');
       return;
     }
 
     const token = localStorage.getItem('token');
     if (!token) {
-        alert("Please login to download premium reports.");
+        toast.error('Please login to download premium reports.');
         return;
     }
 
@@ -140,7 +159,7 @@ const RankPredictor = () => {
         }
       } else {
         const errorMsg = err.response?.data?.details || err.message || 'Unknown error occurred.';
-        alert(`PDF Generation Error: ${errorMsg}\n\nPlease ensure you have a stable connection and browser permissions are granted.`);
+        toast.error(`PDF Error: ${errorMsg}. Check your connection and browser permissions.`);
       }
     }
   };
@@ -259,12 +278,12 @@ const RankPredictor = () => {
     const totalMarksValue = parseFloat(formData.totalMarks);
     
     if (marksValue > totalMarksValue) {
-      alert(`Invalid Marks: Your marks cannot exceed the total marks (${totalMarksValue}).`);
+      toast.error(`Marks exceed total marks (${totalMarksValue})`);
       return;
     }
 
     if (marksValue < 0) {
-      alert("Invalid Marks: Marks cannot be negative.");
+      toast.error('Marks cannot be negative.');
       return;
     }
 
@@ -284,7 +303,13 @@ const RankPredictor = () => {
         headers: token ? { Authorization: `Bearer ${token}` } : {}
       });
       setPrediction(response.data);
+      // ── Persist to localStorage for session restore ──
+      try {
+        localStorage.setItem('rp_prediction', JSON.stringify(response.data));
+        localStorage.setItem('rp_formData', JSON.stringify(formData));
+      } catch {}
       if (token) await refreshUser();
+
       
       // @ts-ignore
       if (window.confetti) {
@@ -313,7 +338,7 @@ const RankPredictor = () => {
         window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
       } else {
         const errorMsg = err.response?.data?.details || err.message || 'Failed to predict rank. Please try again.';
-        alert(`Error: ${errorMsg}`);
+        toast.error(`Error: ${errorMsg}`);
       }
     } finally {
       setLoading(false);
@@ -606,6 +631,11 @@ const RankPredictor = () => {
                       <span className="text-[10px] font-black uppercase tracking-widest">Prediction Generated</span>
                     </div>
                     <h3 className="text-3xl font-black tracking-tighter">Your AI Insights</h3>
+                    {restoredSession && (
+                      <p className="text-[9px] text-amber-500 font-bold uppercase tracking-widest flex items-center gap-1 mt-0.5">
+                        ↩ Restored from last session
+                      </p>
+                    )}
                   </div>
                   <button 
                     onClick={handleDownload}

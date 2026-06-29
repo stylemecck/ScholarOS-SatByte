@@ -1,3 +1,4 @@
+import { toast } from '../lib/toast';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -107,7 +108,7 @@ const AccountSettings = () => {
 
   const copyReferralCode = () => {
     navigator.clipboard.writeText(user.referralCode || '');
-    alert('Referral code copied!');
+    toast.success('Referral code copied to clipboard!');
   };
 
   const avatarStyles = ["avataaars", "bottts", "initials", "lorelei", "micah", "pixel-art"];

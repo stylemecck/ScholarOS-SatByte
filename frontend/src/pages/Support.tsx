@@ -11,6 +11,7 @@ import {
 import axios from 'axios';
 import { useAuth } from '../context/useAuth';
 import { Link } from 'react-router-dom';
+import { toast } from '../lib/toast';
 
 const Support = () => {
   const { user } = useAuth();
@@ -35,7 +36,7 @@ const Support = () => {
     setPaymentLoading(label);
     const res = await loadRazorpay();
     if (!res) {
-      alert("Razorpay SDK failed to load. Are you online?");
+      toast.error('Razorpay SDK failed to load. Are you online?');
       setPaymentLoading(null);
       return;
     }
@@ -62,9 +63,9 @@ const Support = () => {
             }, {
               headers: user ? { Authorization: `Bearer ${localStorage.getItem('token')}` } : {}
             });
-            alert(`Thank you so much for the ${quantity} coffee(s)! ❤️`);
+            toast.success(`Thank you for the ${quantity} coffee(s)! ❤️ We really appreciate your support!`);
           } catch (err) {
-            alert("Verification failed, but we'll check it manually!");
+            toast.info('Payment received! We will verify it manually shortly.');
           }
         },
         prefill: { 
@@ -78,8 +79,8 @@ const Support = () => {
       paymentObject.open();
     } catch (err: any) {
       console.error("SUPPORT INITIATION ERROR:", err);
-      const errorMsg = err.response?.data?.details || err.response?.data?.error || "Failed to initiate support payment.";
-      alert(errorMsg);
+      const errorMsg = err.response?.data?.details || err.response?.data?.error || 'Failed to initiate support payment.';
+      toast.error(errorMsg);
     } finally {
       setPaymentLoading(null);
     }
