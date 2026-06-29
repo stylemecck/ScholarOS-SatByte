@@ -117,11 +117,12 @@ def generate_resume(data):
             pdf.cell(100, 7, safe_text(edu.get('degree')), align='L')
             pdf.set_font('helvetica', 'I', 10)
             pdf.set_text_color(100, 100, 100)
-            pdf.cell(0, 7, safe_text(edu.get('year')), align='R', new_x="LMARGIN", new_y="NEXT")
+            date_str = f"{edu.get('startDate', '')} - {edu.get('endDate', '')}" if edu.get('startDate') else edu.get('year', '')
+            pdf.cell(0, 7, safe_text(date_str), align='R', new_x="LMARGIN", new_y="NEXT")
             
             pdf.set_font('helvetica', 'B', 10)
             pdf.set_text_color(50, 50, 50)
-            pdf.cell(0, 6, safe_text(edu.get('school')), new_x="LMARGIN", new_y="NEXT")
+            pdf.cell(0, 6, safe_text(edu.get('institution', edu.get('school', ''))), new_x="LMARGIN", new_y="NEXT")
             pdf.ln(4)
 
     # 5. Skills

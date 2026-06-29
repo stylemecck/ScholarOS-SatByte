@@ -9,6 +9,7 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 // Type Definitions for Documentation
 interface ApiEndpoint {
@@ -222,6 +223,10 @@ const Docs = () => {
 
   return (
     <div className="min-h-screen bg-[#050505] text-[#E4E4E7] selection:bg-primary/30 selection:text-white flex overflow-hidden">
+      <SEO 
+        title="Developer API Reference & Documentation"
+        description="Comprehensive developer documentation for ScholarOS APIs. Build applications with our rank predictors, resume builders, and media suites."
+      />
       
       {/* 1. Sidebar Navigation */}
       <aside className={`

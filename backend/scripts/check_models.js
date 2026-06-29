@@ -10,11 +10,10 @@ async function listModels() {
     const genAI = new GoogleGenerativeAI(apiKey);
     
     const models = [
-        "gemini-1.5-flash",
-        "models/gemini-1.5-flash",
-        "gemini-1.5-pro",
-        "models/gemini-1.5-pro",
-        "gemini-pro"
+        "gemini-2.5-flash",
+        "gemini-flash-latest",
+        "gemini-pro-latest",
+        "gemini-3.5-flash"
     ];
 
     for (const m of models) {
@@ -22,7 +21,7 @@ async function listModels() {
             console.log(`Checking ${m}...`);
             const model = genAI.getGenerativeModel({ model: m });
             const res = await model.generateContent("Hi");
-            console.log(`SUCCESS: ${m} -> ${res.response.text().substring(0, 20)}...`);
+            console.log(`SUCCESS: ${m} -> ${res.response.text().substring(0, 40).trim()}...`);
         } catch (err) {
             console.log(`FAILED: ${m} - ${err.message}`);
         }

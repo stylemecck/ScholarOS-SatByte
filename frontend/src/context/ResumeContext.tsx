@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode, type Dispatch, type SetStateAction } from 'react';
+import axios from 'axios';
 
 export interface ResumeData {
   personalInfo: {
@@ -45,8 +46,13 @@ export interface ResumeData {
     description: string;
   }>;
   skills: string[];
-  template: 'Modern' | 'Classic' | 'Creative';
+  languages?: string[];
+  interests?: string[];
+  template: 'Modern' | 'Classic' | 'Creative' | 'Minimal' | 'Corporate' | 'Tech';
   themeColor: string;
+  fontFamily?: string;
+  spacing?: string;
+  fontSize?: 'Small' | 'Normal' | 'Large';
 }
 
 const initialData: ResumeData = {
@@ -67,8 +73,13 @@ const initialData: ResumeData = {
   certifications: [],
   achievements: [],
   skills: [],
+  languages: [],
+  interests: [],
   template: 'Modern',
-  themeColor: '#8b5cf6'
+  themeColor: '#8b5cf6',
+  fontFamily: 'Inter',
+  spacing: 'Normal',
+  fontSize: 'Normal'
 };
 
 const sampleData: ResumeData = {
@@ -126,8 +137,11 @@ const sampleData: ResumeData = {
     }
   ],
   skills: ['React', 'Node.js', 'MongoDB', 'TypeScript', 'Tailwind CSS', 'Framer Motion'],
+  languages: ['English', 'Hindi'],
+  interests: ['Coding', 'Gaming'],
   template: 'Modern',
-  themeColor: '#8b5cf6'
+  themeColor: '#8b5cf6',
+  fontSize: 'Normal'
 };
 
 interface ResumeContextType {
@@ -135,14 +149,34 @@ interface ResumeContextType {
   setResumeData: Dispatch<SetStateAction<ResumeData>>;
   fillSampleData: () => void;
   resetData: () => void;
+  aiFillResume: (title: string, skills: string) => Promise<void>;
 }
 
 const ResumeContext = createContext<ResumeContextType | undefined>(undefined);
 
 export const ResumeProvider = ({ children }: { children: ReactNode }) => {
   const [resumeData, setResumeData] = useState<ResumeData>(() => {
-    const saved = localStorage.getItem('resume-draft');
-    return saved ? JSON.parse(saved) : initialData;
+    try {
+      const saved = localStorage.getItem('resume-draft');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Deep-merge: ensure every field exists even if localStorage has old schema
+        return {
+          ...initialData,
+          ...parsed,
+          personalInfo: { ...initialData.personalInfo, ...(parsed.personalInfo || {}) },
+          education:      Array.isArray(parsed.education)      ? parsed.education      : [],
+          experience:     Array.isArray(parsed.experience)     ? parsed.experience     : [],
+          projects:       Array.isArray(parsed.projects)       ? parsed.projects       : [],
+          certifications: Array.isArray(parsed.certifications) ? parsed.certifications : [],
+          achievements:   Array.isArray(parsed.achievements)   ? parsed.achievements   : [],
+          skills:         Array.isArray(parsed.skills)         ? parsed.skills         : [],
+          languages:      Array.isArray(parsed.languages)      ? parsed.languages      : [],
+          interests:      Array.isArray(parsed.interests)      ? parsed.interests      : [],
+        };
+      }
+    } catch { /* corrupted — start fresh */ }
+    return initialData;
   });
 
   useEffect(() => {
@@ -152,8 +186,31 @@ export const ResumeProvider = ({ children }: { children: ReactNode }) => {
   const fillSampleData = () => setResumeData(sampleData);
   const resetData = () => setResumeData(initialData);
 
+  const aiFillResume = async (title: string, skills: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/resumes/ai-fill`,
+        { title, skills },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (res.data) {
+        setResumeData({
+          ...initialData,
+          ...res.data,
+          personalInfo: {
+            ...initialData.personalInfo,
+            ...(res.data.personalInfo || {})
+          }
+        });
+      }
+    } catch (err: any) {
+      throw new Error(err.response?.data?.error || 'AI Resume auto-fill failed');
+    }
+  };
+
   return (
-    <ResumeContext.Provider value={{ resumeData, setResumeData, fillSampleData, resetData }}>
+    <ResumeContext.Provider value={{ resumeData, setResumeData, fillSampleData, resetData, aiFillResume }}>
       {children}
     </ResumeContext.Provider>
   );

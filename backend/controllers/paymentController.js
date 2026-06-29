@@ -87,7 +87,7 @@ exports.verifyPayment = async (req, res) => {
               amount: orderCredits,
               description: `Purchased ${orderCredits} Credits via Razorpay`
             });
-            const planName = orderCredits === 12000 || orderCredits === 1000 ? 'Enterprise' : 'Pro';
+            const planName = orderCredits === 12000 || orderCredits === 1000 ? 'Ultimate' : 'Pro';
             user.plan = planName;
             await user.save();
             console.log(`Successfully credited ${orderCredits} credits and upgraded plan to ${planName} for user ${targetUserId}. New balance: ${user.credits}`);
@@ -98,25 +98,25 @@ exports.verifyPayment = async (req, res) => {
                 console.log(`Generating tax invoice PDF for order: ${razorpay_order_id}`);
                 const finalOrder = order || {
                   id: razorpay_order_id,
-                  amount: orderCredits === 12000 ? 499000 : orderCredits === 1200 ? 99000 : orderCredits === 1000 ? 49900 : 9900,
+                  amount: orderCredits === 12000 ? 799000 : orderCredits === 1200 ? 299000 : orderCredits === 1000 ? 79900 : 29900,
                   notes: { credits: orderCredits.toString() }
                 };
-
+ 
                 const pdfBuffer = await generateInvoicePDF(user, finalOrder, {
                   razorpay_order_id,
                   razorpay_payment_id,
                   razorpay_signature
                 });
                 
-                const planName = orderCredits === 12000 || orderCredits === 1000 ? 'Business' : 'Pro';
+                const invoicePlanName = orderCredits === 12000 || orderCredits === 1000 ? 'Ultimate' : 'Pro';
                 const duration = orderCredits === 12000 || orderCredits === 1200 ? 'Yearly' : 'Monthly';
                 const invoiceNo = `INV-${new Date().getFullYear()}${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${(razorpay_payment_id || 'TXT').slice(-6).toUpperCase()}`;
 
                 console.log(`Sending tax invoice email via Resend...`);
                 await sendInvoiceEmail(user.email, user.name, pdfBuffer, {
                   invoiceNo,
-                  planDetails: `${planName} ${duration} SaaS Plan`,
-                  amount: finalOrder.amount ? finalOrder.amount / 100 : 99,
+                  planDetails: `${invoicePlanName} ${duration} SaaS Plan`,
+                  amount: finalOrder.amount ? finalOrder.amount / 100 : (orderCredits === 12000 ? 7990 : orderCredits === 1200 ? 2990 : orderCredits === 1000 ? 799 : 299),
                   phoneNumber: user.phoneNumber || 'N/A'
                 });
               } catch (pdfErr) {

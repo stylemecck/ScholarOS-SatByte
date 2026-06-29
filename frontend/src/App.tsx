@@ -47,6 +47,10 @@ const PDFToText             = lazy(() => import('./pages/tools/PDFToText'));
 const ResumeBuilder         = lazy(() => import('./pages/tools/ResumeBuilder'));
 const StudyPlanner          = lazy(() => import('./pages/tools/StudyPlanner'));
 const MarksVsPercentile     = lazy(() => import('./pages/tools/MarksVsPercentile'));
+const AIStudyAssistant      = lazy(() => import('./pages/tools/AIStudyAssistant'));
+const InterviewPrep         = lazy(() => import('./pages/tools/InterviewPrep'));
+const CareerRoadmaps        = lazy(() => import('./pages/tools/CareerRoadmaps'));
+const AIPdfWorkspace        = lazy(() => import('./pages/tools/AIPdfWorkspace'));
 
 // PDF tools
 const MergePDF    = lazy(() => import('./pages/tools/pdf/MergePDF'));
@@ -159,6 +163,10 @@ function AppContent() {
               <Route path="/tools/study-planner"      element={<StudyPlanner />} />
               <Route path="/tools/marks-percentile"   element={<MarksVsPercentile />} />
               <Route path="/tools/marks-vs-percentile" element={<MarksVsPercentile />} />
+              <Route path="/tools/ai-study-assistant" element={<AIStudyAssistant />} />
+              <Route path="/tools/ai-interview-prep"  element={<InterviewPrep />} />
+              <Route path="/tools/career-roadmaps"   element={<CareerRoadmaps />} />
+              <Route path="/tools/ai-pdf-workspace"   element={<AIPdfWorkspace />} />
 
               {/* PDF Tools */}
               <Route path="/tools/pdf/merge"          element={<MergePDF />} />

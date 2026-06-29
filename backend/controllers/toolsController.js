@@ -1,4 +1,5 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const os = require('os');
 const pdfParse = require('pdf-parse');
 const User = require('../models/User');
 const { spawn } = require('child_process');
@@ -7,23 +8,13 @@ const fs = require('fs');
 const predictor = require('../utils/predictor');
 const percentileService = require('../services/percentileService');
 const { EXAM_CONFIG } = require('../utils/examConfig');
-
-const getAIModel = (modelName = "gemini-1.5-flash") => {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey.length < 10) {
-    throw new Error('Gemini API Key is missing or too short. Please check your backend/.env file.');
-  }
-  const genAI = new GoogleGenerativeAI(apiKey);
-  return genAI.getGenerativeModel({ model: modelName });
-};
+const { getAIModel } = require('../utils/aiHelper');
 
 const generateWithFallback = async (prompt) => {
   const modelsToTry = [
-    "gemini-3-flash-preview", 
-    "gemini-2.5-flash", 
     "gemini-2.0-flash",
-    "gemini-2.0-flash-lite", // Lite models often have higher quotas
-    "gemini-flash-lite-latest"
+    "gemini-1.5-flash",
+    "gemini-1.5-pro"
   ];
   let lastError = null;
 
@@ -422,8 +413,6 @@ exports.deleteResult = async (req, res) => {
     res.status(500).json({ error: 'Failed to delete result' });
   }
 };
-
-const os = require('os');
 
 exports.generatePdf = async (req, res) => {
   res.status(501).json({ error: 'Standard PDF generation not implemented. Use specific tool export instead.' });

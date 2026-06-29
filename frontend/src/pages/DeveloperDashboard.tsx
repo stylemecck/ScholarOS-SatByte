@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import SEO from '../components/SEO';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer
@@ -107,6 +108,10 @@ const DeveloperDashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-[#050505] text-white overflow-hidden">
+      <SEO 
+        title="Developer Console – API Management"
+        description="Manage your SatByte developer API keys, monitor system request logs, view latency analytics, and configure webhooks."
+      />
       {/* Sidebar */}
       <div className="w-64 border-r border-white/5 bg-[#080808] hidden lg:flex flex-col p-6 space-y-10">
         <div className="flex items-center gap-3 px-2">

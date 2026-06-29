@@ -4,7 +4,8 @@ import {
   Menu, X, Zap, Sparkles,
   BarChart3, ChevronDown, LayoutDashboard, Settings,
   FileText, Image as ImageIcon, GraduationCap, ArrowRight,
-  LogOut, CreditCard, Sun, Moon, ChevronRight
+  LogOut, CreditCard, Sun, Moon, ChevronRight,
+  BrainCircuit, Mic, Map, BookOpenCheck
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -62,27 +63,39 @@ const Navbar = () => {
 
   const toolCategories = [
     {
-      title: 'Academic & AI',
-      icon: <GraduationCap className="w-4 h-4" />,
-      color: 'text-blue-500',
-      bg: 'bg-blue-500/10',
+      title: 'AI Premium Suite',
+      icon: <BrainCircuit className="w-4 h-4" />,
+      color: 'text-amber-400',
+      bg: 'bg-amber-400/10',
       tools: [
-        { name: 'Rank Predictor', path: '/tools/rank-predictor', desc: 'AI-powered entrance insights', icon: Sparkles },
-        { name: 'Resume Builder', path: '/tools/resume-builder', desc: 'ATS-optimised profiles', icon: FileText },
-        { name: 'Study Planner', path: '/tools/study-planner', desc: 'Personalised study roadmaps', icon: BarChart3 },
+        { name: 'AI Study Assistant', path: '/tools/ai-study-assistant', desc: 'Smart chat for any subject', icon: BrainCircuit },
+        { name: 'AI Interview Prep',  path: '/tools/ai-interview-prep',  desc: 'Voice mock interview coach',  icon: Mic        },
+        { name: 'Career Roadmaps',    path: '/tools/career-roadmaps',    desc: 'Personalised career tracks',  icon: Map        },
+        { name: 'AI PDF Workspace',   path: '/tools/ai-pdf-workspace',   desc: 'Chat & summarise docs',       icon: BookOpenCheck },
+      ]
+    },
+    {
+      title: 'Academic & Resume',
+      icon: <GraduationCap className="w-4 h-4" />,
+      color: 'text-blue-400',
+      bg: 'bg-blue-400/10',
+      tools: [
+        { name: 'Rank Predictor',  path: '/tools/rank-predictor',  desc: 'AI-powered entrance insights', icon: Sparkles  },
+        { name: 'Resume Builder',  path: '/tools/resume-builder',  desc: 'ATS-optimised profiles',       icon: FileText  },
+        { name: 'Study Planner',   path: '/tools/study-planner',   desc: 'Personalised study roadmaps',  icon: BarChart3 },
       ]
     },
     {
       title: 'Media & PDF',
       icon: <ImageIcon className="w-4 h-4" />,
-      color: 'text-purple-500',
-      bg: 'bg-purple-500/10',
+      color: 'text-purple-400',
+      bg: 'bg-purple-400/10',
       tools: [
-        { name: 'Merge PDF', path: '/tools/pdf/merge', desc: 'Combine multiple files', icon: Zap },
-        { name: 'Compress Image', path: '/tools/image/compress', desc: 'Reduce size, keep quality', icon: ImageIcon },
-        { name: 'Rotate PDF', path: '/tools/pdf/rotate', desc: 'Fix orientation instantly', icon: ArrowRight },
+        { name: 'Merge PDF',       path: '/tools/pdf/merge',        desc: 'Combine multiple files',      icon: Zap       },
+        { name: 'Compress Image',  path: '/tools/image/compress',   desc: 'Reduce size, keep quality',   icon: ImageIcon },
+        { name: 'Rotate PDF',      path: '/tools/pdf/rotate',       desc: 'Fix orientation instantly',   icon: ArrowRight },
       ]
-    }
+    },
   ];
 
   return (
@@ -110,7 +123,7 @@ const Navbar = () => {
             <span className="text-[15px] sm:text-[17px] font-black tracking-tight">
               Scholar<span className="text-primary italic">OS</span>
             </span>
-            <span className="text-[6px] sm:text-[7px] font-bold uppercase tracking-[0.25em] text-muted-foreground/60 hidden sm:block">SEO & PDF Suite</span>
+            <span className="text-[6px] sm:text-[7px] font-bold uppercase tracking-[0.25em] text-muted-foreground/60 hidden sm:block">AI Student Suite</span>
           </div>
         </Link>
 
@@ -134,10 +147,10 @@ const Navbar = () => {
                   exit={{ opacity: 0, y: 12, scale: 0.97 }}
                   transition={{ duration: 0.18 }}
                   onMouseLeave={() => setIsToolsOpen(false)}
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[520px] bg-background/97 backdrop-blur-3xl border border-border/50 rounded-3xl p-5 shadow-sm overflow-hidden"
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[720px] bg-background/97 backdrop-blur-3xl border border-border/50 rounded-3xl p-5 shadow-sm overflow-hidden"
                 >
                   <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-primary via-indigo-500 to-purple-500" />
-                  <div className="grid grid-cols-2 gap-6">
+                  <div className="grid grid-cols-3 gap-6">
                     {toolCategories.map((cat) => (
                       <div key={cat.title} className="space-y-3">
                         <div className={`flex items-center gap-2 ${cat.color}`}>
@@ -375,11 +388,35 @@ const Navbar = () => {
                   </div>
                 </div>
 
+                {/* Premium AI tools */}
+                <div>
+                  <p className="text-[9px] font-black uppercase tracking-[0.35em] text-amber-400/70 px-1 mb-2">⚡ AI Premium Suite</p>
+                  <div className="grid grid-cols-1 gap-2">
+                    {[
+                      { name: 'AI Study Assistant', path: '/tools/ai-study-assistant', icon: BrainCircuit },
+                      { name: 'AI Interview Prep',  path: '/tools/ai-interview-prep',  icon: Mic         },
+                      { name: 'Career Roadmaps',    path: '/tools/career-roadmaps',    icon: Map          },
+                      { name: 'AI PDF Workspace',   path: '/tools/ai-pdf-workspace',   icon: BookOpenCheck},
+                    ].map((tool) => (
+                      <Link
+                        key={tool.path}
+                        to={tool.path}
+                        className="flex items-center gap-3 p-3 bg-amber-400/5 hover:bg-amber-400/10 border border-amber-400/10 hover:border-amber-400/20 rounded-xl transition-all group"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-amber-400/10 text-amber-400 flex items-center justify-center shrink-0">
+                          <tool.icon className="w-4 h-4" />
+                        </div>
+                        <p className="text-xs font-bold group-hover:text-amber-400 transition-colors">{tool.name}</p>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Quick tools */}
                 <div>
                   <p className="text-[9px] font-black uppercase tracking-[0.35em] text-muted-foreground/50 px-1 mb-2">Quick Tools</p>
                   <div className="grid grid-cols-1 gap-2">
-                    {toolCategories.flatMap(c => c.tools).slice(0, 4).map((tool) => (
+                    {toolCategories.flatMap(c => c.tools).slice(3, 7).map((tool) => (
                       <Link
                         key={tool.path}
                         to={tool.path}

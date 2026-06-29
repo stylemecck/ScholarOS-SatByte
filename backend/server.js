@@ -16,6 +16,11 @@ const referralRoutes = require('./routes/referral');
 const pdfRoutes = require('./routes/pdf');
 const imageRoutes = require('./routes/image');
 const settingRoutes = require('./routes/settingRoutes');
+const chatRoutes = require('./routes/chat');
+const resumeRoutes = require('./routes/resume');
+const interviewRoutes = require('./routes/interview');
+const aiPdfRoutes = require('./routes/aiPdf');
+const roadmapRoutes = require('./routes/roadmap');
 
 const app = express();
 
@@ -50,6 +55,11 @@ app.use('/api/referrals', referralRoutes);
 app.use('/api/pdf', pdfRoutes);
 app.use('/api/image', imageRoutes);
 app.use('/api/settings', settingRoutes);
+app.use('/api/chats', chatRoutes);
+app.use('/api/resumes', resumeRoutes);
+app.use('/api/interviews', interviewRoutes);
+app.use('/api/ai-pdf', aiPdfRoutes);
+app.use('/api/roadmaps', roadmapRoutes);
 app.use('/api/developer', require('./routes/api'));
 
 // Global Error Handler

@@ -156,5 +156,62 @@
   background: rgba(255, 255, 255, 0.2);
 }
 
+@media print {
+  nav, footer, .no-print {
+    display: none !important;
+  }
+}
 
-
+/* Theme Adaptiveness Overrides for Hardcoded Hex Classes in Light Mode */
+html:not(.dark) {
+  .bg-\[\#111\], 
+  .bg-\[\#0D0D0D\], 
+  .bg-\[\#0d0d0d\], 
+  .bg-\[\#0b0f19\], 
+  .bg-\[\#151515\], 
+  .bg-\[\#1A1A1A\], 
+  .bg-\[\#1a1a1a\], 
+  .bg-white\/5 {
+    background-color: rgb(var(--card)) !important;
+    border-color: rgba(var(--border), 0.08) !important;
+  }
+  
+  .bg-\[\#0D0D0D\]\/60, 
+  .bg-\[\#0d0d0d\]\/60 {
+    background-color: rgba(var(--card), 0.6) !important;
+    border-color: rgba(var(--border), 0.08) !important;
+  }
+  
+  .bg-\[\#0f172a\] {
+    background-color: rgb(var(--background)) !important;
+    border-color: rgba(var(--border), 0.08) !important;
+  }
+  
+  .bg-black\/20, 
+  .bg-black\/30, 
+  .bg-black\/40 {
+    background-color: rgba(var(--muted), 0.6) !important;
+  }
+  
+  .border-white\/5, 
+  .border-white\/10 {
+    border-color: rgba(var(--border), 0.08) !important;
+  }
+  
+  /* Text Readability Overrides */
+  h1, h2, h3, h4, h5, h6 {
+    color: rgb(var(--foreground)) !important;
+  }
+  
+  .text-white,
+  .text-zinc-100, 
+  .text-zinc-200 {
+    color: rgb(var(--foreground)) !important;
+  }
+  
+  .text-zinc-300, 
+  .text-zinc-400,
+  .text-zinc-500 {
+    color: rgb(var(--muted-foreground)) !important;
+  }
+}

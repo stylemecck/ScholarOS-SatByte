@@ -15,6 +15,7 @@ interface User {
   email: string;
   role: string;
   credits: number;
+  plan?: string;
   referralCode?: string;
   referralsCount?: number;
   avatar?: string;
@@ -56,6 +57,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           email: res.data.email, 
           role: res.data.role,
           credits: res.data.credits,
+          plan: res.data.plan,
           referralCode: res.data.referralCode,
           referralsCount: res.data.referralsCount,
           avatar: res.data.avatar,

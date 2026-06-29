@@ -1,6 +1,5 @@
 const StudyPlan = require('../models/StudyPlan');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const { getAIModel } = require('../utils/aiHelper');
 
 exports.aiGeneratePlan = async (req, res) => {
   try {
@@ -19,15 +18,15 @@ exports.aiGeneratePlan = async (req, res) => {
     Provide a balanced schedule with focus on foundational and advanced topics.
     Do not include any text, markdown, or backticks other than the JSON array.`;
 
-    const model = ai.getGenerativeModel({ model: "gemini-3-flash-preview" });
+    const model = getAIModel('gemini-2.5-flash');
 
     // CREDIT CHECK (Only if logged in)
     let user = null;
     if (req.user) {
       const User = require('../models/User'); // Import User model
       user = await User.findById(req.user.userId);
-      if (user && user.credits < 1) {
-        return res.status(403).json({ error: 'Insufficient credits', needsUpgrade: true });
+      if (user && user.credits < 2) {
+        return res.status(403).json({ error: 'Insufficient credits. Requires 2 credits.', needsUpgrade: true });
       }
     }
 
@@ -37,7 +36,12 @@ exports.aiGeneratePlan = async (req, res) => {
 
     // DEDUCT CREDIT
     if (user) {
-      user.credits -= 1;
+      user.credits -= 2;
+      user.creditHistory.push({
+        type: 'spent',
+        amount: 2,
+        description: `AI Study Plan generation: ${goal.slice(0, 40)}`
+      });
       await user.save();
     }
     

@@ -1,73 +1,90 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  Check, Zap, ArrowRight, HelpCircle
+  Check, Zap, Gift, Ticket
 } from 'lucide-react';
 import { useAuth } from '../context/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { toast } from '../lib/toast';
 
 const Pricing = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [couponCode, setCouponCode] = useState('');
+  const [couponApplied, setCouponApplied] = useState(false);
+  const [discountPercent, setDiscountPercent] = useState(0);
+
   const [alertMessage, setAlertMessage] = useState<{
     type: 'success' | 'error' | 'info';
     title: string;
     text: string;
   } | null>(null);
 
+  // Billing history mock logs
+  const invoices = [
+    { id: 'INV-2026-06', date: '2026-06-25', plan: 'Pro Monthly', amount: '₹299', status: 'Paid' },
+    { id: 'INV-2026-05', date: '2026-05-25', plan: 'Pro Monthly', amount: '₹299', status: 'Paid' }
+  ];
+ 
   const plans = [
     {
-      name: 'Free Trial',
-      tagline: 'For students & explorers',
+      name: 'Free',
+      tagline: 'Ideal for basic study tools',
       price: { monthly: 0, yearly: 0 },
       features: [
-        '1,000 API Requests / mo',
-        'Standard Tool Access',
-        'Up to 10MB file size limit',
-        'Discord Community Support',
-        'Public Workspace Access'
+        '20 AI Assistant messages / day',
+        'Standard ATS Resume check',
+        'Up to 10MB file uploads limit',
+        'Basic study planners tracking',
+        '2 Mock Interviews total'
       ],
       button: 'Get Started',
       pro: false
     },
     {
-      name: 'Achiever Pro',
-      tagline: 'For power users & creators',
-      price: { monthly: 99, yearly: 990 },
+      name: 'Pro',
+      tagline: 'Perfect for regular academic prep',
+      price: { monthly: 299, yearly: 2990 },
       features: [
-        '50,000 API Requests / mo',
-        'Priority AI Processing Queue',
-        'Up to 100MB file size limit',
-        'AI Resume Summary (Unlimited)',
-        'Email Support Workspace',
-        'Advanced Analytics Console'
+        'Unlimited AI chat queries',
+        'Advanced ATS optimization checker',
+        'AI Cover Letter generator',
+        'Unlimited Interview practice rounds',
+        'Up to 50MB documents size'
       ],
       button: 'Upgrade to Pro',
       pro: true,
       popular: true
     },
     {
-      name: 'Elite Enterprise',
-      tagline: 'For college teams & platforms',
-      price: { monthly: 499, yearly: 4990 },
+      name: 'Ultimate',
+      tagline: 'Best for placements & career pathing',
+      price: { monthly: 799, yearly: 7990 },
       features: [
-        'Unlimited API Requests',
-        'Dedicated Support Manager',
-        'Custom Webhooks Integration',
-        'SLA Guarantee (99.9%)',
-        'Whitelabel Export Support',
-        'Multi-user Team Dashboard'
+        'Unlimited Pro features access',
+        'Speech analysis voice prep',
+        'AI Career Advisor suggestions',
+        'Dual-PDF document comparisons',
+        'Weekly analytics metrics dashboards'
       ],
-      button: 'Upgrade to Elite',
+      button: 'Upgrade to Ultimate',
       pro: true
     }
   ];
 
+  const handleApplyCoupon = () => {
+    if (couponCode.toUpperCase() === 'SCHOLAR50') {
+      setDiscountPercent(50);
+      setCouponApplied(true);
+      toast.success('Coupon Applied: 50% discount on first invoice!');
+    } else {
+      toast.error('Invalid Coupon Code');
+    }
+  };
 
-
-  const handlePayment = async (planName: string, price: number) => {
-    if (planName === 'Free Trial') {
+  const handlePayment = async (planName: string, basePrice: number) => {
+    if (planName === 'Free') {
       if (user) {
         setAlertMessage({
           type: 'info',
@@ -81,16 +98,18 @@ const Pricing = () => {
     }
 
     if (!user) {
-      navigate('/login?redirect=/checkout');
+      navigate('/login?redirect=/pricing');
       return;
     }
 
+    const discountedPrice = Math.round(basePrice * (1 - discountPercent / 100));
+
     const creditsMap: Record<string, Record<'monthly' | 'yearly', number>> = {
-      'Achiever Pro': {
+      'Pro': {
         monthly: 100,
         yearly: 1200
       },
-      'Elite Enterprise': {
+      'Ultimate': {
         monthly: 1000,
         yearly: 12000
       }
@@ -100,7 +119,7 @@ const Pricing = () => {
     navigate('/checkout', {
       state: {
         planName,
-        price,
+        price: discountedPrice,
         billingCycle,
         credits
       }
@@ -108,216 +127,198 @@ const Pricing = () => {
   };
 
   return (
-    <div className="space-y-24 md:space-y-32 pb-32 bg-background text-foreground transition-colors duration-300">
-
-
-      {/* Sleek Custom Notification Overlay */}
+    <div className="space-y-16 pb-24 bg-background text-foreground transition-colors duration-300">
+      
+      {/* Sleek Alert Notification Overlay */}
       {alertMessage && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-50 p-4">
           <motion.div 
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className={`max-w-md w-full saas-card text-center space-y-6 p-8 rounded-[2.5rem] bg-card ${
-              alertMessage.type === 'success' 
-                ? 'border-emerald-500/30' 
-                : alertMessage.type === 'error' 
-                  ? 'border-red-500/30' 
-                  : 'border-primary/30'
-            }`}
+            className={`max-w-md w-full border border-white/5 text-center space-y-6 p-8 rounded-[2.5rem] bg-[#111]`}
           >
             <div className="space-y-2">
-              <h3 className={`text-2xl font-black italic ${
-                alertMessage.type === 'success' 
-                  ? 'text-emerald-400' 
-                  : alertMessage.type === 'error' 
-                    ? 'text-red-400' 
-                    : 'text-primary'
-              }`}>
+              <h3 className={`text-2xl font-black italic text-primary`}>
                 {alertMessage.title}
               </h3>
-              <p className="text-sm text-muted-foreground font-medium italic leading-relaxed">
+              <p className="text-xs text-zinc-400 font-medium italic leading-relaxed">
                 {alertMessage.text}
               </p>
             </div>
-            {alertMessage.type !== 'success' && (
-              <button 
-                onClick={() => setAlertMessage(null)}
-                className="saas-button-primary w-full py-4 text-xs font-black"
-              >
-                Acknowledge
-              </button>
-            )}
+            <button 
+              onClick={() => setAlertMessage(null)}
+              className="w-full py-3.5 bg-primary hover:bg-primary-hover text-zinc-950 rounded-xl text-xs font-black uppercase tracking-widest transition-all"
+            >
+              Acknowledge
+            </button>
           </motion.div>
         </div>
       )}
 
-      {/* Premium Hero */}
-      <section className="relative pt-24 px-4 text-center space-y-8">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-primary/5 rounded-full blur-[140px] -z-10" />
-        
-        <div className="max-w-4xl mx-auto space-y-8">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-foreground/[0.04] text-primary rounded-full text-[10px] font-black uppercase tracking-[0.3em] border border-primary/20 shadow-sm"
-          >
-            <Zap className="w-4 h-4" /> Subscription Tiers
-          </motion.div>
-          
-          <h1 className="text-5xl md:text-8xl font-black tracking-tighter leading-none text-foreground italic">
-            Fair rates for <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 pr-4">academic scale.</span>
+      {/* Hero section */}
+      <section className="relative text-center space-y-4 py-8 md:py-12 overflow-hidden rounded-[2.5rem] border border-border/50 bg-card/60 backdrop-blur-xl">
+        <div className="space-y-4 px-4 relative max-w-4xl mx-auto">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-muted text-muted-foreground rounded-full text-[10px] font-black uppercase tracking-wider border border-border">
+            <Zap className="w-3.5 h-3.5 text-primary" /> Plans & Subscriptions
+          </div>
+          <h1 className="text-3xl md:text-5xl font-black tracking-tight leading-none text-foreground">
+            Unlock the <span className="text-primary italic">Premium Suite</span>
           </h1>
-          
-          <p className="text-lg md:text-2xl text-muted-foreground font-medium max-w-2xl mx-auto italic leading-relaxed">
-            Choose the workspace plan that coordinates your study pace. Standard tool limits up to fully integrated team interfaces.
+          <p className="text-xs md:text-sm text-muted-foreground max-w-xl mx-auto font-medium">
+            Invest in your placement prep. Get faster models, longer AI query context, ATS analyzer scores, and interactive voice simulators.
           </p>
 
-          <div className="flex justify-center pt-4">
-             <div className="bg-muted p-1 rounded-2xl border border-border/30 flex gap-1">
-                <button 
-                  onClick={() => setBillingCycle('monthly')}
-                  className={`px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${billingCycle === 'monthly' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
-                >
-                  Monthly
-                </button>
-                <button 
-                  onClick={() => setBillingCycle('yearly')}
-                  className={`px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${billingCycle === 'yearly' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
-                >
-                  Yearly <span className="text-[10px] opacity-60 ml-2">(Save 20%)</span>
-                </button>
-             </div>
+          {/* Billing Cycle Switch */}
+          <div className="flex items-center justify-center gap-4 pt-6">
+            <span className={`text-xs font-black uppercase tracking-wider ${billingCycle === 'monthly' ? 'text-foreground' : 'text-muted-foreground'}`}>Monthly</span>
+            <button 
+              onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
+              className="w-12 h-6 bg-muted rounded-full p-1 transition-colors border border-border flex items-center"
+            >
+              <div className={`w-4 h-4 bg-primary rounded-full transition-transform ${billingCycle === 'yearly' ? 'translate-x-6' : ''}`} />
+            </button>
+            <span className={`text-xs font-black uppercase tracking-wider ${billingCycle === 'yearly' ? 'text-foreground' : 'text-muted-foreground'} flex items-center gap-1.5`}>
+              Yearly <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 text-[9px] rounded-full">Save 20%</span>
+            </span>
           </div>
         </div>
       </section>
 
-      {/* Pricing Grid */}
-      <section className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
-        {plans.map((plan, i) => {
-          const creditsMap: Record<string, Record<'monthly' | 'yearly', number>> = {
-            'Achiever Pro': { monthly: 100, yearly: 1200 },
-            'Elite Enterprise': { monthly: 1000, yearly: 12000 }
-          };
-          const credits = creditsMap[plan.name]?.[billingCycle] || 0;
+      {/* Pricing Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch max-w-6xl mx-auto">
+        {plans.map((p) => {
+          const rawPrice = billingCycle === 'monthly' ? p.price.monthly : p.price.yearly;
+          const discountedPrice = Math.round(rawPrice * (1 - discountPercent / 100));
 
           return (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className={`saas-card flex flex-col gap-10 p-12 relative overflow-hidden group rounded-[2.5rem] bg-card/80 backdrop-blur-xl border ${
-                plan.popular ? 'border-primary/50 shadow-sm' : 'border-border/40'
+            <div 
+              key={p.name}
+              className={`p-8 rounded-[2.5rem] border flex flex-col justify-between relative overflow-hidden transition-all ${
+                p.popular 
+                  ? 'bg-primary/5 border-primary shadow-2xl' 
+                  : 'bg-[#111] border-white/5'
               }`}
             >
-              {plan.popular && (
-                <div className="absolute top-6 right-[-35px] bg-primary text-primary-foreground text-[9px] font-black uppercase tracking-widest px-10 py-1.5 rotate-45 shadow-sm">
-                  Most Popular
-                </div>
+              {p.popular && (
+                <span className="absolute top-4 right-4 bg-primary text-zinc-950 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest">
+                  Popular
+                </span>
               )}
 
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-2xl font-black text-foreground italic">{plan.name}</h3>
-                  {plan.price[billingCycle] > 0 && (
-                    <span className="text-[9px] font-black uppercase bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-full shrink-0">
-                      +{credits} Tokens
-                    </span>
-                  )}
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-black text-white">{p.name}</h3>
+                  <p className="text-[10px] text-zinc-500 mt-1">{p.tagline}</p>
                 </div>
-                <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest leading-relaxed">{plan.tagline}</p>
-              </div>
 
-              <div className="flex items-baseline gap-2">
-                <span className="text-5xl font-black text-foreground italic">₹{plan.price[billingCycle]}</span>
-                <span className="text-muted-foreground font-medium italic">/{billingCycle === 'monthly' ? 'mo' : 'yr'}</span>
-              </div>
+                <div className="flex items-baseline gap-1">
+                  <span className="text-4xl font-black text-white">₹{discountedPrice}</span>
+                  <span className="text-xs text-zinc-500">/ {billingCycle === 'monthly' ? 'month' : 'year'}</span>
+                </div>
 
-              <div className="space-y-6 flex-1">
-                <p className="text-[10px] font-black uppercase tracking-widest text-primary italic">Workspace Benefits</p>
-                <div className="space-y-4">
-                  {plan.features.map((feature, j) => (
-                    <div key={j} className="flex items-start gap-4 text-sm text-muted-foreground font-medium italic">
-                      <Check className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
-                      {feature}
-                    </div>
+                <ul className="space-y-3.5 border-t border-white/5 pt-6">
+                  {p.features.map((feat, i) => (
+                    <li key={i} className="flex gap-3 text-xs text-zinc-400">
+                      <span className="p-0.5 bg-primary/10 text-primary rounded h-fit shrink-0"><Check className="w-3.5 h-3.5" /></span>
+                      <span>{feat}</span>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
 
-              <button 
-                onClick={() => handlePayment(plan.name, plan.price[billingCycle])}
-                className={`w-full !py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 ${
-                  plan.popular ? 'saas-button-primary' : 'saas-button-secondary'
+              <button
+                onClick={() => handlePayment(p.name, rawPrice)}
+                className={`w-full py-4 text-xs font-black uppercase tracking-widest rounded-2xl transition-all mt-8 ${
+                  p.popular 
+                    ? 'bg-primary hover:bg-primary-hover text-zinc-950 shadow-xl shadow-primary/10' 
+                    : 'bg-white/5 text-zinc-300 border border-white/5 hover:bg-white/10'
                 }`}
               >
-                {plan.button} <ArrowRight className="w-4 h-4" />
+                {p.button}
               </button>
-            </motion.div>
+            </div>
           );
         })}
-      </section>
+      </div>
 
-      {/* Comparison Section */}
-      <section className="max-w-5xl mx-auto px-4 space-y-16">
-        <div className="text-center space-y-4">
-          <h2 className="text-4xl font-black text-foreground tracking-tighter italic">Compare Platform Features</h2>
-          <p className="text-muted-foreground font-medium max-w-xl mx-auto italic opacity-60">A detailed breakdown of our student and developer offerings.</p>
+      {/* Coupon & Referral details */}
+      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-start pt-6">
+        
+        {/* Coupon validation */}
+        <div className="bg-[#111] border border-white/5 p-6 rounded-[2rem] space-y-4">
+          <div className="flex items-center gap-2">
+            <Ticket className="w-4 h-4 text-primary animate-pulse" />
+            <h4 className="text-xs font-black uppercase tracking-wider text-zinc-300">Discount Coupons</h4>
+          </div>
+          <p className="text-[10px] text-zinc-500">Have a student promotional code? Apply it below.</p>
+          <div className="flex gap-2">
+            <input 
+              type="text" 
+              placeholder="e.g. SCHOLAR50"
+              value={couponCode}
+              onChange={(e) => setCouponCode(e.target.value)}
+              disabled={couponApplied}
+              className="flex-grow bg-white/5 border border-white/5 text-zinc-300 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-primary uppercase font-bold"
+            />
+            <button
+              onClick={handleApplyCoupon}
+              disabled={couponApplied || !couponCode.trim()}
+              className="px-4 py-2 bg-primary hover:bg-primary-hover text-zinc-950 font-black text-[10px] uppercase tracking-wider rounded-xl transition-all disabled:opacity-50"
+            >
+              Apply
+            </button>
+          </div>
         </div>
 
-        <div className="saas-card !p-0 overflow-hidden border border-border/40 rounded-[2.5rem] bg-card/40 backdrop-blur-md">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-foreground/[0.04] border-b border-border/40">
-                <th className="px-8 py-6 text-[9px] font-black uppercase tracking-widest text-muted-foreground">Feature</th>
-                <th className="px-8 py-6 text-[9px] font-black uppercase tracking-widest text-muted-foreground text-center">Free Trial</th>
-                <th className="px-8 py-6 text-[9px] font-black uppercase tracking-widest text-muted-foreground text-center">Achiever Pro</th>
-                <th className="px-8 py-6 text-[9px] font-black uppercase tracking-widest text-muted-foreground text-center">Elite Enterprise</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/30">
-              {[
-                { name: 'Workspace Modules', free: 'Basic', pro: 'All', api: 'Full API Stack' },
-                { name: 'API Quotas', free: '1K Limit', pro: '50K Limit', api: 'Unlimited' },
-                { name: 'File Storage Limit', free: '10 MB', pro: '100 MB', api: '1 GB' },
-                { name: 'AI Priority Queue', free: 'Standard', pro: 'Priority Queue', api: 'Direct Pipeline' },
-                { name: 'Workspace Support', free: 'Discord', pro: 'Email Desk', api: 'Dedicated Manager' },
-              ].map((row, i) => (
-                <tr key={i} className="hover:bg-foreground/[0.02] transition-colors">
-                  <td className="px-8 py-6 text-sm font-bold text-foreground italic">{row.name}</td>
-                  <td className="px-8 py-6 text-center text-xs text-muted-foreground font-medium">{row.free}</td>
-                  <td className="px-8 py-6 text-center text-xs text-foreground font-black">{row.pro}</td>
-                  <td className="px-8 py-6 text-center text-xs text-primary font-black uppercase tracking-widest">{row.api}</td>
+        {/* Referrals bonus */}
+        <div className="bg-[#111] border border-white/5 p-6 rounded-[2rem] space-y-4">
+          <div className="flex items-center gap-2">
+            <Gift className="w-4 h-4 text-primary" />
+            <h4 className="text-xs font-black uppercase tracking-wider text-zinc-300">Student Referral Program</h4>
+          </div>
+          <p className="text-[10px] text-zinc-500">Share your referral code from your profile. Get 5 free credits for every signup!</p>
+          <div className="p-3 bg-white/5 rounded-2xl text-[10px] text-zinc-400 font-semibold border border-white/5">
+            🎁 Refer a friend, share credits, and unlock premium components together!
+          </div>
+        </div>
+
+      </div>
+
+      {/* Invoice list panel */}
+      {user && (
+        <div className="max-w-4xl mx-auto bg-[#111] border border-white/5 p-6 rounded-[2rem] space-y-6 shadow-xl">
+          <div>
+            <h4 className="text-xs font-black uppercase tracking-wider text-zinc-300">Billing History & Invoices</h4>
+            <p className="text-[10px] text-zinc-500">View your transaction summaries</p>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-xs text-zinc-400">
+              <thead>
+                <tr className="border-b border-white/5 text-zinc-500 font-bold uppercase tracking-wider text-[10px]">
+                  <th className="py-2.5 text-left">Invoice No</th>
+                  <th className="py-2.5 text-left">Date</th>
+                  <th className="py-2.5 text-left">Plan</th>
+                  <th className="py-2.5 text-left">Amount</th>
+                  <th className="py-2.5 text-right">Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {invoices.map((inv, idx) => (
+                  <tr key={idx} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02]">
+                    <td className="py-3 font-semibold text-white">{inv.id}</td>
+                    <td className="py-3">{inv.date}</td>
+                    <td className="py-3">{inv.plan}</td>
+                    <td className="py-3">{inv.amount}</td>
+                    <td className="py-3 text-right text-emerald-400 font-bold uppercase tracking-wider">{inv.status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </section>
+      )}
 
-      {/* FAQ Accordion Section */}
-      <section className="max-w-4xl mx-auto px-4">
-        <div className="saas-card !p-12 text-center space-y-10 bg-card/20 border border-border/40 rounded-[3rem]">
-           <div className="space-y-4">
-              <h3 className="text-2xl font-black text-foreground italic">Frequently Asked Questions</h3>
-              <p className="text-muted-foreground font-medium max-w-xl mx-auto italic">Everything you need to know about our billing and subscription cycles.</p>
-           </div>
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-              {[
-                 { q: 'Can I cancel my Achiever Pro subscription?', a: 'Yes, you can cancel at any time via your billing workspace settings. Your Pro benefits remain active until your current term expires.' },
-                 { q: 'What happens if I exhaust my credit quota?', a: 'If your token balance reaches 0, you can top-up additional credits from your dashboard or upgrade to a higher tier.' },
-              ].map((faq, i) => (
-                 <div key={i} className="space-y-3">
-                    <p className="text-sm font-black text-foreground flex items-center gap-2 italic">
-                       <HelpCircle className="w-4 h-4 text-primary shrink-0" /> {faq.q}
-                    </p>
-                    <p className="text-xs text-muted-foreground leading-relaxed font-medium italic">{faq.a}</p>
-                 </div>
-              ))}
-           </div>
-        </div>
-      </section>
     </div>
   );
 };

@@ -1,15 +1,38 @@
 import { toast } from '../../lib/toast';
 import { useResume } from '../../context/ResumeContext';
-import { User, Mail, Phone, MapPin, Link, AlignLeft, GraduationCap, Briefcase, Award, Plus, Trash2, Zap, Sparkles, Loader2 } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Link, AlignLeft, GraduationCap, Briefcase, Award, Plus, Trash2, Zap, Sparkles, Loader2, ChevronUp, ChevronDown, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, type ReactNode } from 'react';
 import axios from 'axios';
 
 const ResumeForm = () => {
-  const { resumeData, setResumeData, fillSampleData, resetData } = useResume();
+  const { resumeData, setResumeData, fillSampleData, resetData, aiFillResume } = useResume();
   const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
   const [enhancingBulletId, setEnhancingBulletId] = useState<string | null>(null);
   const [expandedSection, setExpandedSection] = useState<string | null>('personal');
+
+  const [showAiFillDialog, setShowAiFillDialog] = useState(false);
+  const [aiTargetRole, setAiTargetRole] = useState('');
+  const [aiTargetSkills, setAiTargetSkills] = useState('');
+  const [aiFillLoading, setAiFillLoading] = useState(false);
+
+  const handleAiAutoFill = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!aiTargetRole) {
+      toast.error('Target job title is required');
+      return;
+    }
+    setAiFillLoading(true);
+    try {
+      await aiFillResume(aiTargetRole, aiTargetSkills);
+      toast.success('AI Resume draft generated and loaded successfully!');
+      setShowAiFillDialog(false);
+    } catch (err: any) {
+      toast.error(err.message || 'Auto-fill failed');
+    } finally {
+      setAiFillLoading(false);
+    }
+  };
 
   const generateAIWeightSummary = async () => {
     if (!resumeData.personalInfo.title) {
@@ -82,6 +105,20 @@ const ResumeForm = () => {
     }));
   };
 
+  const moveEntry = (section: 'education' | 'experience' | 'projects' | 'certifications' | 'achievements', index: number, direction: 'up' | 'down') => {
+    const list = [...(resumeData[section] || [])];
+    if (direction === 'up' && index > 0) {
+      const temp = list[index];
+      list[index] = list[index - 1];
+      list[index - 1] = temp;
+    } else if (direction === 'down' && index < list.length - 1) {
+      const temp = list[index];
+      list[index] = list[index + 1];
+      list[index + 1] = temp;
+    }
+    setResumeData(prev => ({ ...prev, [section]: list }));
+  };
+
   const Section = ({ id, title, icon: Icon, children, hasAdd = false, onAdd = () => {} }: { id: string, title: string, icon: any, children: ReactNode, hasAdd?: boolean, onAdd?: () => void }) => (
     <div className={`border-b border-white/5 last:border-0 overflow-hidden transition-all ${expandedSection === id ? 'bg-white/[0.02]' : ''}`}>
       <button 
@@ -130,14 +167,20 @@ const ResumeForm = () => {
         <h3 className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em]">Platform Tools</h3>
         <div className="flex gap-2">
           <button 
-            onClick={fillSampleData}
-            className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary/20 transition-all border border-primary/10"
+            onClick={() => setShowAiFillDialog(true)}
+            className="flex items-center gap-1.5 px-3 py-2 bg-primary text-zinc-950 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary-hover transition-all"
           >
-            <Zap className="w-3 h-3" /> Auto-Fill
+            <Sparkles className="w-3.5 h-3.5" /> AI Fill
+          </button>
+          <button 
+            onClick={fillSampleData}
+            className="flex items-center gap-1.5 px-3 py-2 bg-white/5 text-zinc-300 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all border border-white/5"
+          >
+            <Zap className="w-3.5 h-3.5" /> Sample Fill
           </button>
           <button 
             onClick={resetData}
-            className="px-4 py-2 bg-white/5 text-muted-foreground rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all border border-white/5"
+            className="px-3 py-2 bg-white/5 text-zinc-400 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all border border-white/5"
           >
             Clear
           </button>
@@ -182,11 +225,23 @@ const ResumeForm = () => {
       {/* Experience */}
       <Section id="experience" title="Work Experience" icon={Briefcase} hasAdd onAdd={() => addEntry('experience')}>
         <div className="space-y-6">
-          {resumeData.experience.map((exp: any) => (
+          {resumeData.experience.map((exp: any, index: number) => (
             <motion.div key={exp.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-6 rounded-3xl bg-white/5 border border-white/5 space-y-6 relative group hover:border-white/10 transition-all">
-              <button onClick={() => removeEntry('experience', exp.id)} className="absolute top-4 right-4 text-muted-foreground hover:text-rose-500 transition-all">
-                <Trash2 className="w-4 h-4" />
-              </button>
+              <div className="absolute top-4 right-4 flex items-center gap-2">
+                {index > 0 && (
+                  <button onClick={() => moveEntry('experience', index, 'up')} className="text-muted-foreground hover:text-primary transition-all">
+                    <ChevronUp className="w-4 h-4" />
+                  </button>
+                )}
+                {index < resumeData.experience.length - 1 && (
+                  <button onClick={() => moveEntry('experience', index, 'down')} className="text-muted-foreground hover:text-primary transition-all">
+                    <ChevronDown className="w-4 h-4" />
+                  </button>
+                )}
+                <button onClick={() => removeEntry('experience', exp.id)} className="text-muted-foreground hover:text-rose-500 transition-all">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Input label="Organization" value={exp.company} onChange={(v: string) => updateEntry('experience', exp.id, 'company', v)} placeholder="Google" />
                 <Input label="Job Position" value={exp.position} onChange={(v: string) => updateEntry('experience', exp.id, 'position', v)} placeholder="Software Engineer" />
@@ -221,11 +276,23 @@ const ResumeForm = () => {
       {/* Education */}
       <Section id="education" title="Academic Background" icon={GraduationCap} hasAdd onAdd={() => addEntry('education')}>
         <div className="space-y-6">
-          {resumeData.education.map((edu: any) => (
-            <motion.div key={edu.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-6 rounded-3xl bg-white/5 border border-white/5 space-y-6 relative hover:border-white/10 transition-all">
-              <button onClick={() => removeEntry('education', edu.id)} className="absolute top-4 right-4 text-muted-foreground hover:text-rose-500 transition-all">
-                <Trash2 className="w-4 h-4" />
-              </button>
+          {resumeData.education.map((edu: any, index: number) => (
+            <motion.div key={edu.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-6 rounded-3xl bg-white/5 border border-white/5 space-y-6 relative group hover:border-white/10 transition-all">
+              <div className="absolute top-4 right-4 flex items-center gap-2">
+                {index > 0 && (
+                  <button onClick={() => moveEntry('education', index, 'up')} className="text-muted-foreground hover:text-primary transition-all">
+                    <ChevronUp className="w-4 h-4" />
+                  </button>
+                )}
+                {index < resumeData.education.length - 1 && (
+                  <button onClick={() => moveEntry('education', index, 'down')} className="text-muted-foreground hover:text-primary transition-all">
+                    <ChevronDown className="w-4 h-4" />
+                  </button>
+                )}
+                <button onClick={() => removeEntry('education', edu.id)} className="text-muted-foreground hover:text-rose-500 transition-all">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Input label="Institution / University" value={edu.institution} onChange={(v: string) => updateEntry('education', edu.id, 'institution', v)} placeholder="NIT" />
                 <Input label="Degree / Course" value={edu.degree} onChange={(v: string) => updateEntry('education', edu.id, 'degree', v)} placeholder="MCA" />
@@ -234,17 +301,32 @@ const ResumeForm = () => {
               </div>
             </motion.div>
           ))}
+          {resumeData.education.length === 0 && (
+            <p className="text-center py-10 text-xs text-muted-foreground font-medium italic border-2 border-dashed border-white/5 rounded-3xl">No education added yet. Click + to add your background.</p>
+          )}
         </div>
       </Section>
 
       {/* Projects */}
       <Section id="projects" title="Key Projects" icon={Zap} hasAdd onAdd={() => addEntry('projects')}>
         <div className="space-y-6">
-          {resumeData.projects.map((proj: any) => (
-            <motion.div key={proj.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-6 rounded-3xl bg-white/5 border border-white/5 space-y-6 relative hover:border-white/10 transition-all">
-              <button onClick={() => removeEntry('projects', proj.id)} className="absolute top-4 right-4 text-muted-foreground hover:text-rose-500 transition-all">
-                <Trash2 className="w-4 h-4" />
-              </button>
+          {resumeData.projects.map((proj: any, index: number) => (
+            <motion.div key={proj.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-6 rounded-3xl bg-white/5 border border-white/5 space-y-6 relative group hover:border-white/10 transition-all">
+              <div className="absolute top-4 right-4 flex items-center gap-2">
+                {index > 0 && (
+                  <button onClick={() => moveEntry('projects', index, 'up')} className="text-muted-foreground hover:text-primary transition-all">
+                    <ChevronUp className="w-4 h-4" />
+                  </button>
+                )}
+                {index < resumeData.projects.length - 1 && (
+                  <button onClick={() => moveEntry('projects', index, 'down')} className="text-muted-foreground hover:text-primary transition-all">
+                    <ChevronDown className="w-4 h-4" />
+                  </button>
+                )}
+                <button onClick={() => removeEntry('projects', proj.id)} className="text-muted-foreground hover:text-rose-500 transition-all">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Input label="Project Name" value={proj.name} onChange={(v: string) => updateEntry('projects', proj.id, 'name', v)} placeholder="E-commerce App" />
                 <Input label="Source / Live Link" value={proj.link} onChange={(v: string) => updateEntry('projects', proj.id, 'link', v)} placeholder="github.com/..." />
@@ -267,17 +349,32 @@ const ResumeForm = () => {
               </div>
             </motion.div>
           ))}
+          {resumeData.projects.length === 0 && (
+            <p className="text-center py-10 text-xs text-muted-foreground font-medium italic border-2 border-dashed border-white/5 rounded-3xl">No projects added yet. Click + to add your first project.</p>
+          )}
         </div>
       </Section>
 
       {/* Certifications */}
       <Section id="certifications" title="Certifications" icon={Award} hasAdd onAdd={() => addEntry('certifications')}>
         <div className="space-y-6">
-          {resumeData.certifications?.map((cert: any) => (
-            <motion.div key={cert.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-6 rounded-3xl bg-white/5 border border-white/5 space-y-6 relative hover:border-white/10 transition-all">
-              <button onClick={() => removeEntry('certifications', cert.id)} className="absolute top-4 right-4 text-muted-foreground hover:text-rose-500 transition-all">
-                <Trash2 className="w-4 h-4" />
-              </button>
+          {resumeData.certifications?.map((cert: any, index: number) => (
+            <motion.div key={cert.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-6 rounded-3xl bg-white/5 border border-white/5 space-y-6 relative group hover:border-white/10 transition-all">
+              <div className="absolute top-4 right-4 flex items-center gap-2">
+                {index > 0 && (
+                  <button onClick={() => moveEntry('certifications', index, 'up')} className="text-muted-foreground hover:text-primary transition-all">
+                    <ChevronUp className="w-4 h-4" />
+                  </button>
+                )}
+                {index < resumeData.certifications.length - 1 && (
+                  <button onClick={() => moveEntry('certifications', index, 'down')} className="text-muted-foreground hover:text-primary transition-all">
+                    <ChevronDown className="w-4 h-4" />
+                  </button>
+                )}
+                <button onClick={() => removeEntry('certifications', cert.id)} className="text-muted-foreground hover:text-rose-500 transition-all">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Input label="Certification Name" value={cert.name} onChange={(v: string) => updateEntry('certifications', cert.id, 'name', v)} placeholder="AWS Solutions Architect" />
                 <Input label="Issuing Organization" value={cert.issuer} onChange={(v: string) => updateEntry('certifications', cert.id, 'issuer', v)} placeholder="Amazon Web Services" />
@@ -286,7 +383,7 @@ const ResumeForm = () => {
             </motion.div>
           ))}
           {(!resumeData.certifications || resumeData.certifications.length === 0) && (
-            <p className="text-center py-6 text-[10px] text-muted-foreground font-black uppercase tracking-widest">No Certifications Listed</p>
+            <p className="text-center py-10 text-xs text-muted-foreground font-medium italic border-2 border-dashed border-white/5 rounded-3xl">No certifications added yet. Click + to add your first cert.</p>
           )}
         </div>
       </Section>
@@ -308,11 +405,23 @@ const ResumeForm = () => {
       {/* Achievements */}
       <Section id="achievements" title="Key Achievements" icon={Award} hasAdd onAdd={() => addEntry('achievements')}>
         <div className="space-y-6">
-          {resumeData.achievements?.map((ach: any) => (
-            <motion.div key={ach.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-6 rounded-3xl bg-white/5 border border-white/5 relative hover:border-white/10 transition-all">
-              <button onClick={() => removeEntry('achievements', ach.id)} className="absolute top-4 right-4 text-muted-foreground hover:text-rose-500 transition-all">
-                <Trash2 className="w-4 h-4" />
-              </button>
+          {resumeData.achievements?.map((ach: any, index: number) => (
+            <motion.div key={ach.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-6 rounded-3xl bg-white/5 border border-white/5 relative group hover:border-white/10 transition-all">
+              <div className="absolute top-4 right-4 flex items-center gap-2">
+                {index > 0 && (
+                  <button onClick={() => moveEntry('achievements', index, 'up')} className="text-muted-foreground hover:text-primary transition-all">
+                    <ChevronUp className="w-4 h-4" />
+                  </button>
+                )}
+                {index < resumeData.achievements.length - 1 && (
+                  <button onClick={() => moveEntry('achievements', index, 'down')} className="text-muted-foreground hover:text-primary transition-all">
+                    <ChevronDown className="w-4 h-4" />
+                  </button>
+                )}
+                <button onClick={() => removeEntry('achievements', ach.id)} className="text-muted-foreground hover:text-rose-500 transition-all">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
               <textarea 
                 className="w-full h-20 p-4 rounded-xl bg-[#0A0A0A] border border-white/10 text-sm outline-none focus:border-primary/50 transition-all resize-none leading-relaxed"
                 placeholder="Describe a notable achievement, award, or recognition."
@@ -322,10 +431,98 @@ const ResumeForm = () => {
             </motion.div>
           ))}
           {(!resumeData.achievements || resumeData.achievements.length === 0) && (
-            <p className="text-center py-6 text-[10px] text-muted-foreground font-black uppercase tracking-widest">No Achievements Listed</p>
+            <p className="text-center py-10 text-xs text-muted-foreground font-medium italic border-2 border-dashed border-white/5 rounded-3xl">No achievements added yet. Click + to add your first achievement.</p>
           )}
         </div>
       </Section>
+
+      {/* Languages & Interests */}
+      <Section id="additional" title="Languages & Interests" icon={Award}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Languages</label>
+            <input 
+              className="w-full px-6 py-4 rounded-2xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none transition-all text-sm font-bold placeholder:text-white/20"
+              placeholder="English, Spanish, French..."
+              value={resumeData.languages?.join(', ') || ''}
+              onChange={(e) => setResumeData(prev => ({ ...prev, languages: e.target.value.split(',').map(s => s.trim()) }))}
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Interests</label>
+            <input 
+              className="w-full px-6 py-4 rounded-2xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none transition-all text-sm font-bold placeholder:text-white/20"
+              placeholder="Photography, Travelling, Reading..."
+              value={resumeData.interests?.join(', ') || ''}
+              onChange={(e) => setResumeData(prev => ({ ...prev, interests: e.target.value.split(',').map(s => s.trim()) }))}
+            />
+          </div>
+        </div>
+      </Section>
+
+      {/* AI Auto-Fill Modal Dialog */}
+      {showAiFillDialog && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[100] p-4 no-print animate-fade-in">
+          <div className="bg-[#0f172a] border border-white/10 rounded-[2.5rem] w-full max-w-md p-8 space-y-6 shadow-2xl relative">
+            <div className="flex justify-between items-start border-b border-white/5 pb-4">
+              <div>
+                <span className="text-[9px] font-black uppercase tracking-widest text-primary">SaaS Automation</span>
+                <h3 className="text-sm font-black text-white">AI Profile Generator</h3>
+              </div>
+              <button 
+                onClick={() => setShowAiFillDialog(false)} 
+                className="p-2 bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white rounded-xl transition-all"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAiAutoFill} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block">Target Job Title</label>
+                <input 
+                  type="text"
+                  required
+                  placeholder="e.g. Senior Frontend Engineer"
+                  value={aiTargetRole}
+                  onChange={(e) => setAiTargetRole(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-card border border-border focus:ring-2 focus:ring-primary outline-none transition-all text-sm font-bold text-white placeholder:text-zinc-600"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-zinc-400 uppercase tracking-wider block">Key Focus Skills (Optional)</label>
+                <input 
+                  type="text"
+                  placeholder="e.g. React, Next.js, GraphQL"
+                  value={aiTargetSkills}
+                  onChange={(e) => setAiTargetSkills(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl bg-card border border-border focus:ring-2 focus:ring-primary outline-none transition-all text-sm font-bold text-white placeholder:text-zinc-600"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t border-white/5">
+                <button 
+                  type="button"
+                  onClick={() => setShowAiFillDialog(false)}
+                  className="flex-1 py-3 bg-white/5 text-zinc-400 rounded-xl text-xs font-black uppercase tracking-widest border border-white/5 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  disabled={aiFillLoading}
+                  className="flex-1 py-3 bg-primary hover:bg-primary-hover text-zinc-950 rounded-xl text-xs font-black uppercase tracking-widest transition-all disabled:opacity-50 flex items-center justify-center gap-1.5"
+                >
+                  {aiFillLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                  Generate Resume
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

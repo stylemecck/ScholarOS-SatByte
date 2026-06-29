@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Resume = require('../models/Resume');
 
 exports.getStats = async (req, res) => {
   try {
@@ -71,13 +72,54 @@ exports.getStats = async (req, res) => {
       .slice(0, 5)
       .map(([name, count]) => ({ name, count }));
 
+    const totalResumes = await Resume.countDocuments();
+    const allResumes = await Resume.find({}, 'atsScore template skills').lean();
+    
+    let sumScore = 0;
+    let validScoreCount = 0;
+    const templateCounts = {};
+    const skillCounts = {};
+
+    allResumes.forEach(r => {
+      if (typeof r.atsScore === 'number') {
+        sumScore += r.atsScore;
+        validScoreCount++;
+      }
+      if (r.template) {
+        templateCounts[r.template] = (templateCounts[r.template] || 0) + 1;
+      }
+      if (r.skills && Array.isArray(r.skills)) {
+        r.skills.forEach(s => {
+          if (s) {
+            skillCounts[s] = (skillCounts[s] || 0) + 1;
+          }
+        });
+      }
+    });
+
+    const avgAtsScore = validScoreCount > 0 ? Math.round(sumScore / validScoreCount) : 0;
+
+    const mostUsedTemplates = Object.entries(templateCounts)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 5)
+      .map(([name, count]) => ({ name, count }));
+
+    const popularSkills = Object.entries(skillCounts)
+      .sort(([, a], [, b]) => b - a)
+      .slice(0, 10)
+      .map(([name, count]) => ({ name, count }));
+
     res.json({
       totalUsers,
       totalRevenue,
       totalAIRequests,
       topTools: topTools.length > 0 ? topTools : [{ name: 'N/A', count: 0 }],
       userGrowth: formattedGrowth,
-      revenueHistory: formattedRevenue
+      revenueHistory: formattedRevenue,
+      totalResumes,
+      avgAtsScore,
+      mostUsedTemplates,
+      popularSkills
     });
   } catch (err) {
     console.error("ADMIN STATS ERROR:", err);
