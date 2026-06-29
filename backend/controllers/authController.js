@@ -4,6 +4,12 @@ const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
 const Otp = require('../models/Otp');
 const StudyPlan = require('../models/StudyPlan');
+const Resume = require('../models/Resume');
+const Chat = require('../models/Chat');
+const Document = require('../models/Document');
+const Roadmap = require('../models/Roadmap');
+const Interview = require('../models/Interview');
+const ApiKey = require('../models/ApiKey');
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -390,5 +396,71 @@ exports.resetPassword = async (req, res) => {
   } catch (err) {
     console.error("RESET PASSWORD ERROR:", err);
     res.status(500).json({ error: 'Failed to reset password' });
+  }
+};
+
+exports.exportUserData = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const user = await User.findById(userId).select('-password');
+    const resumes = await Resume.find({ userId });
+    const chats = await Chat.find({ userId });
+    const documents = await Document.find({ userId });
+    const roadmaps = await Roadmap.find({ userId });
+    const interviews = await Interview.find({ userId });
+    const studyPlan = await StudyPlan.find({ userId });
+    const apiKeys = await ApiKey.find({ userId });
+
+    res.json({
+      exportedAt: new Date().toISOString(),
+      user,
+      resumes,
+      chats,
+      documents,
+      roadmaps,
+      interviews,
+      studyPlan,
+      apiKeys
+    });
+  } catch (err) {
+    console.error("EXPORT USER DATA ERROR:", err);
+    res.status(500).json({ error: 'Failed to export user data' });
+  }
+};
+
+exports.wipeUserData = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    await Resume.deleteMany({ userId });
+    await Chat.deleteMany({ userId });
+    await Document.deleteMany({ userId });
+    await Roadmap.deleteMany({ userId });
+    await Interview.deleteMany({ userId });
+    await StudyPlan.deleteMany({ userId });
+    await ApiKey.deleteMany({ userId });
+
+    res.json({ message: 'All personal workspace data has been permanently wiped.' });
+  } catch (err) {
+    console.error("WIPE USER DATA ERROR:", err);
+    res.status(500).json({ error: 'Failed to wipe user data' });
+  }
+};
+
+exports.deleteAccount = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    await User.findByIdAndDelete(userId);
+    await Resume.deleteMany({ userId });
+    await Chat.deleteMany({ userId });
+    await Document.deleteMany({ userId });
+    await Roadmap.deleteMany({ userId });
+    await Interview.deleteMany({ userId });
+    await StudyPlan.deleteMany({ userId });
+    await ApiKey.deleteMany({ userId });
+
+    res.json({ message: 'Your account and all associated data have been permanently deleted.' });
+  } catch (err) {
+    console.error("DELETE ACCOUNT ERROR:", err);
+    res.status(500).json({ error: 'Failed to delete account' });
   }
 };

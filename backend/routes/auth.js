@@ -13,5 +13,8 @@ router.post('/gift-credits', authMiddleware, authController.giftCredits);
 router.get('/leaderboard', authController.getLeaderboard);
 router.put('/update-profile', authMiddleware, authController.updateProfile);
 router.put('/change-password', authMiddleware, authController.changePassword);
+router.get('/export-data', authMiddleware, authController.exportUserData);
+router.delete('/wipe-data', authMiddleware, authController.wipeUserData);
+router.delete('/delete-account', authMiddleware, authController.deleteAccount);
 
 module.exports = router;

@@ -497,6 +497,67 @@ const AdminDashboard = () => {
                   </div>
                 </div>
 
+                {/* Usage Activity Track */}
+                {selectedUserDetails.activityStats && (
+                  <div className="space-y-3 pt-4 border-t border-white/5">
+                    <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-bold block">Usage Tracking logs</span>
+                    <div className="grid grid-cols-2 gap-2 text-[10px]">
+                      <div className="bg-white/5 p-2 rounded-xl flex justify-between">
+                        <span className="text-zinc-500">Resumes:</span>
+                        <span className="font-bold text-white font-mono">{selectedUserDetails.activityStats.resumesCount}</span>
+                      </div>
+                      <div className="bg-white/5 p-2 rounded-xl flex justify-between">
+                        <span className="text-zinc-500">Docs (PDF):</span>
+                        <span className="font-bold text-white font-mono">{selectedUserDetails.activityStats.documentsCount}</span>
+                      </div>
+                      <div className="bg-white/5 p-2 rounded-xl flex justify-between">
+                        <span className="text-zinc-500">AI Chats:</span>
+                        <span className="font-bold text-white font-mono">{selectedUserDetails.activityStats.chatsCount}</span>
+                      </div>
+                      <div className="bg-white/5 p-2 rounded-xl flex justify-between">
+                        <span className="text-zinc-500">Interviews:</span>
+                        <span className="font-bold text-white font-mono">{selectedUserDetails.activityStats.interviewsCount}</span>
+                      </div>
+                      <div className="bg-white/5 p-2 rounded-xl flex justify-between">
+                        <span className="text-zinc-500">Roadmaps:</span>
+                        <span className="font-bold text-white font-mono">{selectedUserDetails.activityStats.roadmapsCount}</span>
+                      </div>
+                      <div className="bg-white/5 p-2 rounded-xl flex justify-between">
+                        <span className="text-zinc-500">API Keys:</span>
+                        <span className="font-bold text-white font-mono">{selectedUserDetails.activityStats.apiKeysCount}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Purchase & Credit Logs */}
+                <div className="space-y-3 pt-4 border-t border-white/5">
+                  <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-bold block">Purchases & Activity History</span>
+                  <div className="max-h-48 overflow-y-auto space-y-2 pr-1 custom-scroll">
+                    {selectedUserDetails.creditHistory && selectedUserDetails.creditHistory.length > 0 ? (
+                      selectedUserDetails.creditHistory.map((history: any, hIdx: number) => (
+                        <div key={hIdx} className="bg-white/5 p-2.5 rounded-xl flex justify-between items-start text-[9px] gap-2">
+                          <div className="space-y-1">
+                            <span className={`font-black uppercase tracking-widest px-1.5 py-0.5 rounded text-[7px] ${
+                              history.type === 'added' ? 'bg-emerald-500/10 text-emerald-500' :
+                              history.type === 'spent' ? 'bg-amber-500/10 text-amber-500' : 'bg-blue-500/10 text-blue-500'
+                            }`}>
+                              {history.type === 'added' ? 'PURCHASE' : history.type.toUpperCase()}
+                            </span>
+                            <p className="text-zinc-300 font-medium">{history.description || 'System Adjustment'}</p>
+                            <span className="text-zinc-600 block">{new Date(history.date).toLocaleString()}</span>
+                          </div>
+                          <span className={`font-mono font-black ${history.type === 'added' ? 'text-emerald-500' : 'text-amber-500'}`}>
+                            {history.type === 'added' ? '+' : '-'}{history.amount}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-[10px] text-zinc-600 italic">No transactions logged yet.</p>
+                    )}
+                  </div>
+                </div>
+
               </div>
             ) : (
               <p className="text-xs text-zinc-600 text-center py-10">Select a user to review details.</p>

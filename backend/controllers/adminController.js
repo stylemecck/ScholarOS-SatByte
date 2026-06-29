@@ -1,5 +1,11 @@
 const User = require('../models/User');
 const Resume = require('../models/Resume');
+const Chat = require('../models/Chat');
+const Document = require('../models/Document');
+const Interview = require('../models/Interview');
+const Roadmap = require('../models/Roadmap');
+const StudyPlan = require('../models/StudyPlan');
+const ApiKey = require('../models/ApiKey');
 
 exports.getStats = async (req, res) => {
   try {
@@ -146,11 +152,32 @@ exports.getUserDetails = async (req, res) => {
       return res.status(403).json({ error: 'Access denied. Admins only.' });
     }
     const { userId } = req.params;
-    const user = await User.findById(userId, 'name email role plan credits createdAt creditHistory savedResults');
+    const user = await User.findById(userId, 'name email role plan credits createdAt creditHistory savedResults').lean();
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    res.json(user);
+
+    // Activity tracking counts
+    const resumesCount = await Resume.countDocuments({ userId });
+    const documentsCount = await Document.countDocuments({ userId });
+    const chatsCount = await Chat.countDocuments({ userId });
+    const interviewsCount = await Interview.countDocuments({ userId });
+    const roadmapsCount = await Roadmap.countDocuments({ userId });
+    const studyTasksCount = await StudyPlan.countDocuments({ userId });
+    const apiKeysCount = await ApiKey.countDocuments({ userId });
+
+    res.json({
+      ...user,
+      activityStats: {
+        resumesCount,
+        documentsCount,
+        chatsCount,
+        interviewsCount,
+        roadmapsCount,
+        studyTasksCount,
+        apiKeysCount
+      }
+    });
   } catch (err) {
     console.error("ADMIN GET USER DETAILS ERROR:", err);
     res.status(500).json({ error: 'Failed to fetch user details', details: err.message });

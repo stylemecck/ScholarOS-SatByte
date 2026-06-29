@@ -6,7 +6,7 @@ import {
   BookOpen, Clock, CheckSquare, Zap, Plus, Trash2, Copy,
   CreditCard, Search, ArrowUpRight, Sparkles,
   Percent, Calculator, Minimize2, Image, Scissors,
-  RotateCw, X, Download, FileSpreadsheet
+  RotateCw, X, Download, FileSpreadsheet, Shield
 } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../context/useAuth';
@@ -32,9 +32,17 @@ const Dashboard = () => {
   const [documents,     setDocuments]     = useState<any[]>([]);
 
   /* local UI states */
-  const [activeTab,   setActiveTab]   = useState<'overview' | 'documents' | 'billing'>('overview');
+  const [activeTab,   setActiveTab]   = useState<'overview' | 'documents' | 'billing' | 'data-control'>('overview');
   const [toolSearch,  setToolSearch]  = useState('');
   const [selectedCat, setSelectedCat] = useState<'all' | 'academic' | 'pdf' | 'image'>('all');
+  
+  const [cloudSync, setCloudSync] = useState<boolean>(() => {
+    const saved = localStorage.getItem('cloud-sync');
+    return saved !== 'false';
+  });
+  const [wiping, setWiping] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [exportingData, setExportingData] = useState(false);
   
   /* preview document modal */
   const [selectedDoc, setSelectedDoc] = useState<any | null>(null);
@@ -117,6 +125,72 @@ const Dashboard = () => {
       setDocuments(Array.isArray(docRes.data)    ? docRes.data     : []);
     } catch (err) {
       console.warn('Dashboard fetch failed:', err);
+    }
+  };
+
+  const handleToggleCloudSync = (val: boolean) => {
+    setCloudSync(val);
+    localStorage.setItem('cloud-sync', String(val));
+    if (val) {
+      toast.success('Cloud sync activated. Resumes will be backed up in the cloud.');
+    } else {
+      toast.info('Cloud sync deactivated. Drafts will now be stored in local storage.');
+    }
+  };
+
+  const handleExportData = async () => {
+    setExportingData(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/export-data`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(response.data, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `ScholarOS_Data_Export_${new Date().toISOString().split('T')[0]}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      toast.success('Your workspace data has been compiled and downloaded.');
+    } catch (err) {
+      toast.error('Failed to compile data export.');
+    } finally {
+      setExportingData(false);
+    }
+  };
+
+  const handleWipeData = async () => {
+    if (!confirm('WARNING: This will permanently delete ALL your saved resumes, documents, roadmap progress, and history logs from our servers. This action is irreversible. Do you want to proceed?')) return;
+    setWiping(true);
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/auth/wipe-data`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success('All workspace data has been wiped.');
+      fetchDashboardData();
+    } catch {
+      toast.error('Failed to wipe data.');
+    } finally {
+      setWiping(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!confirm('CRITICAL WARNING: This will permanently delete your user profile and purge all your data from our database. You will be logged out immediately. Do you want to delete your account?')) return;
+    setDeleting(true);
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/auth/delete-account`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      toast.success('Account permanently deleted.');
+      logout();
+    } catch {
+      toast.error('Failed to delete account.');
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -398,7 +472,7 @@ const Dashboard = () => {
       </div>
 
       {/* ── Inner Workspace Navigation Tabs ──────────────────────────────────── */}
-      <div className="flex border-b border-white/5 no-print gap-6">
+      <div className="flex border-b border-white/5 no-print gap-6 overflow-x-auto scrollbar-hide whitespace-nowrap pb-px">
         <button onClick={() => setActiveTab('overview')}
           className={`pb-4 text-xs font-black uppercase tracking-widest transition-all border-b-2 ${activeTab === 'overview' ? 'border-primary text-white' : 'border-transparent text-zinc-500 hover:text-zinc-300'}`}
         >
@@ -413,6 +487,11 @@ const Dashboard = () => {
           className={`pb-4 text-xs font-black uppercase tracking-widest transition-all border-b-2 ${activeTab === 'billing' ? 'border-primary text-white' : 'border-transparent text-zinc-500 hover:text-zinc-300'}`}
         >
           SaaS Billing & Token Logs
+        </button>
+        <button onClick={() => setActiveTab('data-control')}
+          className={`pb-4 text-xs font-black uppercase tracking-widest transition-all border-b-2 ${activeTab === 'data-control' ? 'border-primary text-white' : 'border-transparent text-zinc-500 hover:text-zinc-300'}`}
+        >
+          Data & Privacy Control
         </button>
       </div>
 
@@ -761,6 +840,95 @@ const Dashboard = () => {
               </div>
             </div>
 
+          </div>
+        )}
+
+        {/* TAB 4: DATA & PRIVACY CONTROL */}
+        {activeTab === 'data-control' && (
+          <div className="bg-[#111] border border-white/5 p-8 rounded-[2.5rem] space-y-8 shadow-xl">
+            <div>
+              <h3 className="text-base font-black uppercase tracking-wider text-white flex items-center gap-2">
+                <Shield className="w-5 h-5 text-primary" /> Privacy & Data Control
+              </h3>
+              <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Manage your data preferences, backups, and account settings</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Cloud Sync Preference */}
+              <div className="bg-white/5 border border-white/5 p-6 rounded-3xl space-y-4">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h4 className="text-xs font-black uppercase text-white tracking-wider">Cloud Data Storage</h4>
+                    <p className="text-[10px] text-zinc-500 leading-normal">
+                      Sync draft resume files and history on our MongoDB servers to access them across all devices.
+                    </p>
+                  </div>
+                  <button 
+                    onClick={() => handleToggleCloudSync(!cloudSync)}
+                    className={`w-12 h-6 rounded-full p-1 transition-all duration-300 ${cloudSync ? 'bg-primary' : 'bg-zinc-700'}`}
+                  >
+                    <div className={`w-4 h-4 bg-zinc-950 rounded-full transition-all duration-300 ${cloudSync ? 'translate-x-6' : 'translate-x-0'}`} />
+                  </button>
+                </div>
+                <div className="text-[9px] font-black uppercase text-zinc-400">
+                  Status: {cloudSync ? <span className="text-emerald-500">Enabled (Cloud Sync Active)</span> : <span className="text-amber-500">Disabled (Local Storage Only)</span>}
+                </div>
+              </div>
+
+              {/* Data Export */}
+              <div className="bg-white/5 border border-white/5 p-6 rounded-3xl space-y-4 flex flex-col justify-between">
+                <div>
+                  <h4 className="text-xs font-black uppercase text-white tracking-wider">Export My Data</h4>
+                  <p className="text-[10px] text-zinc-500 leading-normal">
+                    Download a comprehensive backup of your profile details, resume content, active roadmaps, and custom settings as a JSON file.
+                  </p>
+                </div>
+                <button 
+                  onClick={handleExportData} 
+                  disabled={exportingData}
+                  className="w-fit flex items-center gap-2 px-5 py-2.5 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-50"
+                >
+                  {exportingData ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+                  Download Data Package
+                </button>
+              </div>
+
+              {/* Clear Workspace */}
+              <div className="bg-white/5 border border-white/5 p-6 rounded-3xl space-y-4 flex flex-col justify-between">
+                <div>
+                  <h4 className="text-xs font-black uppercase text-rose-500 tracking-wider">Wipe Workspace Data</h4>
+                  <p className="text-[10px] text-zinc-500 leading-normal">
+                    Instantly delete all your resume drafts, notes, document uploads, and planners. This will empty your account metrics but keep your credentials intact.
+                  </p>
+                </div>
+                <button 
+                  onClick={handleWipeData} 
+                  disabled={wiping}
+                  className="w-fit flex items-center gap-2 px-5 py-2.5 bg-rose-500/10 hover:bg-rose-500 hover:text-zinc-950 text-rose-500 border border-rose-500/20 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-50"
+                >
+                  {wiping ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                  Wipe Data Stores
+                </button>
+              </div>
+
+              {/* Delete Account */}
+              <div className="bg-white/5 border border-white/5 p-6 rounded-3xl space-y-4 flex flex-col justify-between">
+                <div>
+                  <h4 className="text-xs font-black uppercase text-red-500 tracking-wider">Delete My Account</h4>
+                  <p className="text-[10px] text-zinc-500 leading-normal">
+                    Permanently purge your account, billing details, referrals, and workspace history. This cannot be undone.
+                  </p>
+                </div>
+                <button 
+                  onClick={handleDeleteAccount} 
+                  disabled={deleting}
+                  className="w-fit flex items-center gap-2 px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-50"
+                >
+                  {deleting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <X className="w-3.5 h-3.5" />}
+                  Delete Account Permanently
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
