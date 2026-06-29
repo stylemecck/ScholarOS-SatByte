@@ -300,7 +300,7 @@ const Navbar = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMenuOpen(false)}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[80] md:hidden"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[80] md:hidden pointer-events-auto"
             />
 
             {/* Drawer panel */}
@@ -309,7 +309,7 @@ const Navbar = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 220 }}
-              className="fixed top-0 right-0 bottom-0 z-[90] md:hidden w-[82vw] max-w-[360px] bg-background border-l border-border/40 flex flex-col shadow-2xl"
+              className="fixed top-0 right-0 bottom-0 z-[90] md:hidden w-[82vw] max-w-[360px] bg-background border-l border-border/40 flex flex-col shadow-2xl pointer-events-auto"
             >
               {/* Drawer header */}
               <div className="flex items-center justify-between px-5 py-4 border-b border-border/20 shrink-0">
