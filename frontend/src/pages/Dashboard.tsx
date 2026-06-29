@@ -6,7 +6,7 @@ import {
   BookOpen, Clock, CheckSquare, Zap, Plus, Trash2, Copy,
   CreditCard, Search, ArrowUpRight, Sparkles,
   Percent, Calculator, Minimize2, Image, Scissors,
-  RotateCw, X, Download, FileSpreadsheet, Shield
+  RotateCw, X, Download, FileSpreadsheet, Shield, TrendingUp
 } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../context/useAuth';
@@ -30,6 +30,7 @@ const Dashboard = () => {
   const [roadmaps,      setRoadmaps]      = useState<any[]>([]);
   const [resumes,       setResumes]       = useState<any[]>([]);
   const [documents,     setDocuments]     = useState<any[]>([]);
+  const [savedResults,  setSavedResults]  = useState<any[]>([]);
 
   /* local UI states */
   const [activeTab,   setActiveTab]   = useState<'overview' | 'documents' | 'billing' | 'data-control'>('overview');
@@ -120,6 +121,7 @@ const Dashboard = () => {
       setCredits(meRes.data.credits ?? 0);
       setPlan(meRes.data.plan ?? 'Free');
       setCreditHistory(meRes.data.creditHistory ?? []);
+      setSavedResults(meRes.data.savedResults ?? []);
       setRoadmaps(Array.isArray(roadmapRes.data) ? roadmapRes.data : []);
       setResumes(Array.isArray(resumeRes.data)   ? resumeRes.data  : []);
       setDocuments(Array.isArray(docRes.data)    ? docRes.data     : []);
@@ -616,6 +618,70 @@ const Dashboard = () => {
                     </span>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* Saved AI Rank Predictions */}
+            <div className="md:col-span-12 bg-[#111] border border-white/5 p-6 rounded-[2.5rem] space-y-6 shadow-xl">
+              <div>
+                <h3 className="text-sm font-black uppercase tracking-wider text-white flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-primary animate-pulse" /> My Saved AI Rank Predictions
+                </h3>
+                <p className="text-[10px] text-zinc-500">History of your AI rank/percentile assessments and counseling guidance</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {savedResults.filter(r => r.toolName === 'Rank Predictor').map((res, idx) => (
+                  <div key={idx} className="bg-white/5 border border-white/5 p-5 rounded-3xl space-y-4 hover:border-primary/20 transition-all flex flex-col justify-between relative group">
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <span className="text-[8px] font-black uppercase tracking-widest text-primary bg-primary/10 border border-primary/25 px-2.5 py-1 rounded-full">
+                            {res.data.exam}
+                          </span>
+                          <h4 className="text-sm font-black text-white pt-3 font-semibold">Marks: {res.data.marks}</h4>
+                        </div>
+                        <span className="text-[10px] text-zinc-500 font-mono">{new Date(res.date).toLocaleDateString()}</span>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-3 bg-black/30 p-3 rounded-2xl border border-white/5 font-mono">
+                        <div>
+                          <span className="text-[8px] text-zinc-500 font-black uppercase block mb-0.5">Est. Rank Range</span>
+                          <span className="text-xs font-black text-emerald-400">{res.data.predictedRank || 'N/A'}</span>
+                        </div>
+                        <div>
+                          <span className="text-[8px] text-zinc-500 font-black uppercase block mb-0.5">Est. Percentile</span>
+                          <span className="text-xs font-black text-primary">{res.data.predictedPercentile || 'N/A'}%</span>
+                        </div>
+                      </div>
+
+                      <p className="text-[10px] text-zinc-400 font-medium leading-relaxed italic line-clamp-3">
+                        "{res.data.analysis}"
+                      </p>
+                    </div>
+
+                    <div className="flex justify-between items-center pt-3 border-t border-white/5">
+                      <span className="text-[9px] uppercase tracking-wider text-zinc-500 font-bold">Category: {res.data.category || 'General'}</span>
+                      <button 
+                        onClick={() => {
+                          alert(`Counselor Analysis:\n\n${res.data.analysis}\n\nSuggested Colleges:\n${res.data.suggestedColleges?.map((c: any) => `- ${c.name} (${c.branch})`).join('\n') || 'No suggestions logged.'}`);
+                        }}
+                        className="px-3 py-1 bg-white/5 hover:bg-primary hover:text-zinc-950 border border-white/5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all"
+                      >
+                        Full Report
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                {savedResults.filter(r => r.toolName === 'Rank Predictor').length === 0 && (
+                  <div className="col-span-full py-8 text-center bg-white/[0.01] border border-dashed border-white/5 rounded-3xl">
+                    <p className="text-xs text-zinc-500 italic">No saved rank predictions found.</p>
+                    <Link to="/tools/rank-predictor" className="inline-block mt-2 text-[10px] font-black uppercase text-primary tracking-widest hover:underline">
+                      Predict your Rank now
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
 
