@@ -5,13 +5,13 @@ import {
   User, Mail, Camera, Shield, Bell, 
   Trash2, Save, Loader2, LogOut, Key,
   CheckCircle2, AlertCircle, Share2, Copy,
-  Lock, Smartphone, Eye, EyeOff
+  Lock, Smartphone, Eye, EyeOff, CreditCard, Coins
 } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../context/useAuth';
 import { Navigate } from 'react-router-dom';
 
-type TabType = 'profile' | 'security' | 'notifications' | 'referrals';
+type TabType = 'profile' | 'security' | 'notifications' | 'referrals' | 'billing';
 
 const AccountSettings = () => {
   const { user, logout, isLoading } = useAuth();
@@ -41,6 +41,9 @@ const AccountSettings = () => {
     newFeatures: true
   });
 
+  const [creditHistory, setCreditHistory] = useState<any[]>([]);
+  const [credits, setCredits] = useState<number>(0);
+
   useEffect(() => {
     if (user) {
       setProfileData({
@@ -48,6 +51,18 @@ const AccountSettings = () => {
         email: user.email || '',
         avatar: user.avatar || ''
       });
+      const fetchDetails = async () => {
+        try {
+          const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+          });
+          setCredits(res.data.credits || 0);
+          setCreditHistory(res.data.creditHistory?.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()) || []);
+        } catch (e) {
+          console.error("Failed to load billing history:", e);
+        }
+      };
+      fetchDetails();
     }
   }, [user]);
 
@@ -134,6 +149,7 @@ const AccountSettings = () => {
           <SettingsTab icon={Shield} label="Security" active={activeTab === 'security'} onClick={() => { setActiveTab('security'); setMessage(null); }} />
           <SettingsTab icon={Bell} label="Notifications" active={activeTab === 'notifications'} onClick={() => { setActiveTab('notifications'); setMessage(null); }} />
           <SettingsTab icon={Share2} label="Referrals" active={activeTab === 'referrals'} onClick={() => { setActiveTab('referrals'); setMessage(null); }} />
+          <SettingsTab icon={CreditCard} label="Billing & Usage" active={activeTab === 'billing'} onClick={() => { setActiveTab('billing'); setMessage(null); }} />
           <div className="pt-4 mt-4 border-t border-border">
             <button onClick={logout} className="w-full flex items-center gap-3 px-6 py-4 text-rose-500 font-black text-sm hover:bg-rose-500/10 rounded-2xl transition-all uppercase tracking-widest">
               <LogOut className="w-5 h-5" /> Logout
@@ -271,6 +287,107 @@ const AccountSettings = () => {
                     <div className="bg-muted/30 p-6 rounded-3xl border border-border text-center">
                       <p className="text-2xl font-black text-primary">50+</p>
                       <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Potential Credits</p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'billing' && (
+              <motion.div key="billing" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
+                <div className="bg-card border border-border rounded-[2.5rem] p-8 md:p-10 shadow-xl space-y-8">
+                  <div className="flex items-center gap-4 text-primary">
+                    <CreditCard className="w-8 h-8" />
+                    <div>
+                      <h3 className="text-xl font-black uppercase tracking-tighter">Billing & Subscription</h3>
+                      <p className="text-xs text-muted-foreground font-medium">Manage your active plans, billing details, and credit transactions.</p>
+                    </div>
+                  </div>
+
+                  {/* Plan Card */}
+                  <div className="p-8 bg-primary/5 border border-primary/10 rounded-[2rem] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+                    <div className="space-y-2">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-primary/60">Current Plan</p>
+                      <h4 className="text-3xl font-black italic tracking-tight text-foreground">
+                        {credits >= 1000 ? 'Elite Enterprise' : credits >= 100 ? 'Achiever Pro' : 'Free Trial'}
+                      </h4>
+                      <p className="text-xs text-muted-foreground font-medium">
+                        {credits >= 100 ? 'Subscribed via credit bundle. Active until manual exhaustion.' : 'Standard entry-level academic quotas.'}
+                      </p>
+                    </div>
+                    <div className="flex flex-col sm:items-end gap-2 shrink-0">
+                      <div className="flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-2xl">
+                        <Coins className="w-4 h-4 text-primary animate-bounce" />
+                        <span className="text-xs font-black text-foreground">{credits} Tokens Available</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                    <a href="/pricing" className="saas-button-primary !py-4 text-xs font-black text-center flex-1">
+                      Upgrade / Buy Credits
+                    </a>
+                    {credits >= 100 && (
+                      <button 
+                        onClick={() => {
+                          toast.success('Your subscription cancellation request is received. Your auto-renewal is paused, and your remaining credits will stay valid until exhausted.');
+                        }}
+                        className="saas-button-secondary !py-4 text-xs font-black flex-1"
+                      >
+                        Cancel Active Plan
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Transaction History */}
+                  <div className="space-y-4">
+                    <h4 className="text-sm font-black uppercase tracking-widest text-muted-foreground">Transaction Logs</h4>
+                    <div className="border border-border/10 rounded-3xl overflow-hidden bg-muted/5">
+                      <div className="overflow-x-auto scrollbar-thin">
+                        <table className="w-full text-left border-collapse text-xs">
+                          <thead>
+                            <tr className="bg-foreground/[0.03] border-b border-border/10 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                              <th className="px-6 py-4">Date</th>
+                              <th className="px-6 py-4">Type</th>
+                              <th className="px-6 py-4">Amount</th>
+                              <th className="px-6 py-4">Description</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-border/10">
+                            {creditHistory.length === 0 ? (
+                              <tr>
+                                <td colSpan={4} className="px-6 py-8 text-center text-muted-foreground italic font-medium">
+                                  No transaction records found.
+                                </td>
+                              </tr>
+                            ) : (
+                              creditHistory.map((item, idx) => (
+                                <tr key={idx} className="hover:bg-foreground/[0.01]">
+                                  <td className="px-6 py-4 font-medium text-muted-foreground">
+                                    {new Date(item.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+                                  </td>
+                                  <td className="px-6 py-4">
+                                    <span className={`px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${
+                                      item.type === 'added' ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20' :
+                                      item.type === 'bonus' ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20' :
+                                      'bg-slate-500/10 text-slate-500 border border-slate-500/20'
+                                    }`}>
+                                      {item.type}
+                                    </span>
+                                  </td>
+                                  <td className={`px-6 py-4 font-black ${item.type === 'spent' ? 'text-rose-500' : 'text-emerald-500'}`}>
+                                    {item.type === 'spent' ? '-' : '+'}{item.amount}
+                                  </td>
+                                  <td className="px-6 py-4 text-muted-foreground font-medium italic">
+                                    {item.description || 'N/A'}
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
                 </div>

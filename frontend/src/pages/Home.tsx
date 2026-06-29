@@ -50,10 +50,10 @@ const Home = () => {
   };
 
   const pricingTiers = [
-    { label: 'Free Trial', price: '₹0', credits: '1,000 credits/mo', desc: 'Ideal for casual students exploring predictions.', features: ['1,000 API Requests', 'Standard Support', '5MB File Limits'] },
-    { label: 'Student Achiever', price: '₹49', credits: '10,000 credits/mo', desc: 'Perfect for active exam prep & resumes.', features: ['10,000 API Requests', 'Priority Process Queue', '25MB File Limits', 'ATS Enhancer'] },
-    { label: 'Academic Power', price: '₹99', credits: '50,000 credits/mo', desc: 'Our most popular plan for power users.', features: ['50,000 API Requests', 'Instant Priority Queue', '100MB File Limits', 'ATS Enhancer (Unlimited)', 'Email Support'] },
-    { label: 'Institution Elite', price: '₹499', credits: 'Unlimited', desc: 'Best for college teams and API integrations.', features: ['Unlimited Workspace Requests', 'Whitelabel Export Mode', '1GB File Limits', '99.9% Server SLA', '24/7 Dedicated Support'] }
+    { label: 'Free Trial', price: '₹0', period: '/mo', credits: '1,000 requests/mo', desc: 'Ideal for casual students exploring predictions.', features: ['1,000 API Requests', 'Standard Support', '10MB File Limits'] },
+    { label: 'Achiever Pro (Monthly)', price: '₹99', period: '/mo', credits: '100 credits/mo', desc: 'Perfect for active exam prep & resume building.', features: ['50,000 API Requests', 'Priority Process Queue', '100MB File Limits', 'AI Resume Summary'] },
+    { label: 'Achiever Pro (Yearly)', price: '₹990', period: '/yr', credits: '1,200 credits/yr', desc: 'Save 20% compared to monthly billing.', features: ['50,000 API Requests', 'Priority Process Queue', '100MB File Limits', 'AI Resume Summary'] },
+    { label: 'Elite Enterprise', price: '₹499', period: '/mo', credits: '1,000 credits/mo', desc: 'Best for college teams and API integrations.', features: ['Unlimited API Requests', 'Dedicated Support Manager', 'Custom Webhooks', 'Whitelabel Export Mode'] }
   ];
 
   const faqs = [
@@ -548,10 +548,10 @@ const Home = () => {
                 className="w-full h-2 bg-foreground/[0.08] rounded-lg appearance-none cursor-pointer accent-primary focus:outline-none animate-pulse" 
               />
               <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-muted-foreground pt-4">
-                <span>1K Credits</span>
-                <span>10K Credits</span>
-                <span>50K Credits</span>
-                <span>Unlimited</span>
+                <span>Free Trial</span>
+                <span>Pro Monthly</span>
+                <span>Pro Yearly</span>
+                <span>Elite Enterprise</span>
               </div>
             </div>
 
@@ -569,7 +569,7 @@ const Home = () => {
               <div className="text-left md:text-right space-y-3">
                 <div>
                   <span className="text-4xl font-black text-foreground italic">{pricingTiers[creditSlider].price}</span>
-                  <span className="text-xs text-muted-foreground italic font-medium">/mo</span>
+                  <span className="text-xs text-muted-foreground italic font-medium">{pricingTiers[creditSlider].period}</span>
                 </div>
                 <Link to="/pricing" className="saas-button-primary !py-3 w-full text-center inline-block text-[10px] tracking-wider font-black">
                   Select Plan <ArrowRight className="w-3.5 h-3.5 inline ml-1" />
