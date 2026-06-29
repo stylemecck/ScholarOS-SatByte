@@ -51,12 +51,12 @@ const ExploreTools = () => {
             "@type": "ListItem",
             "position": 1,
             "name": "Home",
-            "item": "https://toolkit.satbyte.in"
+            "item": "https://os.satbyte.in"
           },{
             "@type": "ListItem",
             "position": 2,
             "name": "Tools",
-            "item": "https://toolkit.satbyte.in/tools"
+            "item": "https://os.satbyte.in/tools"
           }]
         }}
       />

@@ -40,7 +40,7 @@ const ResultPDFTemplate = ({ user, data, date }: PDFTemplateProps) => {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
             <div style={{ width: '32px', height: '32px', backgroundColor: COLORS.blue, borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: COLORS.white, fontWeight: 900 }}>S</div>
-            <h1 style={{ fontSize: '24px', fontWeight: 900, color: COLORS.slate900, letterSpacing: '-0.05em', margin: 0 }}>SATBYTE <span style={{ color: COLORS.blue, fontWeight: 500 }}>TOOLKIT</span></h1>
+            <h1 style={{ fontSize: '24px', fontWeight: 900, color: COLORS.slate900, letterSpacing: '-0.05em', margin: 0 }}>Scholar<span style={{ color: COLORS.blue, fontWeight: 500 }}>OS</span></h1>
           </div>
           <p style={{ fontSize: '10px', fontWeight: 900, color: COLORS.slate400, textTransform: 'uppercase', letterSpacing: '0.3em', marginLeft: '40px', margin: 0 }}>Official Career Insight Report</p>
         </div>
@@ -195,11 +195,11 @@ const ResultPDFTemplate = ({ user, data, date }: PDFTemplateProps) => {
       {/* Footer Branding */}
       <div style={{ marginTop: '32px', paddingTop: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px solid ${COLORS.slate100}` }}>
         <p style={{ fontSize: '9px', color: COLORS.slate400, fontWeight: 500, fontStyle: 'italic', maxWidth: '400px', margin: 0 }}>
-          * Predictions are based on historical data. Final outcome may vary during actual counseling. SATBYTE TOOLKIT is an AI prediction platform.
+          * Predictions are based on historical data. Final outcome may vary during actual counseling. ScholarOS is an AI prediction platform.
         </p>
         <div style={{ textAlign: 'right' }}>
-          <p style={{ fontSize: '9px', fontWeight: 900, color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0 }}>Toolkit by SatByte</p>
-          <p style={{ fontSize: '8px', color: COLORS.slate400, margin: 0 }}>www.toolkit.satbyte.in</p>
+          <p style={{ fontSize: '9px', fontWeight: 900, color: '#1e293b', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0 }}>ScholarOS by SatByte</p>
+          <p style={{ fontSize: '8px', color: COLORS.slate400, margin: 0 }}>os.satbyte.in</p>
         </div>
       </div>
     </div>

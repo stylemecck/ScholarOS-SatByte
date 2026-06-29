@@ -14,9 +14,9 @@ const SEO = ({
   title = "Toolkit by SatByte – Student Productivity & Utility Platform",
   description = "Discover productivity, academic, AI-powered, career, PDF, and utility tools built for students, developers, and creators. Free rank predictors, resume builders, and more.",
   keywords = "student tools, PDF tools, image tools, academic calculators, rank predictors, resume builders, productivity tools, API tools, developer utilities",
-  ogImage = "https://toolkit.satbyte.in/og-image.png",
+  ogImage = "https://os.satbyte.in/og-image.png",
   ogType = "website",
-  canonicalUrl = "https://toolkit.satbyte.in",
+  canonicalUrl = "https://os.satbyte.in",
   schema
 } : SEOProps) => {
   const fullTitle = title.includes('SatByte') ? title : `${title} | SatByte Toolkit`;
@@ -57,10 +57,10 @@ const SEO = ({
             "@context": "https://schema.org",
             "@type": "WebSite",
             "name": "SatByte Toolkit",
-            "url": "https://toolkit.satbyte.in",
+            "url": "https://os.satbyte.in",
             "potentialAction": {
               "@type": "SearchAction",
-              "target": "https://toolkit.satbyte.in/tools?q={search_term_string}",
+              "target": "https://os.satbyte.in/tools?q={search_term_string}",
               "query-input": "required name=search_term_string"
             }
           })}

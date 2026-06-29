@@ -25,7 +25,7 @@ app.use(helmet({
 }));
 app.use(morgan('dev')); // Logging
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://toolkit.satbyte.in'],
+  origin: ['http://localhost:5173', 'https://toolkit.satbyte.in', 'https://os.satbyte.in'],
   credentials: true,
   exposedHeaders: ["x-rtb-fingerprint-id", "request-id"]
 }));

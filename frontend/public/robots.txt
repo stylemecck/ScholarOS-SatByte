@@ -7,7 +7,7 @@ Disallow: /callback/
 Disallow: /auth/
 
 # Host
-Host: https://toolkit.satbyte.in
+Host: https://os.satbyte.in
 
 # Sitemaps
-Sitemap: https://toolkit.satbyte.in/sitemap.xml
+Sitemap: https://os.satbyte.in/sitemap.xml

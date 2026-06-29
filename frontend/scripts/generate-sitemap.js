@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { tools } from '../src/utils/toolsConfig.js'; // Note: Needs .js if running in node with type module or similar
 
-const BASE_URL = 'https://toolkit.satbyte.in';
+const BASE_URL = 'https://os.satbyte.in';
 
 const pages = [
   { path: '/', priority: '1.0', changefreq: 'daily' },

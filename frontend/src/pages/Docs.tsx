@@ -73,7 +73,7 @@ const DOCS_CONTENT: Record<string, DocCategory> = {
           code: {
             lang: 'bash',
             title: 'Authentication Header',
-            snippet: `curl -H "x-api-key: sos_live_51P..." https://toolkit.satbyte.in/api/v1/user/profile`
+            snippet: `curl -H "x-api-key: sos_live_51P..." https://os.satbyte.in/api/v1/user/profile`
           }
         }
       },
@@ -96,7 +96,7 @@ const DOCS_CONTENT: Record<string, DocCategory> = {
 const formData = new FormData();
 formData.append('file', fs.createReadStream('original.png'));
 
-const response = await axios.post('https://toolkit.satbyte.in/api/v1/image/compress', formData, {
+const response = await axios.post('https://os.satbyte.in/api/v1/image/compress', formData, {
   headers: { 'x-api-key': 'YOUR_KEY' }
 });`
           }
@@ -416,7 +416,7 @@ const Docs = () => {
                             <code className="text-[11px] font-mono text-white/70">{ep.path}</code>
                           </div>
                           <button 
-                            onClick={() => copyToClipboard(`https://toolkit.satbyte.in/api/v1${ep.path}`, `path-${i}`)}
+                            onClick={() => copyToClipboard(`https://os.satbyte.in/api/v1${ep.path}`, `path-${i}`)}
                             className="text-muted-foreground hover:text-white transition-colors"
                           >
                             {copiedId === `path-${i}` ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
