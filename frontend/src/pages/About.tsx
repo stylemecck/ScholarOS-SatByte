@@ -181,8 +181,8 @@ const About = () => {
             <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-primary bg-primary/10 px-4 py-2 rounded-full border border-primary/20">
               <Code2 className="w-4 h-4" /> Founder & Lead Engineer
             </div>
-            <h3 className="text-4xl md:text-6xl font-black text-foreground tracking-tighter italic">Satyam Kumar</h3>
-            <p className="text-lg md:text-xl text-muted-foreground font-medium leading-relaxed italic">
+            <h3 className="text-xl md:text-[22px] font-extrabold text-foreground tracking-tight italic">Satyam Kumar</h3>
+            <p className="text-[18px] md:text-[24px] text-muted-foreground font-medium leading-[1.7] italic mt-4 block border-l-2 border-primary/30 pl-4">
               "I built ScholarOS to solve my own problems as a student. Today, it serves thousands. My goal is simple: to provide industrial-grade quality to every student in India, completely ad-free and affordable."
             </p>
           </div>

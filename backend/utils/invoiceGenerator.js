@@ -69,7 +69,7 @@ exports.generateInvoicePDF = async (user, order, paymentDetails) => {
     page.drawText("SatByte Technologies Private Limited", { x: 40, y: yPos - 15, size: 9, font: helveticaBold, color: textDark });
     page.drawText("Ward No. 07, Sarmastpur Jhitkahi (Shamil), Vaishali, Bihar - 844122", { x: 40, y: yPos - 27, size: 7.5, font: helvetica, color: textMuted });
     page.drawText("GSTIN: 10AAAAA1111A1Z1 (Mock Bihar)", { x: 40, y: yPos - 39, size: 8, font: helvetica, color: textMuted });
-    page.drawText("Email: billing@studenttoolkitpro.com", { x: 40, y: yPos - 51, size: 8, font: helvetica, color: textMuted });
+    page.drawText("Email: billing@satbyte.in", { x: 40, y: yPos - 51, size: 8, font: helvetica, color: textMuted });
 
     // Invoice Meta Column (Right)
     const invoiceNo = `INV-${new Date().getFullYear()}${(new Date().getMonth() + 1).toString().padStart(2, '0')}-${(paymentDetails.razorpay_payment_id || 'TXT').slice(-6).toUpperCase()}`;

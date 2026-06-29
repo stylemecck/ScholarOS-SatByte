@@ -1,32 +1,15 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
-  Check, Zap, ArrowRight, HelpCircle, Loader2
+  Check, Zap, ArrowRight, HelpCircle
 } from 'lucide-react';
 import { useAuth } from '../context/useAuth';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import confetti from 'canvas-confetti';
-
-const loadRazorpaySDK = (): Promise<boolean> => {
-  return new Promise((resolve) => {
-    if ((window as any).Razorpay) {
-      resolve(true);
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
-  });
-};
 
 const Pricing = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
-  const { user, refreshUser } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [alertMessage, setAlertMessage] = useState<{
     type: 'success' | 'error' | 'info';
     title: string;
@@ -81,15 +64,7 @@ const Pricing = () => {
     }
   ];
 
-  const [showBillingModal, setShowBillingModal] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<{ name: string; price: number } | null>(null);
-  const [phone, setPhone] = useState('');
-  const [addressLine1, setAddressLine1] = useState('');
-  const [city, setCity] = useState('');
-  const [stateName, setStateName] = useState('');
-  const [zipCode, setZipCode] = useState('');
-  const [country, setCountry] = useState('India');
-  const [savingBilling, setSavingBilling] = useState(false);
+
 
   const handlePayment = async (planName: string, price: number) => {
     if (planName === 'Free Trial') {
@@ -106,28 +81,9 @@ const Pricing = () => {
     }
 
     if (!user) {
-      navigate('/login?redirect=/pricing');
+      navigate('/login?redirect=/checkout');
       return;
     }
-
-    // Prefill billing info from user context if available
-    setPhone(user.phoneNumber || '');
-    setAddressLine1(user.address?.line1 || '');
-    setCity(user.address?.city || '');
-    setStateName(user.address?.state || '');
-    setZipCode(user.address?.postalCode || '');
-    setCountry(user.address?.country || 'India');
-    
-    setSelectedPlan({ name: planName, price });
-    setShowBillingModal(true);
-  };
-
-  const proceedToCheckout = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedPlan) return;
-    
-    const planName = selectedPlan.name;
-    const price = selectedPlan.price;
 
     const creditsMap: Record<string, Record<'monthly' | 'yearly', number>> = {
       'Achiever Pro': {
@@ -139,277 +95,25 @@ const Pricing = () => {
         yearly: 12000
       }
     };
-
     const credits = creditsMap[planName]?.[billingCycle] || 0;
 
-    try {
-      setSavingBilling(true);
-      setLoadingPlan(planName);
-      const token = localStorage.getItem('token');
-
-      // 1. Save Billing Info to Profile First
-      console.log("Saving customer billing details to user profile...");
-      await axios.put(`${import.meta.env.VITE_API_URL}/api/auth/update-profile`, {
-        phoneNumber: phone,
-        address: {
-          line1: addressLine1,
-          city: city,
-          state: stateName,
-          postalCode: zipCode,
-          country: country
-        }
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      // Refresh context so invoice has latest details
-      await refreshUser();
-      
-      // Close Billing modal
-      setShowBillingModal(false);
-
-      // 2. Create Razorpay order
-      console.log(`Creating order on backend for ${planName} (${billingCycle}): Amount ${price}, Credits ${credits}`);
-      const orderRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/payments/create-order`, {
-        amount: price,
-        credits: credits
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      console.log("Backend Order Response:", orderRes.data);
-
-      const sdkLoaded = await loadRazorpaySDK();
-      if (!sdkLoaded) {
-        setAlertMessage({
-          type: 'error',
-          title: 'SDK Loading Error',
-          text: 'Failed to load Razorpay Checkout. Please check your network connection and try again.'
-        });
-        setLoadingPlan(null);
-        setSavingBilling(false);
-        return;
+    navigate('/checkout', {
+      state: {
+        planName,
+        price,
+        billingCycle,
+        credits
       }
-
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: orderRes.data.amount,
-        currency: orderRes.data.currency,
-        name: "ScholarOS",
-        description: `${planName} ${billingCycle === 'monthly' ? 'Monthly' : 'Yearly'} Plan (${credits} Credits)`,
-        order_id: orderRes.data.id,
-        handler: async function (response: any) {
-          try {
-            setLoadingPlan(planName);
-            console.log("Razorpay Checkout payment success, sending for backend verification:", response);
-            
-            const verifyRes = await axios.post(`${import.meta.env.VITE_API_URL}/api/payments/verify-payment`, {
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-              credits: credits
-            }, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-
-            console.log("Verification Response:", verifyRes.data);
-
-            // Confetti explosion!
-            confetti({
-              particleCount: 150,
-              spread: 80,
-              origin: { y: 0.6 }
-            });
-
-            setAlertMessage({
-              type: 'success',
-              title: 'Purchase Successful!',
-              text: `Fantastic! Your workspace has been upgraded and credited with ${credits} tokens. A compliant GST tax invoice has been generated and sent to your email. Redirecting to console...`
-            });
-
-            await refreshUser();
-
-            setTimeout(() => {
-              navigate('/dashboard');
-            }, 3500);
-
-          } catch (err: any) {
-            console.error("Payment Verification Error:", err);
-            setAlertMessage({
-              type: 'error',
-              title: 'Verification Failed',
-              text: err.response?.data?.error || 'Unable to verify your payment. Please contact our support if money was debited from your account.'
-            });
-          } finally {
-            setLoadingPlan(null);
-          }
-        },
-        prefill: {
-          name: user?.name,
-          email: user?.email,
-          contact: phone
-        },
-        theme: {
-          color: "#3B82F6"
-        },
-        modal: {
-          ondismiss: function() {
-            setLoadingPlan(null);
-          }
-        }
-      };
-
-      const rzp = new (window as any).Razorpay(options);
-      rzp.open();
-
-    } catch (err: any) {
-      console.error("Checkout Initialization Error:", err);
-      setAlertMessage({
-        type: 'error',
-        title: 'Checkout Initialization Error',
-        text: err.response?.data?.error || 'Failed to start payment process. Please try again.'
-      });
-      setLoadingPlan(null);
-    } finally {
-      setSavingBilling(false);
-    }
+    });
   };
 
   return (
     <div className="space-y-24 md:space-y-32 pb-32 bg-background text-foreground transition-colors duration-300">
-      {/* Premium Billing Modal Overlay */}
-      {showBillingModal && selectedPlan && (
-        <div className="fixed inset-0 bg-background/60 backdrop-blur-md flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <motion.div 
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="max-w-lg w-full saas-card space-y-6 my-8 border-border/40 shadow-md relative bg-card text-foreground p-8 sm:p-10 rounded-[3rem]"
-          >
-            <div className="space-y-1">
-              <h3 className="text-2xl font-black text-foreground italic">Confirm Billing Address</h3>
-              <p className="text-[10px] text-muted-foreground font-black uppercase tracking-wider">
-                Required for Compliant GST Tax Invoicing
-              </p>
-            </div>
-            
-            <div className="bg-primary/5 border border-primary/20 p-4 rounded-2xl flex justify-between items-center text-xs">
-              <div>
-                <span className="font-bold text-foreground uppercase tracking-wider block">Selected Plan</span>
-                <span className="text-muted-foreground italic font-medium">
-                  {selectedPlan.name} ({billingCycle === 'monthly' ? 'Monthly' : 'Yearly'})
-                </span>
-              </div>
-              <span className="text-2xl font-black text-primary italic">₹{selectedPlan.price}</span>
-            </div>
 
-            <form onSubmit={proceedToCheckout} className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Mobile Number</label>
-                <input 
-                  type="tel" 
-                  required
-                  pattern="[0-9]{10}"
-                  placeholder="10-digit mobile number"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                  className="saas-input text-foreground focus:ring-1 focus:ring-primary/50 text-sm"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Billing Address (Line 1)</label>
-                <input 
-                  type="text" 
-                  required
-                  placeholder="House/Flat No, Street name"
-                  value={addressLine1}
-                  onChange={(e) => setAddressLine1(e.target.value)}
-                  className="saas-input text-foreground focus:ring-1 focus:ring-primary/50 text-sm"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">City</label>
-                  <input 
-                    type="text" 
-                    required
-                    placeholder="e.g. Noida"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    className="saas-input text-foreground focus:ring-1 focus:ring-primary/50 text-sm"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">State</label>
-                  <input 
-                    type="text" 
-                    required
-                    placeholder="e.g. Uttar Pradesh"
-                    value={stateName}
-                    onChange={(e) => setStateName(e.target.value)}
-                    className="saas-input text-foreground focus:ring-1 focus:ring-primary/50 text-sm"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">PIN Code</label>
-                  <input 
-                    type="text" 
-                    required
-                    pattern="[0-9]{6}"
-                    placeholder="6-digit PIN code"
-                    value={zipCode}
-                    onChange={(e) => setZipCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    className="saas-input text-foreground focus:ring-1 focus:ring-primary/50 text-sm"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-2">Country</label>
-                  <input 
-                    type="text" 
-                    required
-                    disabled
-                    value={country}
-                    className="saas-input text-muted-foreground bg-muted/30 border border-border/30 text-sm"
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-4 pt-4">
-                <button 
-                  type="button"
-                  onClick={() => setShowBillingModal(false)}
-                  className="saas-button-secondary flex-1 py-4 text-xs font-black animate-none hover:bg-foreground/[0.05]"
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit"
-                  disabled={savingBilling}
-                  className="saas-button-primary flex-1 py-4 flex items-center justify-center gap-2 text-xs font-black"
-                >
-                  {savingBilling ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" /> Saving...
-                    </>
-                  ) : (
-                    <>
-                      Proceed <ArrowRight className="w-4 h-4" />
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-          </motion.div>
-        </div>
-      )}
 
       {/* Sleek Custom Notification Overlay */}
       {alertMessage && (
-        <div className="fixed inset-0 bg-background/60 backdrop-blur-md flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-50 p-4">
           <motion.div 
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -544,20 +248,11 @@ const Pricing = () => {
 
               <button 
                 onClick={() => handlePayment(plan.name, plan.price[billingCycle])}
-                disabled={loadingPlan !== null}
                 className={`w-full !py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 ${
                   plan.popular ? 'saas-button-primary' : 'saas-button-secondary'
-                } disabled:opacity-50 disabled:cursor-not-allowed`}
+                }`}
               >
-                {loadingPlan === plan.name ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" /> Processing...
-                  </>
-                ) : (
-                  <>
-                    {plan.button} <ArrowRight className="w-4 h-4" />
-                  </>
-                )}
+                {plan.button} <ArrowRight className="w-4 h-4" />
               </button>
             </motion.div>
           );

@@ -8,11 +8,11 @@
     --primary-foreground: 255, 255, 255;
     --secondary: 16, 185, 129; /* Emerald/Green */
     --secondary-foreground: 255, 255, 255;
-    --background: 245, 247, 250; /* Soft off-white */
+    --background: 235, 238, 243; /* Dull off-white slate background */
     --foreground: 15, 23, 42; /* Charcoal */
-    --muted: 236, 240, 244; /* Soft slate */
+    --muted: 220, 226, 234; /* Soft slate */
     --muted-foreground: 100, 116, 139; /* Slate 500 */
-    --card: 255, 255, 255; /* Crisp card white */
+    --card: 246, 248, 251; /* Soft off-white cards to remove pure white glare */
     --card-foreground: 15, 23, 42;
     --border: 15, 23, 42;
     --radius: 1.5rem;
@@ -87,19 +87,19 @@
   }
 
   .saas-card {
-    @apply bg-card/80 backdrop-blur-xl border border-border/50 rounded-[2rem] p-8 hover:border-primary/20 transition-all duration-500 shadow-sm;
+    @apply bg-card/80 backdrop-blur-xl border border-border/50 rounded-[2.5rem] p-10 md:p-12 hover:border-primary/20 transition-all duration-500 shadow-sm;
   }
 
   .saas-button-primary {
-    @apply bg-primary text-primary-foreground px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:scale-102 active:scale-98 transition-all shadow-sm;
+    @apply bg-primary text-primary-foreground px-10 rounded-2xl font-bold uppercase tracking-widest text-[14px] md:text-[16px] h-[52px] md:h-[56px] inline-flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-sm;
   }
 
   .saas-button-secondary {
-    @apply bg-muted text-foreground border border-border/50 px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-border transition-all shadow-sm;
+    @apply bg-muted text-foreground border border-border/50 px-10 rounded-2xl font-bold uppercase tracking-widest text-[14px] md:text-[16px] h-[52px] md:h-[56px] inline-flex items-center justify-center gap-2 hover:bg-border transition-all shadow-sm;
   }
 
   .saas-input {
-    @apply w-full bg-muted border border-border/50 rounded-2xl px-6 py-4 text-sm font-medium focus:border-primary/50 outline-none transition-all placeholder:text-muted-foreground/50;
+    @apply w-full bg-foreground/[0.02] border border-border/30 rounded-xl px-5 py-3.5 text-sm font-medium text-foreground focus:bg-background focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none transition-all placeholder:text-muted-foreground/30;
   }
 
   .scroll-hide::-webkit-scrollbar {

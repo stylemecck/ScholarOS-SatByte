@@ -4,7 +4,7 @@ import {
   Menu, X, Zap, Sparkles, 
   BarChart3, ChevronDown, LayoutDashboard, Settings,
   FileText, Image as ImageIcon, GraduationCap, ArrowRight,
-  LogOut, CreditCard, Sun, Moon
+  LogOut, CreditCard, Sun, Moon, ChevronRight
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -133,8 +133,8 @@ const Navbar = () => {
               <button 
                 onMouseEnter={() => setIsToolsOpen(true)}
                 className={`
-                  px-4 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-2
-                  ${isToolsOpen ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04]'}
+                  px-5 py-2.5 rounded-full text-[15px] lg:text-[17px] font-semibold transition-all flex items-center gap-2
+                  ${isToolsOpen ? 'text-primary bg-primary/10' : 'text-muted-foreground hover:text-foreground hover:bg-foreground/[0.03]'}
                 `}
               >
                 Tools <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isToolsOpen ? 'rotate-180' : ''}`} />
@@ -195,8 +195,8 @@ const Navbar = () => {
                 key={link.path}
                 to={link.path}
                 className={`
-                  relative px-4 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all
-                  ${location.pathname === link.path ? 'text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04]'}
+                  relative px-5 py-2.5 rounded-full text-[15px] lg:text-[17px] font-semibold transition-all
+                  ${location.pathname === link.path ? 'text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-foreground/[0.03]'}
                 `}
               >
                 {link.name}
@@ -329,83 +329,115 @@ const Navbar = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-[85%] sm:w-[400px] z-[90] md:hidden bg-background border-l border-border/40 flex flex-col pointer-events-auto"
+              className="fixed top-0 right-0 bottom-0 w-[85%] sm:w-[400px] z-[90] md:hidden bg-background border-l border-border/40 flex flex-col pointer-events-auto shadow-2xl"
             >
-              <div className="flex flex-col h-full overflow-y-auto p-8 pt-24">
+              <div className="flex flex-col h-full overflow-y-auto p-6 md:p-8">
+                {/* Header inside mobile drawer */}
+                <div className="flex items-center justify-between border-b border-border/30 pb-4 mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/30">
+                      <svg className="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                    <span className="text-base font-bold tracking-tight text-foreground">ScholarOS</span>
+                  </div>
+                  <button 
+                    onClick={() => setIsMenuOpen(false)}
+                    className="w-9 h-9 rounded-full bg-foreground/[0.04] text-foreground hover:bg-foreground/[0.08] flex items-center justify-center transition-all focus:outline-none"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
                 {/* User Info on Mobile */}
                 {user && (
-                  <div className="mb-10 p-6 bg-foreground/[0.04] rounded-[2.5rem] border border-border/40">
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary to-purple-600 p-0.5">
-                         <div className="w-full h-full rounded-[0.9rem] overflow-hidden bg-background flex items-center justify-center text-xl font-black">
+                  <div className="mb-6 p-5 bg-foreground/[0.02] border border-border/20 rounded-2xl">
+                    <div className="flex items-center gap-3.5 mb-4">
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-primary to-purple-600 p-0.5">
+                         <div className="w-full h-full rounded-[0.55rem] overflow-hidden bg-background flex items-center justify-center text-lg font-black text-foreground">
                             {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : user.name.charAt(0).toUpperCase()}
                          </div>
                       </div>
-                      <div className="flex flex-col">
-                        <span className="text-lg font-black tracking-tight">{user.name}</span>
-                        <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{user.credits} Credits</span>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-base font-bold tracking-tight truncate text-foreground">{user.name}</span>
+                        <span className="text-[10px] font-bold text-primary uppercase tracking-[0.1em]">{user.credits} Credits</span>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
-                       <Link to="/dashboard" className="flex items-center justify-center gap-2 p-3 bg-foreground/[0.04] rounded-xl text-[10px] font-black uppercase tracking-widest">
-                          <LayoutDashboard className="w-3.5 h-3.5" /> Dash
+                    <div className="flex gap-2">
+                       <Link to="/dashboard" className="flex-1 py-2.5 bg-muted border border-border/30 hover:bg-foreground/[0.04] text-foreground rounded-xl text-xs font-bold text-center flex items-center justify-center gap-2">
+                          <LayoutDashboard className="w-3.5 h-3.5" /> Dashboard
                        </Link>
-                       <Link to="/settings" className="flex items-center justify-center gap-2 p-3 bg-foreground/[0.04] rounded-xl text-[10px] font-black uppercase tracking-widest">
+                       <Link to="/settings" className="flex-1 py-2.5 bg-muted border border-border/30 hover:bg-foreground/[0.04] text-foreground rounded-xl text-xs font-bold text-center flex items-center justify-center gap-2">
                           <Settings className="w-3.5 h-3.5" /> Settings
                        </Link>
                     </div>
                   </div>
                 )}
 
-                <div className="space-y-10">
-                  <div className="space-y-4">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground opacity-50 px-2">Navigation</h3>
-                    <div className="grid grid-cols-1 gap-2">
-                      <Link to="/" className="p-5 bg-foreground/[0.04] rounded-3xl text-2xl font-black tracking-tighter hover:bg-primary/10 hover:text-primary transition-all">Home</Link>
+                <div className="space-y-8">
+                  <div className="space-y-3">
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-50 px-1">Navigation</h3>
+                    <div className="flex flex-col">
+                      <Link 
+                        to="/" 
+                        className="flex items-center justify-between py-3.5 text-base font-semibold text-foreground border-b border-border/10 hover:text-primary transition-colors group"
+                      >
+                        <span>Home</span>
+                        <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                      </Link>
                       {navLinks.map(link => (
-                        <Link key={link.path} to={link.path} className="p-5 bg-foreground/[0.04] rounded-3xl text-2xl font-black tracking-tighter hover:bg-primary/10 hover:text-primary transition-all">{link.name}</Link>
+                        <Link 
+                          key={link.path} 
+                          to={link.path} 
+                          className="flex items-center justify-between py-3.5 text-base font-semibold text-foreground border-b border-border/10 hover:text-primary transition-colors group"
+                        >
+                          <span>{link.name}</span>
+                          <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                        </Link>
                       ))}
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <Link to="/tools" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors">Explore</Link>
-                    <div className="grid grid-cols-1 gap-3">
+                  <div className="space-y-3">
+                    <Link to="/tools" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground transition-colors px-1 block">Featured Modules</Link>
+                    <div className="grid grid-cols-1 gap-2.5">
                       {toolCategories.flatMap(c => c.tools).slice(0, 4).map(tool => (
                         <Link 
                           key={tool.path}
                           to={tool.path}
-                          className="flex items-center gap-4 p-4 bg-foreground/[0.04] rounded-3xl border border-border/40 hover:border-primary/30 transition-all group"
+                          className="flex items-center gap-3 p-3 bg-foreground/[0.01] hover:bg-foreground/[0.03] border border-border/20 rounded-xl transition-all group"
                         >
-                          <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <tool.icon className="w-6 h-6" />
+                          <div className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                            <tool.icon className="w-4 h-4" />
                           </div>
-                          <div className="flex flex-col">
-                            <span className="text-sm font-black uppercase tracking-tight group-hover:text-primary transition-colors">{tool.name}</span>
-                            <span className="text-[10px] text-muted-foreground font-medium">{tool.desc}</span>
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors truncate">{tool.name}</span>
+                            <span className="text-[10px] text-muted-foreground truncate">{tool.desc}</span>
                           </div>
                         </Link>
                       ))}
-                      <Link to="/tools" className="p-4 text-center text-[10px] font-black uppercase tracking-[0.2em] text-primary hover:underline">Explore Marketplace</Link>
+                      <Link to="/tools" className="py-2.5 text-center text-xs font-bold text-primary hover:underline">Explore All Tools</Link>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-auto pt-10 border-t border-border/40 space-y-6">
+                <div className="mt-auto pt-6 border-t border-border/40 space-y-4">
                   {user ? (
                     <button 
                       onClick={() => logout()}
-                      className="w-full py-5 bg-rose-500/10 text-rose-500 rounded-3xl font-black uppercase tracking-widest flex items-center justify-center gap-3"
+                      className="w-full h-12 bg-rose-500/10 text-rose-500 border border-rose-500/20 rounded-xl font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 hover:bg-rose-500/20 transition-all"
                     >
-                      <LogOut className="w-5 h-5" /> Sign Out
+                      <LogOut className="w-4 h-4" /> Sign Out
                     </button>
                   ) : (
-                    <Link to="/login" className="w-full py-5 bg-primary text-white rounded-3xl font-black uppercase tracking-widest flex items-center justify-center gap-3">
-                      <Zap className="w-5 h-5" /> Get Started Now
+                    <Link to="/login" className="w-full h-12 bg-primary text-primary-foreground rounded-xl font-bold uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 hover:opacity-90 transition-all shadow-sm">
+                      <Zap className="w-4 h-4" /> Get Started Now
                     </Link>
                   )}
-                  <p className="text-[9px] text-center text-muted-foreground font-black uppercase tracking-[0.5em] opacity-30">
-                    SatByte Technology © 2026
+                  <p className="text-[9px] text-center text-muted-foreground font-black uppercase tracking-[0.4em] opacity-35">
+                    ScholarOS © 2026
                   </p>
                 </div>
               </div>

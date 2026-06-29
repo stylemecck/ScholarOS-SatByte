@@ -39,8 +39,8 @@ const ToolCard = ({ tool }: ToolCardProps) => {
         </div>
         
         <div className="space-y-2">
-          <h3 className="text-2xl font-black tracking-tighter text-foreground group-hover:text-primary transition-colors">{tool.name}</h3>
-          <p className="text-sm text-muted-foreground font-medium leading-relaxed line-clamp-2 group-hover:text-foreground/70 transition-colors">
+          <h3 className="text-[22px] lg:text-[24px] font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">{tool.name}</h3>
+          <p className="text-[17px] lg:text-[18px] text-muted-foreground font-medium leading-[1.7] line-clamp-2 group-hover:text-foreground/70 transition-colors">
             {tool.description}
           </p>
         </div>

@@ -64,7 +64,7 @@ const Home = () => {
   ];
 
   return (
-    <div className="space-y-24 md:space-y-36 pb-20 md:pb-32 bg-background text-foreground transition-colors duration-300">
+    <div className="space-y-32 md:space-y-48 pb-28 md:pb-44 bg-background text-foreground transition-colors duration-300">
       <SEO 
         title="ScholarOS - SEO, PDF Generation & AI Rank Predictor"
         description="Redesigned student, developer, and exam success hub by SatByte Technologies. Predict ranks, generate intelligent study roadmaps, and build ATS-ready resumes with high-performance AI."
@@ -99,11 +99,11 @@ const Home = () => {
             <Sparkles className="w-4 h-4" /> The Academic Operating System
           </motion.div>
           
-          <div className="space-y-6">
+          <div className="space-y-8">
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-4xl sm:text-7xl md:text-8xl lg:text-[7.5rem] font-black tracking-tighter leading-[0.9] text-foreground"
+              className="text-[40px] md:text-[56px] lg:text-[72px] font-extrabold tracking-[-0.03em] leading-[1.05] text-foreground"
             >
               Academic Success <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-indigo-400 to-purple-500 italic pr-4">Automated.</span>
@@ -113,7 +113,7 @@ const Home = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-lg md:text-2xl text-muted-foreground max-w-3xl mx-auto font-medium leading-relaxed"
+              className="text-[18px] md:text-[22px] text-muted-foreground/90 max-w-[680px] mx-auto font-medium leading-[1.7]"
             >
               The unified SaaS workspace for college students. Predict exam ranks, enhance resume bullet points, map 7-day study tracks, and organize documents.
             </motion.p>
@@ -125,10 +125,10 @@ const Home = () => {
             transition={{ delay: 0.2 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
           >
-            <Link to="/signup" className="saas-button-primary !px-10 !py-5 flex items-center gap-3 text-sm">
+            <Link to="/signup" className="saas-button-primary flex items-center gap-3">
               Create Your Workspace <ArrowRight className="w-5 h-5" />
             </Link>
-            <a href="#tools" className="saas-button-secondary !px-10 !py-5 flex items-center gap-2 text-sm">
+            <a href="#tools" className="saas-button-secondary flex items-center gap-2">
               Browse Modules <Zap className="w-4 h-4" />
             </a>
           </motion.div>
@@ -402,8 +402,8 @@ const Home = () => {
               <div className="flex items-center gap-2 bg-primary/20 text-primary border border-primary/20 w-fit px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
                 <Sparkles className="w-3 h-3" /> Predictive AI Suite
               </div>
-              <h3 className="text-4xl md:text-6xl font-black leading-none tracking-tighter text-foreground">AI Entrance Predictor</h3>
-              <p className="max-w-md text-base text-muted-foreground font-medium leading-relaxed">
+              <h3 className="text-2xl md:text-[28px] lg:text-[32px] font-bold leading-tight tracking-tight text-foreground">AI Entrance Predictor</h3>
+              <p className="max-w-[70ch] text-[17px] lg:text-[18px] text-muted-foreground/80 font-medium leading-[1.7]">
                 Calculate normalized shift difficulties and predict ranks for JEE, CUET PG, NIMCET and state college entrances instantly.
               </p>
             </div>
@@ -415,8 +415,8 @@ const Home = () => {
             <Rocket className="w-10 h-10 text-indigo-500 mb-8 group-hover:translate-y-[-4px] transition-transform" />
             <div className="space-y-3">
               <div className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Career Accelerator</div>
-              <h3 className="text-2xl font-black text-foreground">Resume Studio</h3>
-              <p className="text-sm text-muted-foreground font-medium leading-relaxed">AI summary writers, ATS formatting checkers, and bullet enhancement.</p>
+              <h3 className="text-[22px] lg:text-[24px] font-bold text-foreground">Resume Studio</h3>
+              <p className="text-[17px] lg:text-[18px] text-muted-foreground/80 font-medium leading-[1.7]">AI summary writers, ATS formatting checkers, and bullet enhancement.</p>
             </div>
           </Link>
 
@@ -426,8 +426,8 @@ const Home = () => {
             <Zap className="w-10 h-10 text-purple-500 mb-8 group-hover:scale-110 transition-transform" />
             <div className="space-y-3">
               <div className="text-[10px] font-black uppercase tracking-widest text-purple-400">Document Workspace</div>
-              <h3 className="text-2xl font-black text-foreground">PDF Studio</h3>
-              <p className="text-sm text-muted-foreground font-medium leading-relaxed">Compress files, split pages, add watermarks, and convert images instantly.</p>
+              <h3 className="text-[22px] lg:text-[24px] font-bold text-foreground">PDF Studio</h3>
+              <p className="text-[17px] lg:text-[18px] text-muted-foreground/80 font-medium leading-[1.7]">Compress files, split pages, add watermarks, and convert images instantly.</p>
             </div>
           </Link>
 
@@ -444,8 +444,8 @@ const Home = () => {
               <div className="flex items-center gap-2 bg-emerald-500/25 text-emerald-400 border border-emerald-500/20 w-fit px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
                 <GraduationCap className="w-3.5 h-3.5" /> Grade & Attendance Ledger
               </div>
-              <h3 className="text-3xl font-black tracking-tighter text-foreground">Academic Trackers</h3>
-              <p className="max-w-md text-sm text-muted-foreground font-medium">CGPA converters, attendance threshold metrics, and study planners.</p>
+              <h3 className="text-2xl md:text-[28px] lg:text-[32px] font-bold tracking-tight text-foreground">Academic Trackers</h3>
+              <p className="max-w-[70ch] text-[17px] lg:text-[18px] text-muted-foreground/80 font-medium leading-[1.7]">CGPA converters, attendance threshold metrics, and study planners.</p>
             </div>
           </Link>
         </div>
@@ -494,7 +494,7 @@ const Home = () => {
               return (
                 <div key={category} className="space-y-10">
                   <div className="flex items-center gap-6">
-                    <h2 className="text-2xl md:text-3xl font-black tracking-tighter text-foreground uppercase italic">
+                    <h2 className="text-[32px] md:text-[40px] lg:text-[48px] font-extrabold tracking-tight text-foreground uppercase italic">
                       {category} Modules
                     </h2>
                     <div className="h-px flex-grow bg-gradient-to-r from-border/40 to-transparent" />
@@ -532,9 +532,9 @@ const Home = () => {
         <div className="saas-card p-10 md:p-16 border border-border/40 space-y-12 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px] -z-10" />
           
-          <div className="text-center space-y-4">
-            <h2 className="text-3xl md:text-5xl font-black text-foreground tracking-tighter italic">Workspace Cost Estimator</h2>
-            <p className="text-muted-foreground text-sm max-w-xl mx-auto font-medium">Use the slider to calculate pricing based on your required credit volume.</p>
+          <div className="text-center space-y-6">
+            <h2 className="text-[32px] md:text-[40px] lg:text-[48px] font-extrabold text-foreground tracking-tight italic">Workspace Cost Estimator</h2>
+            <p className="max-w-[72ch] mx-auto text-[16px] md:text-[17px] lg:text-[18px] text-muted-foreground font-medium leading-[1.75]">Use the slider to calculate pricing based on your required credit volume.</p>
           </div>
 
           <div className="space-y-6">
@@ -591,9 +591,9 @@ const Home = () => {
 
       {/* Testimonials */}
       <section className="px-4 max-w-6xl mx-auto space-y-16">
-        <div className="text-center space-y-4">
-          <h2 className="text-3xl md:text-5xl font-black text-foreground tracking-tighter italic">SaaS Feedback</h2>
-          <p className="text-muted-foreground font-medium text-sm">Read what competitive aspirants and college students are saying.</p>
+        <div className="text-center space-y-6">
+          <h2 className="text-[32px] md:text-[40px] lg:text-[48px] font-extrabold text-foreground tracking-tight italic">SaaS Feedback</h2>
+          <p className="max-w-[72ch] mx-auto text-[16px] md:text-[17px] lg:text-[18px] text-muted-foreground font-medium leading-[1.75]">Read what competitive aspirants and college students are saying.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -629,9 +629,9 @@ const Home = () => {
 
       {/* Accordion FAQs */}
       <section className="px-4 max-w-4xl mx-auto space-y-12">
-        <div className="text-center space-y-3">
-          <h2 className="text-3xl md:text-5xl font-black text-foreground tracking-tighter italic">System FAQs</h2>
-          <p className="text-muted-foreground text-sm font-medium">Common questions regarding ScholarOS billing and capabilities.</p>
+        <div className="text-center space-y-6">
+          <h2 className="text-[32px] md:text-[40px] lg:text-[48px] font-extrabold text-foreground tracking-tight italic">System FAQs</h2>
+          <p className="max-w-[72ch] mx-auto text-[16px] md:text-[17px] lg:text-[18px] text-muted-foreground font-medium leading-[1.75]">Common questions regarding ScholarOS billing and capabilities.</p>
         </div>
 
         <div className="space-y-4">
@@ -678,20 +678,20 @@ const Home = () => {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[140px] -z-10 group-hover:bg-purple-500/10 transition-colors duration-1000" />
           
           <div className="space-y-6 max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-7xl font-black text-foreground tracking-tighter leading-none">
+            <h2 className="text-[40px] md:text-[56px] lg:text-[72px] font-extrabold text-foreground tracking-[-0.03em] leading-[1.05]">
               Ready to deploy your <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 italic">Academic Workspace?</span>
             </h2>
-            <p className="text-muted-foreground text-lg md:text-xl font-medium">
+            <p className="max-w-[72ch] mx-auto text-[16px] md:text-[17px] lg:text-[18px] text-muted-foreground font-medium leading-[1.75]">
               Join thousands of students who have upgraded their daily workflow. Sign up for free today.
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
-            <Link to="/signup" className="saas-button-primary !px-12 !py-6 text-base">
+            <Link to="/signup" className="saas-button-primary">
               Get Started for Free
             </Link>
-            <Link to="/about" className="saas-button-secondary !px-12 !py-6 text-base">
+            <Link to="/about" className="saas-button-secondary">
               Our Vision
             </Link>
           </div>

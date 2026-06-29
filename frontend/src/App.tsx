@@ -43,6 +43,7 @@ import DeveloperDashboard from './pages/DeveloperDashboard';
 // import Docs from './pages/Docs';
 import ExploreTools from './pages/ExploreTools';
 import Tutorials from './pages/Tutorials';
+import Checkout from './pages/Checkout';
 import { AuthProvider } from './context/AuthContext';
 import { SettingsProvider, useSettings } from './context/SettingsContext';
 import { useEffect } from 'react';
@@ -105,6 +106,7 @@ function AppContent() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/pricing" element={<Pricing />} />
+          <Route path="/checkout" element={<Checkout />} />
           
           {/* Academic Tools */}
           <Route path="/tools/cgpa-calculator" element={<CGPACalculator />} />
