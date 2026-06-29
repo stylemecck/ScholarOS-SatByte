@@ -55,7 +55,7 @@ const Footer = () => {
                 <div className="absolute inset-0 bg-primary/10 blur-md -z-10" />
               </div>
               <div className="flex flex-col">
-                <span className="text-3xl font-black tracking-tighter text-foreground uppercase leading-none">SatByte<span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 italic">Toolkit</span></span>
+                <span className="text-3xl font-black tracking-tighter text-foreground uppercase leading-none">Scholar<span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 italic">OS</span></span>
                 <span className="text-[9px] font-black uppercase tracking-[0.4em] text-muted-foreground opacity-50 mt-1">SEO & PDF Suite</span>
               </div>
             </Link>
@@ -106,7 +106,7 @@ const Footer = () => {
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-10">
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40">
-            <span>© {currentYear} SatByte Toolkit</span>
+            <span>© {currentYear} ScholarOS</span>
             <span className="hidden md:block w-1.5 h-1.5 bg-border/40 rounded-full" />
             <span>Propulsion by SatByte Technologies</span>
           </div>

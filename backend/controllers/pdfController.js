@@ -176,7 +176,7 @@ exports.imageToPDF = async (req, res) => {
 exports.addWatermark = async (req, res) => {
   try {
     if (!req.file || !req.file.buffer) return res.status(400).json({ error: 'Please upload a PDF file.' });
-    const text = req.body.text || 'Student Toolkit Pro';
+    const text = req.body.text || 'ScholarOS';
     const opacity = parseFloat(req.body.opacity) || 0.3;
 
     const pdfBytes = req.file.buffer;

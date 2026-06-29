@@ -13,20 +13,20 @@ exports.sendReferralBonusEmail = async (userEmail, userName, bonusAmount) => {
 
   try {
     await transporter.sendMail({
-      from: `"Student Toolkit Pro" <${process.env.EMAIL_USER}>`,
+      from: `"ScholarOS" <${process.env.EMAIL_USER}>`,
       to: userEmail,
       subject: "🎉 You've earned Referral Credits!",
       html: `
         <div style="font-family: 'Outfit', sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 20px;">
           <h2 style="color: #8b5cf6;">Great news, ${userName}!</h2>
-          <p>Someone just joined Student Toolkit Pro using your referral code.</p>
+          <p>Someone just joined ScholarOS using your referral code.</p>
           <div style="background: #f5f3ff; padding: 20px; border-radius: 15px; text-align: center;">
             <h1 style="margin: 0; color: #8b5cf6;">+${bonusAmount} Credits</h1>
             <p style="margin: 5px 0 0; font-weight: bold; color: #6d28d9;">Added to your account</p>
           </div>
           <p style="margin-top: 20px;">Keep sharing your code to earn more free AI credits!</p>
           <div style="margin-top: 30px; border-top: 1px solid #eee; pt: 20px; font-size: 12px; color: #888;">
-            © 2026 Student Toolkit Pro | SatByte Technologies
+            © 2026 ScholarOS | SatByte Technologies
           </div>
         </div>
       `
@@ -50,12 +50,12 @@ exports.sendInvoiceEmail = async (userEmail, userName, pdfBuffer, billingDetails
   }
 
   try {
-    const fromEmail = process.env.RESEND_FROM_EMAIL || 'Student Toolkit Pro <onboarding@resend.dev>';
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'ScholarOS <onboarding@resend.dev>';
     
     const htmlContent = `
       <div style="font-family: 'Outfit', -apple-system, sans-serif; max-width: 650px; margin: auto; padding: 30px; border: 1px solid #e5e7eb; border-radius: 24px; background: #fafafa; color: #1f2937;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <h2 style="color: #3b82f6; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.04em;">STUDENT TOOLKIT PRO</h2>
+          <h2 style="color: #3b82f6; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.04em;">SCHOLAROS</h2>
           <p style="margin: 5px 0 0; color: #6b7280; font-size: 13px; font-weight: 600; text-transform: uppercase; tracking: 0.15em;">Official Tax Invoice</p>
         </div>
         
@@ -84,10 +84,10 @@ exports.sendInvoiceEmail = async (userEmail, userName, pdfBuffer, billingDetails
           </table>
         </div>
         
-        <p style="font-size: 13px; line-height: 1.6; color: #6b7280; font-style: italic; margin-bottom: 25px;">Note: Your subscription benefits and AI credits are now fully active inside your student dashboard.</p>
+        <p style="font-size: 13px; line-height: 1.6; color: #6b7280; font-style: italic; margin-bottom: 25px;">Note: Your subscription benefits and AI credits are now fully active inside your dashboard.</p>
         
         <div style="margin-top: 40px; border-top: 1px solid #e5e7eb; padding-top: 20px; font-size: 11px; color: #9ca3af; text-align: center; line-height: 1.5;">
-          © 2026 Student Toolkit Pro | SatByte Technologies Private Limited<br>
+          © 2026 ScholarOS | SatByte Technologies Private Limited<br>
           Ward No. 07, Sarmastpur Jhitkahi (Shamil), Vaishali, Bihar - 844122
         </div>
       </div>
@@ -104,7 +104,7 @@ exports.sendInvoiceEmail = async (userEmail, userName, pdfBuffer, billingDetails
       body: JSON.stringify({
         from: fromEmail,
         to: userEmail,
-        subject: `Tax Invoice ${invoiceNo} - Student Toolkit Pro`,
+        subject: `Tax Invoice ${invoiceNo} - ScholarOS`,
         html: htmlContent,
         attachments: [
           {
@@ -140,12 +140,12 @@ exports.sendGiftCreditEmail = async (recipientEmail, recipientName, senderName, 
   }
 
   try {
-    const fromEmail = process.env.RESEND_FROM_EMAIL || 'Student Toolkit Pro <onboarding@resend.dev>';
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'ScholarOS <onboarding@resend.dev>';
     
     const htmlContent = `
       <div style="font-family: 'Outfit', -apple-system, sans-serif; max-width: 600px; margin: auto; padding: 30px; border: 1px solid #e2e8f0; border-radius: 24px; background: #fafafa; color: #1e293b;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <h2 style="color: #8b5cf6; margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.04em;">STUDENT TOOLKIT PRO</h2>
+          <h2 style="color: #8b5cf6; margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.04em;">SCHOLAROS</h2>
           <p style="margin: 5px 0 0; color: #64748b; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em;">Credits Received Notification</p>
         </div>
         
@@ -175,10 +175,10 @@ exports.sendGiftCreditEmail = async (recipientEmail, recipientName, senderName, 
           </table>
         </div>
         
-        <p style="font-size: 13px; line-height: 1.6; color: #64748b; font-style: italic; margin-bottom: 25px;">These credits are ready to use for Resume Parsing, AI CGPA Predictions, study planners, and all AI features inside your toolkit dashboard.</p>
+        <p style="font-size: 13px; line-height: 1.6; color: #64748b; font-style: italic; margin-bottom: 25px;">These credits are ready to use for Resume Parsing, AI Predictions, study planners, and all AI features inside your ScholarOS dashboard.</p>
         
         <div style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px; font-size: 11px; color: #94a3b8; text-align: center;">
-          © 2026 Student Toolkit Pro | SatByte Technologies Private Limited<br>
+          © 2026 ScholarOS | SatByte Technologies Private Limited<br>
           Ward No. 07, Sarmastpur Jhitkahi (Shamil), Vaishali, Bihar - 844122
         </div>
       </div>
@@ -195,7 +195,7 @@ exports.sendGiftCreditEmail = async (recipientEmail, recipientName, senderName, 
       body: JSON.stringify({
         from: fromEmail,
         to: recipientEmail,
-        subject: `🎉 You've received +${netTransferred} Credits! - Student Toolkit Pro`,
+        subject: `🎉 You've received +${netTransferred} Credits! - ScholarOS`,
         html: htmlContent
       })
     });
@@ -217,12 +217,12 @@ exports.sendGiftDebitEmail = async (senderEmail, senderName, recipientName, reci
   }
 
   try {
-    const fromEmail = process.env.RESEND_FROM_EMAIL || 'Student Toolkit Pro <onboarding@resend.dev>';
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'ScholarOS <onboarding@resend.dev>';
     
     const htmlContent = `
       <div style="font-family: 'Outfit', -apple-system, sans-serif; max-width: 600px; margin: auto; padding: 30px; border: 1px solid #e2e8f0; border-radius: 24px; background: #fafafa; color: #1e293b;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <h2 style="color: #64748b; margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.04em;">STUDENT TOOLKIT PRO</h2>
+          <h2 style="color: #64748b; margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.04em;">SCHOLAROS</h2>
           <p style="margin: 5px 0 0; color: #64748b; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em;">Credits Transferred Notification</p>
         </div>
         
@@ -256,10 +256,10 @@ exports.sendGiftDebitEmail = async (senderEmail, senderName, recipientName, reci
           </table>
         </div>
         
-        <p style="font-size: 13px; line-height: 1.6; color: #64748b; font-style: italic; margin-bottom: 25px;">Thank you for sharing your credits and supporting fellow students within the Student Toolkit Pro community!</p>
+        <p style="font-size: 13px; line-height: 1.6; color: #64748b; font-style: italic; margin-bottom: 25px;">Thank you for sharing your credits and supporting fellow students within the ScholarOS community!</p>
         
         <div style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px; font-size: 11px; color: #94a3b8; text-align: center;">
-          © 2026 Student Toolkit Pro | SatByte Technologies Private Limited<br>
+          © 2026 ScholarOS | SatByte Technologies Private Limited<br>
           Ward No. 07, Sarmastpur Jhitkahi (Shamil), Vaishali, Bihar - 844122
         </div>
       </div>
@@ -276,7 +276,7 @@ exports.sendGiftDebitEmail = async (senderEmail, senderName, recipientName, reci
       body: JSON.stringify({
         from: fromEmail,
         to: senderEmail,
-        subject: `💸 Credit Gifting Receipt - Student Toolkit Pro`,
+        subject: `💸 Credit Gifting Receipt - ScholarOS`,
         html: htmlContent
       })
     });
@@ -296,17 +296,17 @@ exports.sendOTPEmail = async (userEmail, userName, otpCode) => {
   }
 
   try {
-    const fromEmail = process.env.RESEND_FROM_EMAIL || 'Student Toolkit Pro <onboarding@resend.dev>';
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'ScholarOS <onboarding@resend.dev>';
     
     const htmlContent = `
       <div style="font-family: 'Outfit', -apple-system, sans-serif; max-width: 600px; margin: auto; padding: 30px; border: 1px solid #e2e8f0; border-radius: 24px; background: #fafafa; color: #1e293b;">
         <div style="text-align: center; margin-bottom: 30px;">
-          <h2 style="color: #3b82f6; margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.04em;">STUDENT TOOLKIT PRO</h2>
+          <h2 style="color: #3b82f6; margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.04em;">SCHOLAROS</h2>
           <p style="margin: 5px 0 0; color: #64748b; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em;">Secure Verification Request</p>
         </div>
         
         <p style="font-size: 15px; line-height: 1.6; color: #334155;">Hello <strong>${userName}</strong>,</p>
-        <p style="font-size: 14px; line-height: 1.6; color: #475569;">We received a request to reset the password for your Student Toolkit Pro account. Use the secure One-Time Password (OTP) below to complete your reset request:</p>
+        <p style="font-size: 14px; line-height: 1.6; color: #475569;">We received a request to reset the password for your ScholarOS account. Use the secure One-Time Password (OTP) below to complete your reset request:</p>
         
         <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 16px; padding: 25px; margin: 25px 0; text-align: center; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.05);">
           <h1 style="margin: 0; color: #1d4ed8; font-size: 42px; font-weight: 900; letter-spacing: 0.25em; padding-left: 0.25em;">${otpCode}</h1>
@@ -316,7 +316,7 @@ exports.sendOTPEmail = async (userEmail, userName, otpCode) => {
         <p style="font-size: 13px; line-height: 1.6; color: #64748b;">If you did not request this password reset, please ignore this email or contact support. Your password will remain secure and unchanged.</p>
         
         <div style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 20px; font-size: 11px; color: #94a3b8; text-align: center;">
-          © 2026 Student Toolkit Pro | SatByte Technologies Private Limited<br>
+          © 2026 ScholarOS | SatByte Technologies Private Limited<br>
           Ward No. 07, Sarmastpur Jhitkahi (Shamil), Vaishali, Bihar - 844122
         </div>
       </div>
@@ -333,7 +333,7 @@ exports.sendOTPEmail = async (userEmail, userName, otpCode) => {
       body: JSON.stringify({
         from: fromEmail,
         to: userEmail,
-        subject: `🔑 ${otpCode} is your Password Reset Code - Student Toolkit Pro`,
+        subject: `🔑 ${otpCode} is your Password Reset Code - ScholarOS`,
         html: htmlContent
       })
     });

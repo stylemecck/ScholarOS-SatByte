@@ -138,13 +138,13 @@ const Terms = () => {
             <SectionHeading id="intro" title="1. Introduction" icon={Gavel} />
             <div className="space-y-6">
               <p>
-                By accessing and using the SatByte AI ScholarOS ("ScholarOS"), you acknowledge and agree to be bound by the following terms and conditions. These terms constitute a legally binding agreement between you ("User") and SatByte AI ("Company").
+                By accessing and using the ScholarOS ("ScholarOS"), you acknowledge and agree to be bound by the following terms and conditions. These terms constitute a legally binding agreement between you ("User") and SatByte AI ("Company").
               </p>
               <p>
                 The materials contained in this website are protected by applicable copyright and trademark law. You are granted a limited, non-exclusive, non-transferable license to access the tools for personal, academic, or professional use subject to these terms.
               </p>
-              <div className="bg-[#111] border border-white/5 p-8 rounded-3xl space-y-4">
-                <p className="text-sm font-bold text-white italic">"Our mission is to provide industrial-grade utility tools while maintaining the highest standards of user privacy and data security."</p>
+              <div className="bg-card border border-border/40 p-8 rounded-3xl space-y-4">
+                <p className="text-sm font-bold text-foreground italic">"Our mission is to provide industrial-grade utility tools while maintaining the highest standards of user privacy and data security."</p>
               </div>
             </div>
 
@@ -169,11 +169,11 @@ const Terms = () => {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="saas-card !p-8 space-y-4">
-                  <h4 className="text-white font-black italic">Ephemeral Processing</h4>
+                  <h4 className="text-foreground font-black italic">Ephemeral Processing</h4>
                   <p className="text-sm">Files uploaded for compression or conversion are processed in ephemeral memory and are never stored permanently unless you explicitly save them to your cloud dashboard.</p>
                 </div>
                 <div className="saas-card !p-8 space-y-4">
-                  <h4 className="text-white font-black italic">Fair Usage</h4>
+                  <h4 className="text-foreground font-black italic">Fair Usage</h4>
                   <p className="text-sm">Automated scraping or bulk processing via browser-only tools is strictly prohibited and may result in a temporary or permanent IP block.</p>
                 </div>
               </div>
@@ -185,15 +185,15 @@ const Terms = () => {
               <p>
                 The SatByte Developer API allows for programmatic access to our tools. API usage is governed by specific rate limits and security protocols:
               </p>
-              <div className="bg-[#0A0A0A] border border-white/5 rounded-3xl overflow-hidden">
-                <div className="px-6 py-4 bg-white/5 border-b border-white/5 flex items-center justify-between">
+              <div className="bg-card border border-border/40 rounded-3xl overflow-hidden">
+                <div className="px-6 py-4 bg-foreground/[0.04] border-b border-border/30 flex items-center justify-between">
                   <span className="text-[10px] font-black uppercase tracking-widest text-primary">System Protocol</span>
                   <Terminal className="w-4 h-4 text-muted-foreground" />
                 </div>
                 <div className="p-8 space-y-4">
-                  <p className="text-sm text-white/70 font-mono">1. Rate Limiting: 60 requests per minute for Free Tier.</p>
-                  <p className="text-sm text-white/70 font-mono">2. Quotas: Credits are deducted based on the complexity of the operation.</p>
-                  <p className="text-sm text-white/70 font-mono">3. Abuse: Reverse engineering our API or using it to host competing services is forbidden.</p>
+                  <p className="text-sm text-foreground/70 font-mono">1. Rate Limiting: 60 requests per minute for Free Tier.</p>
+                  <p className="text-sm text-foreground/70 font-mono">2. Quotas: Credits are deducted based on the complexity of the operation.</p>
+                  <p className="text-sm text-foreground/70 font-mono">3. Abuse: Reverse engineering our API or using it to host competing services is forbidden.</p>
                 </div>
               </div>
             </div>

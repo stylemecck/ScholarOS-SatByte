@@ -22,7 +22,7 @@ class ResumePDF(FPDF):
         self.set_y(-15)
         self.set_font('helvetica', 'I', 8)
         self.set_text_color(150, 150, 150)
-        self.cell(0, 10, 'Generated via Student Toolkit Pro API', align='C')
+        self.cell(0, 10, 'Generated via ScholarOS API', align='C')
 
 def safe_text(text):
     if not text: return ""

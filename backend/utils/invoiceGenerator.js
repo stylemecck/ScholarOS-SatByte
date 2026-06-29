@@ -37,7 +37,7 @@ exports.generateInvoicePDF = async (user, order, paymentDetails) => {
       color: bgHeader
     });
 
-    page.drawText("STUDENT TOOLKIT PRO", {
+    page.drawText("SCHOLAROS", {
       x: 40,
       y: height - 60,
       size: 24,
@@ -136,7 +136,7 @@ exports.generateInvoicePDF = async (user, order, paymentDetails) => {
     const sgst = parseFloat((basePrice * 0.09).toFixed(2));
     const totalGst = parseFloat((cgst + sgst).toFixed(2));
 
-    const itemDescription = `Student Toolkit Pro - ${planName} ${duration} SaaS Plan (+${credits} Credits)`;
+    const itemDescription = `ScholarOS - ${planName} ${duration} SaaS Plan (+${credits} Credits)`;
 
     // Draw single row item
     yPos -= 45;

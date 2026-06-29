@@ -266,7 +266,7 @@ exports.chat = async (req, res) => {
       user = await User.findById(req.user.userId);
     }
 
-    const prompt = `You are the STP AI Assistant, a helpful and knowledgeable guide for the Student Toolkit Pro platform.
+    const prompt = `You are the ScholarOS Copilot, a helpful and knowledgeable guide for the ScholarOS platform.
     Your goal is to help students with exam predictions, study planning, and career guidance.
     
     Current User Message: ${message}

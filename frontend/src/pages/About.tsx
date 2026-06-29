@@ -181,7 +181,7 @@ const About = () => {
             <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-primary bg-primary/10 px-4 py-2 rounded-full border border-primary/20">
               <Code2 className="w-4 h-4" /> Founder & Lead Engineer
             </div>
-            <h3 className="text-4xl md:text-6xl font-black text-white tracking-tighter italic">Satyam Kumar</h3>
+            <h3 className="text-4xl md:text-6xl font-black text-foreground tracking-tighter italic">Satyam Kumar</h3>
             <p className="text-lg md:text-xl text-muted-foreground font-medium leading-relaxed italic">
               "I built ScholarOS to solve my own problems as a student. Today, it serves thousands. My goal is simple: to provide industrial-grade quality to every student in India, completely ad-free and affordable."
             </p>
@@ -193,7 +193,7 @@ const About = () => {
       <section className="px-4">
         <div className="max-w-7xl mx-auto saas-card !p-12 md:!p-24 text-center space-y-10 relative overflow-hidden group">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-purple-500/10 opacity-50" />
-          <h2 className="text-4xl md:text-7xl font-black text-white tracking-tighter leading-none relative z-10">
+          <h2 className="text-4xl md:text-7xl font-black text-foreground tracking-tighter leading-none relative z-10">
             Start your journey with <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 italic">ScholarOS.</span>
           </h2>

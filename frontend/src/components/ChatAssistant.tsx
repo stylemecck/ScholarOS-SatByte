@@ -6,7 +6,7 @@ import axios from 'axios';
 const ChatAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<{ role: 'user' | 'assistant', content: string }[]>([
-    { role: 'assistant', content: "Hello! I'm your ScholarOS Copilot. How can I help you with your academic goals today?" }
+    { role: 'assistant', content: "Hello! I'm your ScholarOS Copilot. How can I help you with your SEO, PDF, or study goals today?" }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);

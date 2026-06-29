@@ -35,7 +35,7 @@ app.use(express.urlencoded({ limit: '10mb', extended: true }));
 // Routes
 app.get('/', (req, res) => {
   res.json({ 
-    message: 'Student Toolkit Pro API is running',
+    message: 'ScholarOS API is running',
     status: 'healthy',
     version: '1.0.0'
   });

@@ -57,7 +57,7 @@ const Home = () => {
   ];
 
   const faqs = [
-    { q: 'What is ScholarOS?', a: 'ScholarOS is an all-in-one student workspace operating system. It brings together academic planners, AI admission predictors, ATS-compatible resume enhancers, and a full media/PDF studio into a single sleek MERN-stack subscription dashboard.' },
+    { q: 'What is ScholarOS?', a: 'ScholarOS is an all-in-one SEO, PDF generation, and student success workspace. Developed by SatByte Technologies, it brings together academic planners, AI admission predictors, ATS-compatible resume enhancers, and a full media/PDF studio into a single sleek MERN-stack subscription dashboard.' },
     { q: 'How does the credit system work?', a: 'Every module requires a small amount of credits to run (e.g. 1 credit for PDF conversion, 2 credits for Gemini AI Rank Predictions). Free users get 1,000 credits monthly, while Pro users enjoy up to 50,000 or unlimited credits.' },
     { q: 'Is my data secure?', a: 'Absolutely. ScholarOS has been designed with strict privacy standards. Your academic papers, CGPA calculations, and resume fields are securely stored in your local session or encrypted MongoDB databases. We never sell your data.' },
     { q: 'Can I cancel my subscription anytime?', a: 'Yes. You can cancel your subscription at any time via your billing setting tab. Your active credits and limits will remain valid until the end of your billing cycle.' }
@@ -66,8 +66,8 @@ const Home = () => {
   return (
     <div className="space-y-24 md:space-y-36 pb-20 md:pb-32 bg-background text-foreground transition-colors duration-300">
       <SEO 
-        title="ScholarOS - The AI-Powered Academic Workspace"
-        description="Redesigned student and exam success hub. Predict ranks, generate intelligent study roadmaps, and build ATS-ready resumes with high-performance AI."
+        title="ScholarOS - SEO, PDF Generation & AI Rank Predictor"
+        description="Redesigned student, developer, and exam success hub by SatByte Technologies. Predict ranks, generate intelligent study roadmaps, and build ATS-ready resumes with high-performance AI."
         schema={{
           "@context": "https://schema.org",
           "@type": "SoftwareApplication",

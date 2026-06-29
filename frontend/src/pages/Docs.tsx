@@ -233,14 +233,14 @@ const Docs = () => {
           <div className="flex items-center justify-between mb-2">
             <Link to="/" className="flex items-center gap-3 group">
               <div className="w-8 h-8 bg-gradient-to-tr from-primary to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-primary/20 group-hover:rotate-12 transition-transform">
-                <Code2 className="w-5 h-5 text-white" />
+                <Code2 className="w-5 h-5 text-foreground" />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-black uppercase tracking-widest text-white leading-none">ScholarOS <span className="text-primary italic">DOCS</span></span>
+                <span className="text-sm font-black uppercase tracking-widest text-foreground leading-none">ScholarOS <span className="text-primary italic">DOCS</span></span>
                 <span className="text-[7px] font-black uppercase tracking-[0.4em] text-muted-foreground opacity-50">API v1.0.4</span>
               </div>
             </Link>
-            <button onClick={() => setIsMobileMenuOpen(false)} className="lg:hidden p-2 text-muted-foreground hover:text-white transition-colors">
+            <button onClick={() => setIsMobileMenuOpen(false)} className="lg:hidden p-2 text-muted-foreground hover:text-foreground transition-colors">
               <X className="w-5 h-5" />
             </button>
           </div>

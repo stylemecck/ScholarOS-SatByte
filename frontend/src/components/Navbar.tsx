@@ -121,7 +121,7 @@ const Navbar = () => {
             </div>
             <div className="flex flex-col">
               <span className="text-sm sm:text-lg font-black tracking-tighter leading-none">
-                SatByte<span className="text-primary italic">Toolkit</span>
+                Scholar<span className="text-primary italic">OS</span>
               </span>
               <span className="text-[7px] sm:text-[8px] font-black uppercase tracking-[0.3em] text-muted-foreground opacity-50 hidden sm:block">SEO & PDF Suite</span>
             </div>
