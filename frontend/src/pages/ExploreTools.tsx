@@ -40,7 +40,7 @@ const ExploreTools = () => {
   );
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white">
+    <div className="min-h-screen bg-background text-foreground">
       <SEO 
         title="Explore All Tools – Student Productivity Marketplace"
         description="Discover 20+ productivity, academic, AI-powered, career, and utility tools. Explore our collection of PDF editors, rank predictors, and developer utilities."
@@ -99,12 +99,12 @@ const ExploreTools = () => {
                   placeholder="Search by tool..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-14 md:pl-20 pr-6 md:pr-8 py-5 md:py-7 rounded-2xl md:rounded-[2.5rem] border border-white/5 bg-[#0D0D0D] focus:bg-black focus:border-primary/50 outline-none transition-all text-lg md:text-xl font-bold text-white placeholder:text-muted-foreground/20 shadow-2xl"
+                  className="w-full pl-14 md:pl-20 pr-6 md:pr-8 py-5 md:py-7 rounded-2xl md:rounded-[2.5rem] border border-border bg-card focus:bg-background focus:border-primary/50 outline-none transition-all text-lg md:text-xl font-bold text-foreground placeholder:text-muted-foreground/45 shadow-2xl"
                 />
                 {searchQuery && (
                   <button 
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-8 top-1/2 -translate-y-1/2 p-2 hover:bg-white/10 rounded-full transition-colors"
+                    className="absolute right-8 top-1/2 -translate-y-1/2 p-2 hover:bg-muted rounded-full transition-colors"
                   >
                     <X className="w-5 h-5" />
                   </button>

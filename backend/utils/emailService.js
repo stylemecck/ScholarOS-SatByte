@@ -13,7 +13,7 @@ exports.sendReferralBonusEmail = async (userEmail, userName, bonusAmount) => {
 
   try {
     await transporter.sendMail({
-      from: `"ScholarOS" <${process.env.EMAIL_USER}>`,
+      from: '"ScholarOS - SatByte" <${process.env.EMAIL_USER}>',
       to: userEmail,
       subject: "🎉 You've earned Referral Credits!",
       html: `
@@ -50,7 +50,7 @@ exports.sendInvoiceEmail = async (userEmail, userName, pdfBuffer, billingDetails
   }
 
   try {
-    const fromEmail = process.env.RESEND_FROM_EMAIL || 'ScholarOS <onboarding@resend.dev>';
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'ScholarOS - SatByte <onboarding@resend.dev>';
     
     const htmlContent = `
       <div style="font-family: 'Outfit', -apple-system, sans-serif; max-width: 650px; margin: auto; padding: 30px; border: 1px solid #e5e7eb; border-radius: 24px; background: #fafafa; color: #1f2937;">
@@ -140,7 +140,7 @@ exports.sendGiftCreditEmail = async (recipientEmail, recipientName, senderName, 
   }
 
   try {
-    const fromEmail = process.env.RESEND_FROM_EMAIL || 'ScholarOS <onboarding@resend.dev>';
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'ScholarOS - SatByte <onboarding@resend.dev>';
     
     const htmlContent = `
       <div style="font-family: 'Outfit', -apple-system, sans-serif; max-width: 600px; margin: auto; padding: 30px; border: 1px solid #e2e8f0; border-radius: 24px; background: #fafafa; color: #1e293b;">
@@ -217,7 +217,7 @@ exports.sendGiftDebitEmail = async (senderEmail, senderName, recipientName, reci
   }
 
   try {
-    const fromEmail = process.env.RESEND_FROM_EMAIL || 'ScholarOS <onboarding@resend.dev>';
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'ScholarOS - SatByte <onboarding@resend.dev>';
     
     const htmlContent = `
       <div style="font-family: 'Outfit', -apple-system, sans-serif; max-width: 600px; margin: auto; padding: 30px; border: 1px solid #e2e8f0; border-radius: 24px; background: #fafafa; color: #1e293b;">
@@ -296,7 +296,7 @@ exports.sendOTPEmail = async (userEmail, userName, otpCode) => {
   }
 
   try {
-    const fromEmail = process.env.RESEND_FROM_EMAIL || 'ScholarOS <onboarding@resend.dev>';
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'ScholarOS - SatByte <onboarding@resend.dev>';
     
     const htmlContent = `
       <div style="font-family: 'Outfit', -apple-system, sans-serif; max-width: 600px; margin: auto; padding: 30px; border: 1px solid #e2e8f0; border-radius: 24px; background: #fafafa; color: #1e293b;">

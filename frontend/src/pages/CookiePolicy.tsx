@@ -56,18 +56,18 @@ const CookiePolicy = () => {
   const SectionHeading = ({ id, title, icon: Icon }: any) => (
     <div id={id} className="pt-24 first:pt-0 group">
       <div className="flex items-center gap-4 mb-8">
-        <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-primary border border-white/5 group-hover:border-primary/30 transition-all">
+        <div className="w-12 h-12 bg-muted/50 rounded-2xl flex items-center justify-center text-primary border border-border group-hover:border-primary/30 transition-all">
           <Icon className="w-6 h-6" />
         </div>
-        <h2 className="text-3xl font-black tracking-tight italic text-white">{title}</h2>
+        <h2 className="text-3xl font-black tracking-tight italic text-foreground">{title}</h2>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white">
+    <div className="min-h-screen bg-background text-foreground">
       {/* 1. HERO SECTION */}
-      <section className="relative pt-32 pb-24 px-4 overflow-hidden border-b border-white/5 bg-[#080808]">
+      <section className="relative pt-32 pb-24 px-4 overflow-hidden border-b border-border bg-card/50">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-primary/5 rounded-full blur-[140px] -z-10" />
         <div className="max-w-7xl mx-auto space-y-8">
           <div className="space-y-6">
@@ -77,7 +77,7 @@ const CookiePolicy = () => {
             >
               <ShieldCheck className="w-3 h-3" /> Tracking Protocol v1.0.0
             </motion.div>
-            <h1 className="text-6xl md:text-8xl font-black tracking-tighter italic leading-none">
+            <h1 className="text-6xl md:text-8xl font-black tracking-tighter italic leading-none text-foreground">
               Cookie <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500 pr-4">Policy.</span>
             </h1>
@@ -85,9 +85,9 @@ const CookiePolicy = () => {
               How Toolkit by SatByte uses cookies and similar technologies to improve functionality, analytics, security, and your overall user experience.
             </p>
           </div>
-          <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 pt-8 border-t border-white/5">
+          <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 pt-8 border-t border-border">
             <span className="flex items-center gap-2"><Clock className="w-4 h-4" /> Last Updated: May 14, 2026</span>
-            <span className="hidden md:block w-1.5 h-1.5 bg-white/10 rounded-full" />
+            <span className="hidden md:block w-1.5 h-1.5 bg-border rounded-full" />
             <span className="hidden md:block">Transparency Level: Absolute</span>
           </div>
         </div>
@@ -105,7 +105,7 @@ const CookiePolicy = () => {
                   className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-left ${
                     activeSection === section.id 
                     ? 'bg-primary/10 text-primary border border-primary/20' 
-                    : 'text-muted-foreground hover:bg-white/5 hover:text-white'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                   }`}
                 >
                   <section.icon className={`w-4 h-4 ${activeSection === section.id ? 'text-primary' : 'opacity-40'}`} />
@@ -118,7 +118,7 @@ const CookiePolicy = () => {
 
         {/* 3. POLICY CONTENT LAYOUT */}
         <main className="lg:col-span-9 space-y-0">
-          <div className="prose prose-invert max-w-none prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:text-lg prose-headings:font-black prose-headings:italic">
+          <div className="prose dark:prose-invert max-w-none prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:text-lg prose-headings:font-black prose-headings:italic">
             
             <SectionHeading id="intro" title="1. Introduction" icon={Database} />
             <div className="space-y-6">
@@ -135,7 +135,7 @@ const CookiePolicy = () => {
               <p>
                 Cookies are small data files that are placed on your computer or mobile device when you visit a website. Cookies are widely used by website owners in order to make their websites work, or to work more efficiently, as well as to provide reporting information.
               </p>
-              <div className="saas-card !p-8 bg-white/5 border-white/5 rounded-3xl">
+              <div className="saas-card !p-8 bg-muted border border-border rounded-3xl">
                 <p className="text-sm italic font-medium">"Think of cookies as a memory for the web. They help us remember your preferences and keep you logged in across different sessions."</p>
               </div>
             </div>
@@ -147,11 +147,11 @@ const CookiePolicy = () => {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="saas-card !p-8 border-primary/20 bg-primary/5">
-                  <h4 className="text-white font-black italic">Essential Cookies</h4>
+                  <h4 className="text-foreground font-black italic">Essential Cookies</h4>
                   <p className="text-sm">Strictly necessary to provide you with services available through our Website and to use some of its features, such as access to secure areas.</p>
                 </div>
                 <div className="saas-card !p-8 border-blue-500/10">
-                  <h4 className="text-white font-black italic">Performance Cookies</h4>
+                  <h4 className="text-foreground font-black italic">Performance Cookies</h4>
                   <p className="text-sm">These cookies are used to enhance the performance and functionality of our Website but are non-essential to their use.</p>
                 </div>
               </div>
@@ -194,8 +194,8 @@ const CookiePolicy = () => {
                 In addition to our own cookies, we may also use various third-party cookies to report usage statistics of the Service, deliver advertisements on and through the Service, and so on.
               </p>
               <ul className="list-none p-0 space-y-4">
-                <li className="flex gap-4 p-4 bg-white/5 rounded-2xl border border-white/5"><ChevronRight className="text-primary w-5 h-5 shrink-0" /> **Razorpay**: For secure, persistent payment session tracking.</li>
-                <li className="flex gap-4 p-4 bg-white/5 rounded-2xl border border-white/5"><ChevronRight className="text-primary w-5 h-5 shrink-0" /> **Google OAuth**: For maintaining secure login sessions.</li>
+                <li className="flex gap-4 p-4 bg-muted rounded-2xl border border-border"><ChevronRight className="text-primary w-5 h-5 shrink-0" /> **Razorpay**: For secure, persistent payment session tracking.</li>
+                <li className="flex gap-4 p-4 bg-muted rounded-2xl border border-border"><ChevronRight className="text-primary w-5 h-5 shrink-0" /> **Google OAuth**: For maintaining secure login sessions.</li>
               </ul>
             </div>
 
@@ -233,14 +233,14 @@ const CookiePolicy = () => {
             <div className="flex flex-col h-full p-8 space-y-10">
               <div className="flex justify-between items-center">
                 <div className="text-xs font-black uppercase tracking-widest text-primary">Cookie Menu</div>
-                <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-white/50"><X className="w-6 h-6" /></button>
+                <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-muted-foreground"><X className="w-6 h-6" /></button>
               </div>
               <nav className="flex-1 space-y-4 overflow-y-auto custom-scrollbar">
                 {sections.map((section) => (
                   <button
                     key={section.id}
                     onClick={() => scrollToSection(section.id)}
-                    className="w-full flex items-center gap-6 text-2xl font-black italic text-left py-4 border-b border-white/5"
+                    className="w-full flex items-center gap-6 text-2xl font-black italic text-left py-4 border-b border-border"
                   >
                     <section.icon className="w-6 h-6 text-primary" />
                     {section.title.split('. ')[1]}
@@ -254,7 +254,7 @@ const CookiePolicy = () => {
 
       <button 
         onClick={() => setIsMobileMenuOpen(true)}
-        className="lg:hidden fixed bottom-10 right-10 w-16 h-16 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center z-50 border-4 border-black active:scale-95 transition-all"
+        className="lg:hidden fixed bottom-10 right-10 w-16 h-16 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center z-50 border-4 border-background active:scale-95 transition-all"
       >
         <Menu className="w-6 h-6" />
       </button>

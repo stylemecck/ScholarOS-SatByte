@@ -122,19 +122,19 @@ const Support = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white overflow-hidden">
+    <div className="min-h-screen bg-background text-foreground overflow-hidden">
       {/* 1. HERO SECTION */}
-      <section className="relative pt-32 pb-24 px-4 overflow-hidden border-b border-white/5 bg-[#080808]">
+      <section className="relative pt-32 pb-24 px-4 overflow-hidden border-b border-border bg-card/50">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-primary/5 rounded-full blur-[140px] -z-10" />
         <div className="max-w-7xl mx-auto text-center space-y-12">
           <div className="space-y-6">
             <motion.div 
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 text-muted-foreground border border-white/10 rounded-full text-[10px] font-black uppercase tracking-widest"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-muted text-muted-foreground border border-border rounded-full text-[10px] font-black uppercase tracking-widest"
             >
               <HelpCircle className="w-3 h-3 text-primary" /> Support Center
             </motion.div>
-            <h1 className="text-6xl md:text-8xl font-black tracking-tighter italic leading-none">
+            <h1 className="text-6xl md:text-8xl font-black tracking-tighter italic leading-none text-foreground">
               How can we <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 pr-4">help you?</span>
             </h1>
@@ -227,9 +227,9 @@ const Support = () => {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="border-t border-white/5"
+                      className="border-t border-border"
                     >
-                      <div className="px-8 py-8 text-muted-foreground italic leading-relaxed text-lg bg-white/[0.02]">
+                      <div className="px-8 py-8 text-muted-foreground italic leading-relaxed text-lg bg-muted/10">
                         {faq.a}
                       </div>
                     </motion.div>
@@ -241,7 +241,7 @@ const Support = () => {
         </section>
 
         {/* 4. FUEL THE INNOVATION (Coffee Section - Preserved Logic) */}
-        <section className="relative rounded-[4rem] border border-white/5 bg-[#080808] p-12 md:p-24 overflow-hidden">
+        <section className="relative rounded-[4rem] border border-border bg-card p-12 md:p-24 overflow-hidden">
           <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[140px] -z-10" />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             <div className="space-y-10">

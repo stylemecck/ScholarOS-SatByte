@@ -27,9 +27,9 @@ const Contact = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white">
+    <div className="min-h-screen bg-background text-foreground">
       {/* 1. HERO SECTION */}
-      <section className="relative pt-32 pb-24 px-4 overflow-hidden border-b border-white/5 bg-[#080808]">
+      <section className="relative pt-32 pb-24 px-4 overflow-hidden border-b border-border bg-card/50">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-primary/5 rounded-full blur-[140px] -z-10" />
         <div className="max-w-7xl mx-auto text-center space-y-12">
           <div className="space-y-6">
@@ -39,7 +39,7 @@ const Contact = () => {
             >
               <MessageCircle className="w-3 h-3" /> Communication Hub
             </motion.div>
-            <h1 className="text-6xl md:text-9xl font-black tracking-tighter italic leading-none">
+            <h1 className="text-6xl md:text-9xl font-black tracking-tighter italic leading-none text-foreground">
               Let's <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 pr-4">Connect.</span>
             </h1>
@@ -189,7 +189,7 @@ const Contact = () => {
                         {status === 'sending' ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
                         Broadcast Message
                      </button>
-                     <p className="text-center text-[10px] font-black uppercase tracking-widest text-white/20 italic">
+                     <p className="text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground/30 italic">
                         Your information is protected by SatByte Privacy Protocols.
                      </p>
                    </motion.form>
@@ -200,11 +200,11 @@ const Contact = () => {
         </section>
 
         {/* 4. BUSINESS & API INQUIRIES */}
-        <section className="saas-card !p-16 relative overflow-hidden bg-[#080808] border-white/5">
+        <section className="saas-card !p-16 relative overflow-hidden bg-card border-border">
            <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[140px] -z-10" />
            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
               <div className="lg:col-span-8 space-y-6">
-                 <h3 className="text-4xl font-black italic">Building the future of student utility?</h3>
+                 <h3 className="text-4xl font-black italic text-foreground">Building the future of student utility?</h3>
                  <p className="text-lg text-muted-foreground italic leading-relaxed">
                    SatByte is a growing utility + developer platform. We offer custom API licensing, SaaS integrations, and academic collaboration opportunities.
                  </p>

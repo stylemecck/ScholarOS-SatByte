@@ -59,18 +59,18 @@ const Terms = () => {
   const SectionHeading = ({ id, title, icon: Icon }: any) => (
     <div id={id} className="pt-24 first:pt-0 group">
       <div className="flex items-center gap-4 mb-8">
-        <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-primary border border-white/5 group-hover:border-primary/30 transition-all">
+        <div className="w-12 h-12 bg-muted/50 rounded-2xl flex items-center justify-center text-primary border border-border group-hover:border-primary/30 transition-all">
           <Icon className="w-6 h-6" />
         </div>
-        <h2 className="text-3xl font-black tracking-tight italic text-white">{title}</h2>
+        <h2 className="text-3xl font-black tracking-tight italic text-foreground">{title}</h2>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white">
+    <div className="min-h-screen bg-background text-foreground">
       {/* 1. HERO SECTION */}
-      <section className="relative pt-32 pb-24 px-4 overflow-hidden border-b border-white/5 bg-[#080808]">
+      <section className="relative pt-32 pb-24 px-4 overflow-hidden border-b border-border bg-card/50">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-primary/5 rounded-full blur-[140px] -z-10" />
         <div className="max-w-7xl mx-auto space-y-8">
           <div className="space-y-6">
@@ -80,7 +80,7 @@ const Terms = () => {
             >
               <Bookmark className="w-3 h-3" /> Legal Core v2.5.0
             </motion.div>
-            <h1 className="text-6xl md:text-8xl font-black tracking-tighter italic leading-none">
+            <h1 className="text-6xl md:text-8xl font-black tracking-tighter italic leading-none text-foreground">
               Terms & <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 pr-4">Conditions.</span>
             </h1>
@@ -88,9 +88,9 @@ const Terms = () => {
               These terms govern the use of Toolkit by SatByte, our tools, APIs, and cloud services. By using our platform, you agree to these protocols.
             </p>
           </div>
-          <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 pt-8 border-t border-white/5">
+          <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 pt-8 border-t border-border">
             <span className="flex items-center gap-2"><Clock className="w-4 h-4" /> Last Updated: May 14, 2026</span>
-            <span className="hidden md:block w-1.5 h-1.5 bg-white/10 rounded-full" />
+            <span className="hidden md:block w-1.5 h-1.5 bg-border rounded-full" />
             <span className="hidden md:block">Jurisdiction: SatByte Global Cloud</span>
           </div>
         </div>
@@ -101,7 +101,7 @@ const Terms = () => {
         <aside className="lg:col-span-3 hidden lg:block">
           <div className="sticky top-32 space-y-10">
             <div className="space-y-6">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30 px-4">Navigation</h3>
+              <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/50 px-4">Navigation</h3>
               <nav className="space-y-1">
                 {sections.map((section) => (
                   <button
@@ -109,8 +109,8 @@ const Terms = () => {
                     onClick={() => scrollToSection(section.id)}
                     className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all text-left ${
                       activeSection === section.id 
-                      ? 'bg-primary/10 text-primary border border-primary/20 shadow-lg shadow-primary/5' 
-                      : 'text-muted-foreground hover:bg-white/5 hover:text-white'
+                      ? 'bg-primary/10 text-primary border border-primary/20' 
+                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                     }`}
                   >
                     <section.icon className={`w-4 h-4 ${activeSection === section.id ? 'text-primary' : 'opacity-40'}`} />
@@ -121,7 +121,7 @@ const Terms = () => {
             </div>
 
             <div className="saas-card !p-8 space-y-6 bg-gradient-to-br from-primary/10 to-transparent border-primary/20">
-               <p className="text-[10px] font-black text-white uppercase tracking-widest">Compliance Team</p>
+               <p className="text-[10px] font-black text-foreground uppercase tracking-widest">Compliance Team</p>
                <p className="text-xs text-muted-foreground font-medium italic">Have questions about our data protocols?</p>
                <Link to="/contact" className="w-full saas-button-primary !py-3 text-[10px] font-black uppercase flex items-center justify-center gap-2">
                  <MessageSquare className="w-3 h-3" /> Contact Legal
@@ -132,7 +132,7 @@ const Terms = () => {
 
         {/* 3. LEGAL CONTENT LAYOUT */}
         <main className="lg:col-span-9 space-y-0">
-          <div className="prose prose-invert max-w-none prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:text-lg prose-headings:font-black prose-headings:italic">
+          <div className="prose dark:prose-invert max-w-none prose-p:text-muted-foreground prose-p:leading-relaxed prose-p:text-lg prose-headings:font-black prose-headings:italic">
             
             {/* Introduction */}
             <SectionHeading id="intro" title="1. Introduction" icon={Gavel} />
@@ -217,7 +217,7 @@ const Terms = () => {
               </p>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 list-none p-0">
                 {['Copyrighted material without permission', 'Malicious software or scripts', 'Personally Identifiable Information of others', 'Illegal or harmful content'].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 p-4 bg-white/5 border border-white/5 rounded-2xl text-sm font-medium italic">
+                  <li key={i} className="flex items-center gap-3 p-4 bg-muted border border-border rounded-2xl text-sm font-medium italic">
                     <X className="w-4 h-4 text-rose-500" /> {item}
                   </li>
                 ))}
@@ -276,20 +276,20 @@ const Terms = () => {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="saas-card !p-8 flex items-center gap-6 group hover:border-primary/50 transition-all">
-                  <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                  <div className="w-12 h-12 bg-muted rounded-2xl flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                     <Shield className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-black uppercase tracking-widest text-white">Legal Inquiries</h4>
+                    <h4 className="text-sm font-black uppercase tracking-widest text-foreground">Legal Inquiries</h4>
                     <p className="text-xs text-muted-foreground italic">legal@satbyte.in</p>
                   </div>
                 </div>
                 <div className="saas-card !p-8 flex items-center gap-6 group hover:border-primary/50 transition-all">
-                  <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                  <div className="w-12 h-12 bg-muted rounded-2xl flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
                     <Terminal className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-black uppercase tracking-widest text-white">Developer Support</h4>
+                    <h4 className="text-sm font-black uppercase tracking-widest text-foreground">Developer Support</h4>
                     <p className="text-xs text-muted-foreground italic">api@satbyte.in</p>
                   </div>
                 </div>
@@ -310,14 +310,14 @@ const Terms = () => {
             <div className="flex flex-col h-full p-8 space-y-10">
               <div className="flex justify-between items-center">
                 <div className="text-xs font-black uppercase tracking-widest text-primary">Legal Menu</div>
-                <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-white/50"><X className="w-6 h-6" /></button>
+                <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-muted-foreground"><X className="w-6 h-6" /></button>
               </div>
               <nav className="flex-1 space-y-4 overflow-y-auto custom-scrollbar">
                 {sections.map((section) => (
                   <button
                     key={section.id}
                     onClick={() => scrollToSection(section.id)}
-                    className="w-full flex items-center gap-6 text-2xl font-black italic text-left py-4 border-b border-white/5"
+                    className="w-full flex items-center gap-6 text-2xl font-black italic text-left py-4 border-b border-border"
                   >
                     <section.icon className="w-6 h-6 text-primary" />
                     {section.title.split('. ')[1]}
@@ -331,7 +331,7 @@ const Terms = () => {
 
       <button 
         onClick={() => setIsMobileMenuOpen(true)}
-        className="lg:hidden fixed bottom-10 right-10 w-16 h-16 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center z-50 border-4 border-black active:scale-95 transition-all"
+        className="lg:hidden fixed bottom-10 right-10 w-16 h-16 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center z-50 border-4 border-background active:scale-95 transition-all"
       >
         <Menu className="w-6 h-6" />
       </button>

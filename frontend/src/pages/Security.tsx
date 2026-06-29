@@ -57,15 +57,15 @@ const Security = () => {
         <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center text-primary border border-white/5 group-hover:border-primary/30 transition-all">
           <Icon className="w-6 h-6" />
         </div>
-        <h2 className="text-3xl font-black tracking-tight italic text-white">{title}</h2>
+        <h2 className="text-3xl font-black tracking-tight italic text-foreground">{title}</h2>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white">
+    <div className="min-h-screen bg-background text-foreground">
       {/* 1. HERO SECTION */}
-      <section className="relative pt-32 pb-24 px-4 overflow-hidden border-b border-white/5 bg-[#080808]">
+      <section className="relative pt-32 pb-24 px-4 overflow-hidden border-b border-border bg-card/50">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-primary/5 rounded-full blur-[140px] -z-10" />
         <div className="max-w-7xl mx-auto space-y-8">
           <div className="space-y-6">
@@ -75,7 +75,7 @@ const Security = () => {
             >
               <Lock className="w-3 h-3" /> Security Protocol v2.0.0
             </motion.div>
-            <h1 className="text-6xl md:text-8xl font-black tracking-tighter italic leading-none">
+            <h1 className="text-6xl md:text-8xl font-black tracking-tighter italic leading-none text-foreground">
               Platform <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-600 pr-4">Security.</span>
             </h1>
@@ -83,9 +83,9 @@ const Security = () => {
               Our commitment to protecting your academic and professional data through industrial-grade encryption and ephemeral cloud processing.
             </p>
           </div>
-          <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-white/30 pt-8 border-t border-white/5">
+          <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 pt-8 border-t border-border">
             <span className="flex items-center gap-2"><Clock className="w-4 h-4" /> Certification: AES-256 Validated</span>
-            <span className="hidden md:block w-1.5 h-1.5 bg-white/10 rounded-full" />
+            <span className="hidden md:block w-1.5 h-1.5 bg-border rounded-full" />
             <span className="hidden md:block">Architecture: Zero-Retention Core</span>
           </div>
         </div>
@@ -140,7 +140,7 @@ const Security = () => {
               <p>
                 All data transmitted to and from SatByte is encrypted using **TLS 1.3** protocols. At rest, sensitive information is protected using **AES-256** industrial-grade encryption.
               </p>
-              <div className="bg-[#111] border border-white/5 p-8 rounded-3xl">
+              <div className="bg-card border border-border p-8 rounded-3xl">
                 <p className="text-sm italic font-bold text-primary">"Your data is encrypted before it ever touches our persistent storage layers."</p>
               </div>
             </div>
@@ -165,8 +165,8 @@ const Security = () => {
                 Our most critical security feature is our **Zero-Retention Core**. Files processed through our utility tools (Images, PDFs) are kept in RAM or temporary encrypted volumes and are purged automatically within 60 minutes.
               </p>
               <ul className="list-none p-0 space-y-4">
-                <li className="flex gap-4 p-4 bg-white/5 rounded-2xl border border-white/5"><ChevronRight className="text-primary w-5 h-5 shrink-0" /> **Automatic Purge**: All temp files deleted after use.</li>
-                <li className="flex gap-4 p-4 bg-white/5 rounded-2xl border border-white/5"><ChevronRight className="text-primary w-5 h-5 shrink-0" /> **RAM-Only Processing**: Heavy PDF tasks utilize high-speed, volatile memory.</li>
+                <li className="flex gap-4 p-4 bg-muted rounded-2xl border border-border"><ChevronRight className="text-primary w-5 h-5 shrink-0" /> **Automatic Purge**: All temp files deleted after use.</li>
+                <li className="flex gap-4 p-4 bg-muted rounded-2xl border border-border"><ChevronRight className="text-primary w-5 h-5 shrink-0" /> **RAM-Only Processing**: Heavy PDF tasks utilize high-speed, volatile memory.</li>
               </ul>
             </div>
 
@@ -205,14 +205,14 @@ const Security = () => {
             <div className="flex flex-col h-full p-8 space-y-10">
               <div className="flex justify-between items-center">
                 <div className="text-xs font-black uppercase tracking-widest text-primary">Security Menu</div>
-                <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-white/50"><X className="w-6 h-6" /></button>
+                <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-muted-foreground"><X className="w-6 h-6" /></button>
               </div>
               <nav className="flex-1 space-y-4 overflow-y-auto custom-scrollbar">
                 {sections.map((section) => (
                   <button
                     key={section.id}
                     onClick={() => scrollToSection(section.id)}
-                    className="w-full flex items-center gap-6 text-2xl font-black italic text-left py-4 border-b border-white/5"
+                    className="w-full flex items-center gap-6 text-2xl font-black italic text-left py-4 border-b border-border"
                   >
                     <section.icon className="w-6 h-6 text-primary" />
                     {section.title.split('. ')[1]}
@@ -226,7 +226,7 @@ const Security = () => {
 
       <button 
         onClick={() => setIsMobileMenuOpen(true)}
-        className="lg:hidden fixed bottom-10 right-10 w-16 h-16 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center z-50 border-4 border-black active:scale-95 transition-all"
+        className="lg:hidden fixed bottom-10 right-10 w-16 h-16 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center z-50 border-4 border-background active:scale-95 transition-all"
       >
         <Menu className="w-6 h-6" />
       </button>
